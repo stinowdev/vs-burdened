@@ -1,1 +1,98 @@
-#TODO
+name: Build Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Mod version (used for the zip name)"
+        required: true
+        default: "0.1.0"
+      game_version:
+        description: "Vintage Story version to build against"
+        required: true
+        default: "1.22.0"
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+env:
+  MOD_ID: burdened
+  CSPROJ: Burdened.csproj
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Resolve versions
+        id: vars
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+            GAME_VERSION="${{ github.event.inputs.game_version }}"
+          else
+            VERSION="${GITHUB_REF_NAME#v}"
+            GAME_VERSION="$(jq -r '.dependencies.game' resources/modinfo.json)"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "game_version=$GAME_VERSION" >> "$GITHUB_OUTPUT"
+          echo "Building $MOD_ID v$VERSION against game $GAME_VERSION"
+
+      - name: Download Vintage Story server
+        shell: bash
+        run: |
+          GAME_VERSION="${{ steps.vars.outputs.game_version }}"
+          URL="https://cdn.vintagestory.at/gamefiles/stable/vs_server_linux-x64_${GAME_VERSION}.tar.gz"
+          echo "Fetching $URL"
+          mkdir -p "$RUNNER_TEMP/vs"
+          curl -fSL "$URL" -o "$RUNNER_TEMP/vs_server.tar.gz"
+          tar -xzf "$RUNNER_TEMP/vs_server.tar.gz" -C "$RUNNER_TEMP/vs"
+          echo "VINTAGE_STORY=$RUNNER_TEMP/vs" >> "$GITHUB_ENV"
+
+      - name: Stamp version into modinfo.json
+        shell: bash
+        run: |
+          VERSION="${{ steps.vars.outputs.version }}"
+          tmp="$(mktemp)"
+          jq --arg v "$VERSION" '.version = $v' resources/modinfo.json > "$tmp"
+          mv "$tmp" resources/modinfo.json
+          cat resources/modinfo.json
+
+      - name: Build
+        run: dotnet build $CSPROJ -c Release
+
+      - name: Package
+        id: package
+        shell: bash
+        run: |
+          VERSION="${{ steps.vars.outputs.version }}"
+          ZIP_NAME="${MOD_ID}_${VERSION}.zip"
+          mkdir -p Releases
+          # Zip the build output (DLL + modinfo.json + assets), skipping debug files.
+          ( cd bin/Release && zip -r "$GITHUB_WORKSPACE/Releases/$ZIP_NAME" . -x '*.pdb' -x '*.deps.json' )
+          echo "zip_name=$ZIP_NAME" >> "$GITHUB_OUTPUT"
+          echo "zip_path=Releases/$ZIP_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.package.outputs.zip_name }}
+          path: ${{ steps.package.outputs.zip_path }}
+
+      - name: Attach to release (tag builds)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.package.outputs.zip_path }}
