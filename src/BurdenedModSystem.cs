@@ -79,6 +79,12 @@ public class BurdenedModSystem : ModSystem
         serverChannel?.SendPacket(ConfigSyncPacket.From(Config), player);
     }
 
+    // Fired once the player entity is fully in-world. PlayerJoin is too early.
+    private void OnPlayerNowPlaying(IServerPlayer player)
+    {
+        if (sapi != null) SlotEjection.EjectLockedSlots(sapi, player, Config);
+    }
+
     // -------------- Pipeline --------------
 
     public override void Start(ICoreAPI api)
@@ -124,6 +130,7 @@ public class BurdenedModSystem : ModSystem
         serverChannel = api.Network.GetChannel(ModId);
 
         api.Event.PlayerJoin += OnPlayerJoin;
+        api.Event.PlayerNowPlaying += OnPlayerNowPlaying;
 
         api.Logger.Notification(
             "[{0}] server side loaded. Config: hotbarSlots={1}, bagSlots={2}, immersiveCarryingMode={3}",
@@ -135,6 +142,7 @@ public class BurdenedModSystem : ModSystem
         if (sapi != null)
         {
             sapi.Event.PlayerJoin -= OnPlayerJoin;
+            sapi.Event.PlayerNowPlaying -= OnPlayerNowPlaying;
         }
 
         if (harmony != null)

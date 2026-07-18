@@ -1,3 +1,4 @@
 {
-  "burdened:modname": "Burdened"
+  "burdened:modname": "Burdened",
+  "burdened:disabled-slots-cleared": "Burdened: items from disabled slots were returned to your inventory or dropped at your feet."
 }
