@@ -1,5 +1,8 @@
+using Burdened.Client;
 using Burdened.Config;
+using Burdened.Inventory;
 using Burdened.Network;
+using Burdened.Patches;
 using HarmonyLib;
 using System;
 using Vintagestory.API.Client;
@@ -26,6 +29,7 @@ public class BurdenedModSystem : ModSystem
 
     // -------------- Client --------------
     private ICoreClientAPI? capi;
+    private SlotVisuals? slotVisuals;
 
     /// <summary>Raised on the client when the server pushes its config.</summary>
     public event Action<BurdenedConfig>? ConfigReceived;
@@ -35,6 +39,8 @@ public class BurdenedModSystem : ModSystem
     {
         Config = packet.ToConfig();
         
+        SlotLocks.Config = Config;
+
         capi?.Logger.Notification(
             "[{0}] config received from server. hotbarSlots={1}, bagSlots={2}",
             ModId, Config.HotbarSlots, Config.BagSlots);
@@ -93,6 +99,13 @@ public class BurdenedModSystem : ModSystem
             .SetMessageHandler<ConfigSyncPacket>(OnConfigSync);
 
         harmony = new Harmony(ModId);
+        SlotLockPatches.Apply(harmony, api.Logger);
+
+        // Grey the locked slots whenever the config becomes known.
+        // On the sync (ConfigReceived) and again once the world is ready.
+        slotVisuals = new SlotVisuals(api);
+        ConfigReceived += _ => slotVisuals?.TryApply();
+        api.Event.LevelFinalize += () => slotVisuals?.TryApply();
 
         api.Logger.Notification("[{0}] client side loaded.", ModId);
     }
@@ -103,8 +116,10 @@ public class BurdenedModSystem : ModSystem
         sapi = api;
 
         Config = LoadOrCreateConfig(api);
-        
+        SlotLocks.Config = Config;
+
         harmony = new Harmony(ModId);
+        SlotLockPatches.Apply(harmony, api.Logger);
 
         serverChannel = api.Network.GetChannel(ModId);
 
@@ -127,7 +142,11 @@ public class BurdenedModSystem : ModSystem
             harmony.UnpatchAll(ModId);
             harmony = null;
         }
+        
+        SlotLockPatches.Reset();
+        SlotLocks.Config = null;
 
+        slotVisuals = null;
         capi = null;
         sapi = null;
         serverChannel = null;

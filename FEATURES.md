@@ -2,7 +2,7 @@
 
 ## Features
 
-| ID | Feature | Config key | Default | Side |
+| # | Feature | Config key | Default | Side |
 |---|---|---|---|---|
 | F01 | Reduced hotbar slots (1..10) | `hotbarSlots` | 10 | server enforces, client hides |
 | F02 | Reduced bag-equip slots (1..4) | `bagSlots` | 4 | server enforces, client hides |
