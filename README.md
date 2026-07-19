@@ -26,12 +26,14 @@ Required on both client and server.
 
 | | Feature |
 |---|---|
-| ✓ | **F01** — Reduced hotbar slots (`HotbarSlots`, 1–10) |
-| ✓ | **F02** — Reduced bag-equip slots (`BagSlots`, 1–4) |
+| ✓ | **F01**: Reduced hotbar slots (`HotbarSlots`, 1–10) |
+| ✓ | **F02**: Reduced bag-equip slots (`BagSlots`, 1–4) |
 | ✓ | Server-enforced locks + config sync on join |
-| ✓ | Item ejection from newly locked slots (D02) — never deleted |
+| ✓ | Item ejection from newly locked slots (D02), never deleted |
 | ✓ | Hotbar HUD repack (only usable slots, vanilla-style border) |
-| | **F03–F09** — planned (immersive carrying, placeable bags, …) |
+| | **F03–F09** -> planned (immersive carrying, placeable bags, …) |
+
+<img width="1025" height="237" alt="image" src="https://github.com/user-attachments/assets/ffc86af3-d9a6-4ad9-aaaa-0579c6c984f0" />
 
 ## Configuration
 
@@ -43,7 +45,7 @@ Keys that actually do something in **0.1.0**:
 
 ```json
 {
-  "HotbarSlots": 5,
+  "HotbarSlots": 2,
   "BagSlots": 1
 }
 ```
