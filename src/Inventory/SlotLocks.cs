@@ -50,7 +50,7 @@ public static class SlotLocks
         if (slot.Inventory is InventoryPlayerBackpacks backpacks && slot is ItemSlotBackpack)
         {
             int index = Array.IndexOf(backpacks.bagSlots, slot);
-            return index < 0 || index >= cfg.EffectiveBagSlots;
+            return index < 0 || index >= cfg.EffectiveBagSlots();
         }
 
         return false;

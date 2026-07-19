@@ -125,7 +125,7 @@ public static class HotbarScrollPatches
 
     private static List<int> BuildRing(IPlayer player, BurdenedConfig cfg, bool includeBags)
     {
-        int bagCount = cfg.EffectiveBagSlots;
+        int bagCount = cfg.EffectiveBagSlots();
         List<int> ring = new List<int>(cfg.HotbarSlots + bagCount + 1);
         for (int i = 0; i < cfg.HotbarSlots; i++)
         {
@@ -160,7 +160,7 @@ public static class HotbarScrollPatches
         if (skillOffset > 0 && index == 10) return true;
 
         int bagIndex = index - (10 + skillOffset);
-        return bagIndex >= 0 && bagIndex < cfg.EffectiveBagSlots;
+        return bagIndex >= 0 && bagIndex < cfg.EffectiveBagSlots();
     }
 
     private static int SkillOffset(IPlayer player)

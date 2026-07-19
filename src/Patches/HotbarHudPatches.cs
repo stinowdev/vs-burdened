@@ -54,7 +54,7 @@ public static class HotbarHudPatches
             if (cfg == null) return;
 
             int hotbarCount = cfg.HotbarSlots;
-            int bagCount = cfg.EffectiveBagSlots;
+            int bagCount = cfg.EffectiveBagSlots();
             // Immersive mode always needs a 3-slot bag strip (L/B/R)
             bool vanillaLayout = !cfg.ImmersiveCarryingMode
                 && hotbarCount >= SlotLocks.VanillaHotbarSlots

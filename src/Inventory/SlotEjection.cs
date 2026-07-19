@@ -24,7 +24,7 @@ public static class SlotEjection
 
         if (player.InventoryManager.GetOwnInventory(GlobalConstants.backpackInvClassName) is InventoryPlayerBackpacks backpacks)
         {
-            int usable = cfg.EffectiveBagSlots;
+            int usable = cfg.EffectiveBagSlots();
 
             // F03/D03: wrong-role items in the still-visible L/B/R slots.
             if (cfg.ImmersiveCarryingMode)

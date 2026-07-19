@@ -25,12 +25,6 @@ public class BurdenedConfig
     // F03: L (waist bag) / B (backpack) / R (waist bag) slots + on-body rendering.
     public bool ImmersiveCarryingMode { get; set; } = false;
 
-    /// <summary>
-    /// Bag-equip slots the player may use right now. Immersive mode always
-    /// exposes exactly three typed slots (L/B/R); otherwise F02's BagSlots.
-    /// </summary>
-    public int EffectiveBagSlots => ImmersiveCarryingMode ? ImmersiveBagSlots : BagSlots;
-
     // F04: the inventory dialog ("E") shows only the crafting grid and the bag
     // equip slots; bag contents require placing the bag in the world.
     public bool HideBagContentsInDialog { get; set; } = true;
@@ -49,6 +43,12 @@ public class BurdenedConfig
     // F09: remember each container's dialog placement (fixed/movable + position)
     // by container identity, surviving pickup and re-placement. Client-side QoL.
     public bool RememberDialogPlacement { get; set; } = true;
+
+    /// <summary>
+    /// Bag-equip slots the player may use right now. Immersive mode always
+    /// exposes exactly three typed slots (L/B/R); otherwise F02's BagSlots.
+    /// </summary>
+    public int EffectiveBagSlots() => ImmersiveCarryingMode ? ImmersiveBagSlots : BagSlots;
 
     /// <summary>Clamps all values into their valid ranges (bad hand-edits, old versions).</summary>
     public void Sanitize()
