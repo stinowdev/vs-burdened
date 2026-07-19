@@ -18,7 +18,7 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](https://github.com/s
   `backpack-sturdy`, and `hunterbackpack`. **L** and **R** accept other
   bag-class storage (baskets, sacks, …) and never those three backpacks. Wrong
   items are rejected by the server and ejected on join; the HUD shows the three
-  slots with role icons.
+  slots with role icons. Backpack icon added to slot B when enabled.
 
 ### Planned
 
