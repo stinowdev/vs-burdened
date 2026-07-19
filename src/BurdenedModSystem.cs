@@ -107,6 +107,7 @@ public class BurdenedModSystem : ModSystem
         harmony = new Harmony(ModId);
         SlotLockPatches.Apply(harmony, api.Logger);
         HotbarHudPatches.Apply(harmony, api);
+        HotbarScrollPatches.Apply(harmony, api);
 
         // Grey the locked slots whenever the config becomes known.
         // On the sync (ConfigReceived) and again once the world is ready.
@@ -154,6 +155,7 @@ public class BurdenedModSystem : ModSystem
         
         SlotLockPatches.Reset();
         HotbarHudPatches.Reset();
+        HotbarScrollPatches.Reset();
         SlotLocks.Config = null;
 
         slotVisuals = null;

@@ -24,14 +24,14 @@ Required on both client and server.
 
 ## What's in 0.1.0
 
-| | Feature |
-|---|---|
-| ✓ | **F01**: Reduced hotbar slots (`HotbarSlots`, 1–10) |
-| ✓ | **F02**: Reduced bag-equip slots (`BagSlots`, 1–4) |
-| ✓ | Server-enforced locks + config sync on join |
-| ✓ | Item ejection from newly locked slots (D02), never deleted |
-| ✓ | Hotbar HUD repack (only usable slots, vanilla-style border) |
-| | **F03–F09** -> planned (immersive carrying, placeable bags, …) |
+| | Feature | Version |
+|---|---|---|
+| ✓ | **F01**: Reduced hotbar slots (`HotbarSlots`, 1–10) | 0.1.0 |
+| ✓ | **F02**: Reduced bag-equip slots (`BagSlots`, 1–4) | 0.1.0 |
+| ✓ | Server-enforced locks + config sync on join | 0.1.0 |
+| ✓ | Item ejection from newly locked slots (D02), never deleted | 0.1.0 |
+| ✓ | Hotbar HUD repack (only usable slots, vanilla-style border) | 0.1.0 |
+
 
 <img width="1025" height="237" alt="image" src="https://github.com/user-attachments/assets/ffc86af3-d9a6-4ad9-aaaa-0579c6c984f0" />
 

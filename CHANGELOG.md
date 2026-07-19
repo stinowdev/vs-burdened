@@ -6,11 +6,17 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](https://github.com/s
 
 ## [Unreleased]
 
+### Added
+
+- F05 - Concise hotbar scroll: mouse wheel skips locked hotbar/bag-equip slots
+  and wraps both ways within the usable set (Ctrl still reaches bag-equip
+  slots, limited to configured `BagSlots`). Number keys that target a locked
+  slot are ignored.
+
 ### Planned
 
 - F03 - Immersive carrying mode (L/B/R slot taxonomy per D03, bag rendering per D04)
 - F04 - Hide bag contents in the inventory dialog (D05)
-- F05 - Concise hotbar scroll (skip locked slots, wrap both ways)
 - F06 - Offhand holds anything (D06)
 - F07 - Auto-pickup flows into equipped bags with vanilla priority (D07)
 - F08 - Placeable bags: right-click opens, sneak-interact picks up (D08, D09)
