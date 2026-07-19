@@ -8,6 +8,7 @@ using System;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Server;
+using Vintagestory.Client.NoObf;
 
 namespace Burdened;
 
@@ -42,10 +43,28 @@ public class BurdenedModSystem : ModSystem
         SlotLocks.Config = Config;
 
         capi?.Logger.Notification(
-            "[{0}] config received from server. hotbarSlots={1}, bagSlots={2}",
-            ModId, Config.HotbarSlots, Config.BagSlots);
+            "[{0}] config received from server. hotbarSlots={1}, bagSlots={2}, immersive={3}",
+            ModId, Config.HotbarSlots, Config.BagSlots, Config.ImmersiveCarryingMode);
 
         ConfigReceived?.Invoke(Config);
+        // Config often arrives while still on the connecting screen.
+        // LevelFinalize will recompose once the world is up.
+        RecomposeHotbarHud(); //TODO: This is not working as expected.	
+    }
+
+    private void RecomposeHotbarHud()
+    {
+        // HudHotbar.ComposeGuis assumes World.Player + hotbar inventory exist.
+        if (capi?.World?.Player?.InventoryManager?.GetOwnInventory("hotbar") == null) return;
+
+        foreach (GuiDialog gui in capi.Gui.LoadedGuis)
+        {
+            if (gui is HudHotbar hotbar)
+            {
+                hotbar.ComposeGuis();
+                break;
+            }
+        }
     }
 
     // -------------- Server --------------
@@ -110,10 +129,15 @@ public class BurdenedModSystem : ModSystem
         HotbarScrollPatches.Apply(harmony, api);
 
         // Grey the locked slots whenever the config becomes known.
-        // On the sync (ConfigReceived) and again once the world is ready.
+        // On the sync (ConfigReceived) and again once the world is ready
+        // that second pass also recomposes the hotbar HUD if config arrived early.
         slotVisuals = new SlotVisuals(api);
         ConfigReceived += _ => slotVisuals?.TryApply();
-        api.Event.LevelFinalize += () => slotVisuals?.TryApply();
+        api.Event.LevelFinalize += () =>
+        {
+            slotVisuals?.TryApply();
+            RecomposeHotbarHud();
+        };
 
         api.Logger.Notification("[{0}] client side loaded.", ModId);
     }

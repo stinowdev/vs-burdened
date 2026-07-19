@@ -8,12 +8,12 @@ using Vintagestory.Common;
 namespace Burdened.Inventory;
 
 /// <summary>
-/// D02: when a player joins carrying items in slots the config has since
-/// disabled those items are returned through the normal give path (allowed 
-/// hotbar slots, then equipped bags). Anything that does not fit is dropped 
-/// at the player's feet.
-/// Bags are ejected before hotbar items so a hotbar item cannot overflow into 
-/// a bag that is itself about to be unequipped. 
+/// D02 / F03: when a player joins carrying items in slots the config has since
+/// disabled — or bags that violate immersive L/B/R taxonomy (D03) — those items
+/// are returned through the normal give path (allowed hotbar slots, then
+/// equipped bags). Anything that does not fit is dropped at the player's feet.
+/// Bags are ejected before hotbar items so a hotbar item cannot overflow into
+/// a bag that is itself about to be unequipped.
 /// Items are never deleted.
 /// </summary>
 public static class SlotEjection
@@ -22,10 +22,26 @@ public static class SlotEjection
     {
         int ejected = 0;
 
-        // F02 bag equip slots beyond the configured count.
         if (player.InventoryManager.GetOwnInventory(GlobalConstants.backpackInvClassName) is InventoryPlayerBackpacks backpacks)
         {
-            for (int i = cfg.BagSlots; i < backpacks.bagSlots.Length; i++)
+            int usable = cfg.EffectiveBagSlots;
+
+            // F03/D03: wrong-role items in the still-visible L/B/R slots.
+            if (cfg.ImmersiveCarryingMode)
+            {
+                for (int i = 0; i < usable && i < backpacks.bagSlots.Length; i++)
+                {
+                    ItemSlot slot = backpacks.bagSlots[i];
+                    if (slot.Empty) continue;
+                    if (!BagRoles.CanEquipInSlot(slot, slot.Itemstack))
+                    {
+                        ejected += Eject(sapi, player, slot);
+                    }
+                }
+            }
+
+            // F02 / F03: equip slots beyond the effective count.
+            for (int i = usable; i < backpacks.bagSlots.Length; i++)
             {
                 ejected += Eject(sapi, player, backpacks.bagSlots[i]);
             }
@@ -59,7 +75,7 @@ public static class SlotEjection
         slot.MarkDirty();
         if (stack == null || stack.StackSize <= 0) return 0;
 
-        // This respects Burdened's slot locks via CanHold/suitability, 
+        // This respects Burdened's slot locks + taxonomy via CanHold/suitability,
         // so items only ever land in still-usable slots.
         if (!player.InventoryManager.TryGiveItemstack(stack, true))
         {

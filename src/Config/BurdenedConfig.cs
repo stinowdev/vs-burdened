@@ -13,7 +13,7 @@ public class BurdenedConfig
     public const int MaxHotbarSlots = 10;   // vanilla hotbar size
     public const int MinBagSlots = 1;
     public const int MaxBagSlots = 4;       // vanilla bag-equip slot count
-
+    public const int ImmersiveBagSlots = 3; // L / B / R while ImmersiveCarryingMode is on
 
     // F01: usable hotbar slots, left-aligned; the rest are locked + hidden.
     public int HotbarSlots { get; set; } = MaxHotbarSlots;
@@ -24,6 +24,12 @@ public class BurdenedConfig
 
     // F03: L (waist bag) / B (backpack) / R (waist bag) slots + on-body rendering.
     public bool ImmersiveCarryingMode { get; set; } = false;
+
+    /// <summary>
+    /// Bag-equip slots the player may use right now. Immersive mode always
+    /// exposes exactly three typed slots (L/B/R); otherwise F02's BagSlots.
+    /// </summary>
+    public int EffectiveBagSlots => ImmersiveCarryingMode ? ImmersiveBagSlots : BagSlots;
 
     // F04: the inventory dialog ("E") shows only the crafting grid and the bag
     // equip slots; bag contents require placing the bag in the world.

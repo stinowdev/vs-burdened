@@ -44,12 +44,13 @@ public static class SlotLocks
             return slotId >= cfg.HotbarSlots && slotId < VanillaHotbarSlots;
         }
 
-        // F02: bag EQUIP slots beyond the configured count. Only the equip slots
-        // (ItemSlotBackpack) are lockable. Bag CONTENT slots follow their bag.
+        // F02 / F03: bag EQUIP slots beyond the effective count (BagSlots, or
+        // exactly 3 while immersive). Only the equip slots (ItemSlotBackpack)
+        // are lockable. Bag CONTENT slots follow their bag.
         if (slot.Inventory is InventoryPlayerBackpacks backpacks && slot is ItemSlotBackpack)
         {
             int index = Array.IndexOf(backpacks.bagSlots, slot);
-            return index >= cfg.BagSlots;
+            return index < 0 || index >= cfg.EffectiveBagSlots;
         }
 
         return false;

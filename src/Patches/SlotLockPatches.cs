@@ -9,11 +9,12 @@ using Vintagestory.Common;
 namespace Burdened.Patches;
 
 /// <summary>
-/// Enforces the slot locks (F01/F02). A locked slot rejects every incoming item
-/// via <see cref="ItemSlot.CanHold"/> / <see cref="ItemSlot.CanTakeFrom"/> and
-/// scores below everything in the "best suited slot" search that drives
-/// auto-pickup and shift-click. Taking items OUT of a locked slot is left alone
-/// so nothing can ever be trapped inside one.
+/// Enforces the slot locks (F01/F02) and immersive bag-role taxonomy (F03/D03).
+/// A locked slot rejects every incoming item via <see cref="ItemSlot.CanHold"/> /
+/// <see cref="ItemSlot.CanTakeFrom"/>; immersive L/B/R slots also reject the
+/// wrong bag class. Both score below everything in the "best suited slot" search
+/// that drives auto-pickup and shift-click. Taking items OUT of a locked slot
+/// is left alone so nothing can ever be trapped inside one.
 ///
 /// This is server-authoritative; the client runs the same patches so its
 /// prediction and rendering agree with the server. In singleplayer the two
@@ -33,12 +34,20 @@ public static class SlotLockPatches
 
             HarmonyMethod rejectPrefix = new HarmonyMethod(
                 AccessTools.Method(typeof(SlotLockPatches), nameof(RejectWhenLockedPrefix)));
+            HarmonyMethod taxonomyPrefix = new HarmonyMethod(
+                AccessTools.Method(typeof(SlotLockPatches), nameof(RejectWrongBagRolePrefix)));
 
             int patched = 0;
             foreach (MethodInfo target in FindSlotOverrides(nameof(ItemSlot.CanHold)))
+            {
                 patched += TryPatch(harmony, logger, target, prefix: rejectPrefix);
+                patched += TryPatch(harmony, logger, target, prefix: taxonomyPrefix);
+            }
             foreach (MethodInfo target in FindSlotOverrides(nameof(ItemSlot.CanTakeFrom)))
+            {
                 patched += TryPatch(harmony, logger, target, prefix: rejectPrefix);
+                patched += TryPatch(harmony, logger, target, prefix: taxonomyPrefix);
+            }
 
             HarmonyMethod suitabilityPostfix = new HarmonyMethod(
                 AccessTools.Method(typeof(SlotLockPatches), nameof(SuitabilityPostfix)));
@@ -76,12 +85,27 @@ public static class SlotLockPatches
     }
 
     /// <summary>
-    /// Locked slots must also lose the "best suited slot" search used by
-    /// auto-pickup and shift-click. A negative score removes them from contention.
+    /// F03/D03: immersive L/B/R taxonomy. Both <see cref="ItemSlot.CanHold"/> and
+    /// <see cref="ItemSlot.CanTakeFrom"/> take a source slot as their first
+    /// argument, so one prefix covers both.
     /// </summary>
-    public static void SuitabilityPostfix(ItemSlot targetSlot, ref float __result)
+    public static bool RejectWrongBagRolePrefix(ItemSlot __instance, ItemSlot sourceSlot, ref bool __result)
     {
-        if (SlotLocks.IsLocked(targetSlot)) __result = -1f;
+        if (BagRoles.CanEquipInSlot(__instance, sourceSlot?.Itemstack)) return true;
+        __result = false;
+        return false;
+    }
+
+    /// <summary>
+    /// Locked slots and wrong-role immersive bag slots must lose the "best
+    /// suited slot" search used by auto-pickup and shift-click.
+    /// </summary>
+    public static void SuitabilityPostfix(ItemSlot sourceSlot, ItemSlot targetSlot, ref float __result)
+    {
+        if (SlotLocks.IsLocked(targetSlot) || !BagRoles.CanEquipInSlot(targetSlot, sourceSlot?.Itemstack))
+        {
+            __result = -1f;
+        }
     }
 
     private static int TryPatch(Harmony harmony, ILogger logger, MethodInfo? target,

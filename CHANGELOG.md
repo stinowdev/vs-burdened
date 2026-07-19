@@ -12,10 +12,17 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](https://github.com/s
   and wraps both ways within the usable set (Ctrl still reaches bag-equip
   slots, limited to configured `BagSlots`). Number keys that target a locked
   slot are ignored.
+- F03 / D03 - Immersive carrying mode (rules only; on-body meshes are D04 later):
+  when `ImmersiveCarryingMode` is true, bag-equip is fixed to three typed slots
+  **L / B / R** (`BagSlots` is ignored). **B** accepts only `backpack-normal`,
+  `backpack-sturdy`, and `hunterbackpack`. **L** and **R** accept other
+  bag-class storage (baskets, sacks, …) and never those three backpacks. Wrong
+  items are rejected by the server and ejected on join; the HUD shows the three
+  slots with role icons.
 
 ### Planned
 
-- F03 - Immersive carrying mode (L/B/R slot taxonomy per D03, bag rendering per D04)
+- D04 - Immersive on-body bag rendering (static meshes on back/waist)
 - F04 - Hide bag contents in the inventory dialog (D05)
 - F06 - Offhand holds anything (D06)
 - F07 - Auto-pickup flows into equipped bags with vanilla priority (D07)
