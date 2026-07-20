@@ -8,7 +8,7 @@
 | F02 | Reduced bag-equip slots (1..4) | `bagSlots` | 4 | server enforces, client hides |
 | F03 | Immersive carrying mode (L/B/R + rendering) | `immersiveCarryingMode` | false | universal |
 | F04 | Hide bag contents in inventory dialog | `hideBagContentsInDialog` | true | client (server-synced rule) |
-| F05 | Concise hotbar scroll (skip locked slots, wrap both ways) | — (follows F01) | — | client |
+| F05 | Concise hotbar scroll (skip locked slots, wrap both ways) | - (follows F01) | - | client |
 | F06 | Offhand holds anything | `offhandHoldsAnything` | true | server enforces |
 | F07 | Auto-pickup flows into equipped bags (vanilla priority) | `autoPickupToBags` | true | server |
 | F08 | Placeable bags: right-click opens, sneak-interact picks up, contents+arrangement preserved | `placeableBags` | true | universal |

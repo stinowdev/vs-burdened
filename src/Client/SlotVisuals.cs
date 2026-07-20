@@ -19,7 +19,7 @@ public class SlotVisuals
 {
     private const string LockedSlotColor = "#343434";
     private const string WaistBagIcon = "basket";
-    /// <summary>Custom icon key — Cairo-drawn, not SVG (DrawSvg was painting the HUD black).</summary>
+    /// <summary>Custom icon key: Cairo-drawn, not SVG (DrawSvg was painting the HUD black).</summary>
     private const string BackBagIcon = "burdened-backpack";
 
     private readonly ICoreClientAPI capi;

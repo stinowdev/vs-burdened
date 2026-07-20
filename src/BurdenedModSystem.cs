@@ -125,6 +125,7 @@ public class BurdenedModSystem : ModSystem
 
         harmony = new Harmony(ModId);
         SlotLockPatches.Apply(harmony, api.Logger);
+        OffhandPatches.Apply(harmony, api.Logger);
         HotbarHudPatches.Apply(harmony, api);
         HotbarScrollPatches.Apply(harmony, api);
 
@@ -152,6 +153,7 @@ public class BurdenedModSystem : ModSystem
 
         harmony = new Harmony(ModId);
         SlotLockPatches.Apply(harmony, api.Logger);
+        OffhandPatches.Apply(harmony, api.Logger);
 
         serverChannel = api.Network.GetChannel(ModId);
 
@@ -178,6 +180,7 @@ public class BurdenedModSystem : ModSystem
         }
         
         SlotLockPatches.Reset();
+        OffhandPatches.Reset();
         HotbarHudPatches.Reset();
         HotbarScrollPatches.Reset();
         SlotLocks.Config = null;

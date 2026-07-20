@@ -19,12 +19,15 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](https://github.com/s
   bag-class storage (baskets, sacks, …) and never those three backpacks. Wrong
   items are rejected by the server and ejected on join; the HUD shows the three
   slots with role icons. Backpack icon added to slot B when enabled.
+- F06 / D06 - Offhand holds anything: when `OffhandHoldsAnything` is true
+  (default), the offhand slot accepts any item. Usability stays vanilla
+  (holding only; no dual-wield tool use). Auto-pickup suitability is unchanged
+  so items are not steered into the offhand.
 
 ### Planned
 
 - D04 - Immersive on-body bag rendering (static meshes on back/waist)
 - F04 - Hide bag contents in the inventory dialog (D05)
-- F06 - Offhand holds anything (D06)
 - F07 - Auto-pickup flows into equipped bags with vanilla priority (D07)
 - F08 - Placeable bags: right-click opens, sneak-interact picks up (D08, D09)
 - F09 - Remember container dialog placement per container identity (D10)

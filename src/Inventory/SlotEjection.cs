@@ -9,7 +9,7 @@ namespace Burdened.Inventory;
 
 /// <summary>
 /// D02 / F03: when a player joins carrying items in slots the config has since
-/// disabled — or bags that violate immersive L/B/R taxonomy (D03) — those items
+/// disabled, or bags that violate immersive L/B/R taxonomy (D03); those items
 /// are returned through the normal give path (allowed hotbar slots, then
 /// equipped bags). Anything that does not fit is dropped at the player's feet.
 /// Bags are ejected before hotbar items so a hotbar item cannot overflow into

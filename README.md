@@ -33,7 +33,8 @@ Required on both client and server.
 | ✓ | Hotbar HUD repack (only usable slots, vanilla-style border) | 0.1.0 |
 | ✓ | **F05**: Concise hotbar scroll (skip locked slots, wrap both ways) | unreleased |
 | ✓ | **F03** / **D03**: Immersive L/B/R bag slots (rules; meshes = D04 later) | unreleased |
-| | **D04, F04, F06–F09** — on-body meshes, placeable bags, … | planned |
+| ✓ | **F06** / **D06**: Offhand holds anything (usability stays vanilla) | unreleased |
+| | **D04, F04, F07-F09**: on-body meshes, placeable bags, … | planned |
 
 <img width="1025" height="237" alt="image" src="https://github.com/user-attachments/assets/ffc86af3-d9a6-4ad9-aaaa-0579c6c984f0" />
 
@@ -49,7 +50,8 @@ Keys that do something in the current build:
 {
   "HotbarSlots": 2,
   "BagSlots": 1,
-  "ImmersiveCarryingMode": false
+  "ImmersiveCarryingMode": false,
+  "OffhandHoldsAnything": true
 }
 ```
 
@@ -57,9 +59,11 @@ When `ImmersiveCarryingMode` is `true`, bag-equip becomes three typed slots
 (L / B / R) and `BagSlots` is ignored. **B** accepts only leather / sturdy /
 hunter backpacks; **L** and **R** accept other bag-class storage (not those three).
 
-Other keys (`HideBagContentsInDialog`, `OffhandHoldsAnything`,
-`AutoPickupToBags`, `PlaceableBags`, `RememberDialogPlacement`) are reserved
-for upcoming features.
+`OffhandHoldsAnything` (default `true`) lets the offhand hold any item; you
+still only *use* the main hand as in vanilla.
+
+Other keys (`HideBagContentsInDialog`, `AutoPickupToBags`, `PlaceableBags`,
+`RememberDialogPlacement`) are reserved for upcoming features.
 
 Edit on the server (or in singleplayer), then restart / rejoin so clients pick
 up the synced values.
