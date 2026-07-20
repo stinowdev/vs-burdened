@@ -18,6 +18,7 @@ public class ConfigSyncPacket
     public bool AutoPickupToBags;
     public bool PlaceableBags;
     public bool RememberDialogPlacement;
+    public bool OpenBagsFromHotbar;
 
     public static ConfigSyncPacket From(BurdenedConfig config)
     {
@@ -31,6 +32,7 @@ public class ConfigSyncPacket
             AutoPickupToBags = config.AutoPickupToBags,
             PlaceableBags = config.PlaceableBags,
             RememberDialogPlacement = config.RememberDialogPlacement,
+            OpenBagsFromHotbar = config.OpenBagsFromHotbar,
         };
     }
         
@@ -46,6 +48,7 @@ public class ConfigSyncPacket
             AutoPickupToBags = AutoPickupToBags,
             PlaceableBags = PlaceableBags,
             RememberDialogPlacement = RememberDialogPlacement,
+            OpenBagsFromHotbar = OpenBagsFromHotbar,
         };
         config.Sanitize();
         return config;

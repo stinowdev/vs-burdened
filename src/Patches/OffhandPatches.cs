@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using Burdened.Bags;
 using Burdened.Inventory;
 using HarmonyLib;
 using Vintagestory.API.Common;
@@ -8,7 +9,7 @@ namespace Burdened.Patches;
 
 /// <summary>
 /// F06 / D06: when <c>OffhandHoldsAnything</c> is true, the offhand slot
-/// accepts any collectible (still subject to PutLocked, slot tags, and
+/// accepts any non-bag collectible (still subject to PutLocked, slot tags, and
 /// <see cref="InventoryBase.CanContain"/>). Usability stays vanilla: this
 /// only opens placement into the slot; tools/weapons are not used from offhand.
 ///
@@ -47,6 +48,12 @@ public static class OffhandPatches
 
     public static bool CanHoldPrefix(ItemSlot __instance, ItemSlot sourceSlot, ref bool __result)
     {
+        if (__instance is ItemSlotOffhand && BagSupport.IsBag(sourceSlot?.Itemstack))
+        {
+            __result = false;
+            return false;
+        }
+
         if (!AppliesTo(__instance)) return true;
 
         if (__instance.Inventory is InventoryBase inv && inv.PutLocked)
@@ -76,6 +83,12 @@ public static class OffhandPatches
 
     public static bool CanTakeFromPrefix(ItemSlot __instance, ItemSlot sourceSlot, EnumMergePriority priority, ref bool __result)
     {
+        if (__instance is ItemSlotOffhand && BagSupport.IsBag(sourceSlot?.Itemstack))
+        {
+            __result = false;
+            return false;
+        }
+
         if (!AppliesTo(__instance)) return true;
 
         if (__instance.Inventory is InventoryBase inv && inv.PutLocked)

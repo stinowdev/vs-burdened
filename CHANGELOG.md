@@ -10,11 +10,21 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](https://github.com/s
 
 - D04 - Immersive on-body bag rendering (static meshes on back/waist)
 - F07 - Auto-pickup flows into equipped bags with vanilla priority (D07)
-- F08 / D08 / D09 - Floor bags: right-click opens; Ctrl+right-click picks up
-  into a compatible empty bag-equip slot and otherwise leaves the bag placed
 - F09 - Remember container dialog placement per container identity (D10)
-- F10 - Equipped bag slots: right-click opens independently; Ctrl-click places
-  the selected bag on the looked-at block
+
+### Added
+
+- F08 / D08 / D09 - Floor bags: right-click opens through the vanilla
+  contained-bag workspace; Ctrl+right-click transfers directly into a
+  compatible empty bag-equip slot and otherwise leaves the bag placed.
+- F10 - Equipped bag slots: right-click opens independent selective views over
+  the existing backpack inventory; Ctrl-click or selected-bag Ctrl+RMB places
+  directly from the equip slot into vanilla ground storage.
+
+### Fixed
+
+- Reject bags and backpacks from the offhand. F08 pickup does not use general
+  inventory routing, so a full bag bar cannot overflow into the offhand.
 
 ## [v0.3.0-pre1](https://github.com/stinowdev/vs-burdened/releases/tag/v0.3.0-pre1) - 2026-07-20
 

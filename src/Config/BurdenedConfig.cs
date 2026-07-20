@@ -30,20 +30,23 @@ public class BurdenedConfig
     // by placing the bag (F08) once that ships.
     public bool HideBagContentsInDialog { get; set; } = true;
 
-    // F06: the offhand slot accepts any item (usability stays vanilla).
+    // F06 / D06: the offhand manually accepts non-bag items.
     public bool OffhandHoldsAnything { get; set; } = true;
 
     // F07: picked-up items overflow into equipped bags (vanilla priority:
     // hotbar first, then bag contents). Off = hotbar only.
     public bool AutoPickupToBags { get; set; } = true;
 
-    // F08: bags can be placed in the world and opened like chests
-    // (right-click opens, sneak-interact picks up, arrangement preserved).
+    // F08: floor bags open with RMB and move to a compatible bag-equip slot
+    // with literal Ctrl+RMB. Contents and arrangement remain on the bag stack.
     public bool PlaceableBags { get; set; } = true;
 
     // F09: remember each container's dialog placement (fixed/movable + position)
     // by container identity, surviving pickup and re-placement. Client-side QoL.
     public bool RememberDialogPlacement { get; set; } = true;
+
+    // F10: equipped bag slots open with RMB and place with Ctrl+click/RMB.
+    public bool OpenBagsFromHotbar { get; set; } = true;
 
     /// <summary>
     /// Bag-equip slots the player may use right now. Immersive mode always

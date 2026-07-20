@@ -13,7 +13,7 @@
 | F07 | Auto-pickup flows into equipped bags (vanilla priority) | `AutoPickupToBags` | true | server |
 | F08 | Floor bag interaction remap (open / pick up; bags are already placeable in vanilla) | `PlaceableBags` | true | universal |
 | F09 | Remember container dialog placement per container identity | `RememberDialogPlacement` | true | client |
-| F10 | Hotbar bag slots: right-click opens, Ctrl-click places (**experimental**: server stages inventory into vanilla ground-storage) | `OpenBagsFromHotbar` | true | client (+ server place) |
+| F10 | Hotbar bag slots: right-click opens, Ctrl-click places directly from the equip slot | `OpenBagsFromHotbar` | true | client (+ server place) |
 
 ## Bag interactions (F08 + F10)
 

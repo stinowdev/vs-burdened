@@ -1,3 +1,4 @@
+using Burdened.Bags;
 using Burdened.Client;
 using Burdened.Config;
 using Burdened.Inventory;
@@ -113,7 +114,8 @@ public class BurdenedModSystem : ModSystem
 
         api.Network
             .RegisterChannel(ModId)
-            .RegisterMessageType<ConfigSyncPacket>();
+            .RegisterMessageType<ConfigSyncPacket>()
+            .RegisterMessageType<PlaceEquippedBagPacket>();
     }
 
     public override void StartClientSide(ICoreClientAPI api)
@@ -130,6 +132,8 @@ public class BurdenedModSystem : ModSystem
         HotbarHudPatches.Apply(harmony, api);
         HotbarScrollPatches.Apply(harmony, api);
         InventoryDialogPatches.Apply(harmony, api);
+        BagInteractionPatches.ApplyShared(harmony, api.Logger);
+        BagInteractionPatches.ApplyClient(harmony, api);
 
         // Grey the locked slots whenever the config becomes known.
         // On the sync (ConfigReceived) and again once the world is ready
@@ -157,8 +161,11 @@ public class BurdenedModSystem : ModSystem
         harmony = new Harmony(ModId);
         SlotLockPatches.Apply(harmony, api.Logger);
         OffhandPatches.Apply(harmony, api.Logger);
+        BagInteractionPatches.ApplyShared(harmony, api.Logger);
 
         serverChannel = api.Network.GetChannel(ModId);
+        serverChannel.SetMessageHandler<PlaceEquippedBagPacket>(
+            (player, packet) => BagPlacementService.Place(api, player, packet));
 
         api.Event.PlayerJoin += OnPlayerJoin;
         api.Event.PlayerNowPlaying += OnPlayerNowPlaying;
@@ -187,6 +194,8 @@ public class BurdenedModSystem : ModSystem
         HotbarHudPatches.Reset();
         HotbarScrollPatches.Reset();
         InventoryDialogPatches.Reset();
+        BagInteractionPatches.Reset();
+        GuiDialogEquippedBag.CloseAll();
         SlotLocks.Config = null;
 
         slotVisuals = null;

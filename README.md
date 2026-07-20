@@ -36,8 +36,8 @@ Required on both client and server.
 | ✓ | **F03** / **D03**: Immersive L/B/R bag slots (rules only; meshes later) | 0.2.0 |
 | ✓ | **F06** / **D06**: Offhand manually holds non-bag items (usability stays vanilla) | 0.2.0 |
 | ✓ | **F04** / **D05**: Hide bag contents in the E inventory dialog | 0.3.0-pre1 |
-| | **F08** / **D09**: Floor bag open/pickup remap | planned |
-| | **F10**: Hotbar bag right-click open / Ctrl-click place | planned |
+| ✓ | **F08** / **D09**: Floor bag open/pickup remap | unreleased |
+| ✓ | **F10**: Hotbar bag right-click open / Ctrl-click place | unreleased |
 | | **D04, F07, F09**: on-body meshes, auto-pickup, dialog memory | planned |
 
 #### HotbarSlots: 2, BagSlots: 1
@@ -62,7 +62,9 @@ Keys that do something in the current build:
   "BagSlots": 1,
   "ImmersiveCarryingMode": false,
   "OffhandHoldsAnything": true,
-  "HideBagContentsInDialog": true
+  "HideBagContentsInDialog": true,
+  "PlaceableBags": true,
+  "OpenBagsFromHotbar": true
 }
 ```
 
@@ -78,9 +80,15 @@ never target the offhand. You still only *use* the main hand as in vanilla.
 contents stay out of that dialog. Bag-equip slots remain on the hotbar. Set
 to `false` for the vanilla bag-contents grid beside crafting.
 
-Other keys (`AutoPickupToBags`, `PlaceableBags`, `RememberDialogPlacement`)
-are reserved for upcoming features. See [FEATURES.md](FEATURES.md) for the
-planned F08/F10 interaction contract.
+`PlaceableBags` (default `true`) remaps floor bags: right-click opens and
+Ctrl+right-click picks up only into a compatible empty bag-equip slot.
+
+`OpenBagsFromHotbar` (default `true`) enables right-click bag dialogs and
+Ctrl-click placement from equipped bag slots. Multiple equipped bags can be
+open simultaneously.
+
+Other keys (`AutoPickupToBags`, `RememberDialogPlacement`) are reserved for
+upcoming features. See [FEATURES.md](FEATURES.md) for the interaction contract.
 
 Edit on the server (or in singleplayer), then restart / rejoin so clients pick
 up the synced values.
