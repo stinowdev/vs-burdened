@@ -26,6 +26,12 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](https://github.com/s
 - Reject bags and backpacks from the offhand. F08 pickup does not use general
   inventory routing, so a full bag bar cannot overflow into the offhand.
 
+### Known issues
+
+- Opening inventory from hotbar is breaking on backpack (straight line)
+- burdened:no-compatible-bag-slot warning is adding black artifacts to the screen
+
+
 ## [v0.3.0-pre1](https://github.com/stinowdev/vs-burdened/releases/tag/v0.3.0-pre1) - 2026-07-20
 
 ### Added
