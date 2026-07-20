@@ -34,9 +34,11 @@ Required on both client and server.
 | ✓ | Hotbar HUD repack (only usable slots, vanilla-style border) | 0.1.0 |
 | ✓ | **F05**: Concise hotbar scroll (skip locked slots, wrap both ways) | 0.2.0 |
 | ✓ | **F03** / **D03**: Immersive L/B/R bag slots (rules only; meshes later) | 0.2.0 |
-| ✓ | **F06** / **D06**: Offhand holds anything (usability stays vanilla) | 0.2.0 |
+| ✓ | **F06** / **D06**: Offhand manually holds non-bag items (usability stays vanilla) | 0.2.0 |
 | ✓ | **F04** / **D05**: Hide bag contents in the E inventory dialog | 0.3.0-pre1 |
-| | **D04, F07-F10**: on-body meshes, placeable bags, … | planned |
+| | **F08** / **D09**: Floor bag open/pickup remap | planned |
+| | **F10**: Hotbar bag right-click open / Ctrl-click place | planned |
+| | **D04, F07, F09**: on-body meshes, auto-pickup, dialog memory | planned |
 
 #### HotbarSlots: 2, BagSlots: 1
 <img width="536" alt="image" src="https://github.com/user-attachments/assets/7c4fb772-8cc7-43cc-9c5a-2307a4b2b6bc" />
@@ -68,15 +70,17 @@ When `ImmersiveCarryingMode` is `true`, bag-equip becomes three typed slots
 (L / B / R) and `BagSlots` is ignored. **B** accepts only leather / sturdy /
 hunter backpacks; **L** and **R** accept other bag-class storage (not those three).
 
-`OffhandHoldsAnything` (default `true`) lets the offhand hold any item; you
-still only *use* the main hand as in vanilla.
+`OffhandHoldsAnything` (default `true`) lets you manually put any non-bag item
+in the offhand; bags and backpacks are rejected. Auto-pickup and shift-click
+never target the offhand. You still only *use* the main hand as in vanilla.
 
 `HideBagContentsInDialog` (default `true`) makes E show crafting only; bag
 contents stay out of that dialog. Bag-equip slots remain on the hotbar. Set
 to `false` for the vanilla bag-contents grid beside crafting.
 
 Other keys (`AutoPickupToBags`, `PlaceableBags`, `RememberDialogPlacement`)
-are reserved for upcoming features.
+are reserved for upcoming features. See [FEATURES.md](FEATURES.md) for the
+planned F08/F10 interaction contract.
 
 Edit on the server (or in singleplayer), then restart / rejoin so clients pick
 up the synced values.
