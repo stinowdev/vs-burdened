@@ -21,6 +21,7 @@ internal sealed class GuiDialogEquippedBag : GuiDialog
     private readonly int bagIndex;
     private readonly int[] contentSlotIds;
     private readonly int collectibleId;
+    private BagContentsSlotGrid? contentsGrid;
 
     private GuiDialogEquippedBag(ICoreClientAPI api, InventoryPlayerBackpacks backpacks, int bagIndex)
         : base(api)
@@ -85,7 +86,8 @@ internal sealed class GuiDialogEquippedBag : GuiDialog
 
     private void Compose()
     {
-        int columns = Math.Min(6, Math.Max(1, contentSlotIds.Length));
+        // Vanilla ground-stored bag dialogs use four columns.
+        int columns = Math.Min(4, Math.Max(1, contentSlotIds.Length));
         int rows = (int)Math.Ceiling(contentSlotIds.Length / (double)columns);
         double padding = GuiStyle.ElementToDialogPadding;
 
@@ -97,12 +99,16 @@ internal sealed class GuiDialogEquippedBag : GuiDialog
             .WithFixedAlignmentOffset((bagIndex - 1.5) * 70, (bagIndex % 2) * 45 - 22.5);
 
         string title = backpacks.bagSlots[bagIndex].GetStackName();
-        SingleComposer = capi.Gui
+        GuiComposer composer = capi.Gui
             .CreateCompo($"burdened-equipped-bag-{bagIndex}", dialogBounds)
             .AddShadedDialogBG(ElementBounds.Fill)
-            .AddDialogTitleBar(title, () => TryClose())
-            .AddItemSlotGrid(backpacks, SendInventoryPacket, columns, contentSlotIds, gridBounds, "contents")
-            .Compose();
+            .AddDialogTitleBar(title, () => TryClose());
+
+        contentsGrid = new BagContentsSlotGrid(
+            capi, backpacks, SendInventoryPacket, columns, contentSlotIds, gridBounds);
+        composer.AddInteractiveElement(contentsGrid, "contents");
+        GuiElementItemSlotGridBase.UpdateLastSlotGridFlag(composer);
+        SingleComposer = composer.Compose();
     }
 
     private void SendInventoryPacket(object packet)
@@ -113,6 +119,8 @@ internal sealed class GuiDialogEquippedBag : GuiDialog
     private void OnBackpackSlotModified(int slotId)
     {
         if (slotId != bagIndex) return;
+
+        contentsGrid?.RequestRefresh();
 
         ItemSlot equip = backpacks.bagSlots[bagIndex];
         int[] currentIds = BagSupport.ContentSlotIds(backpacks, bagIndex);
@@ -135,5 +143,62 @@ internal sealed class GuiDialogEquippedBag : GuiDialog
     {
         backpacks.SlotModified -= OnBackpackSlotModified;
         base.Dispose();
+    }
+
+    /// <summary>
+    /// InventoryPlayerBackpacks reports bag-content changes by dirtying the
+    /// owning equip-slot id. A normal selective grid assumes every dirty id is
+    /// visible and crashes when it receives that equip id. This adapter maps
+    /// the notification to this bag's visible content ids while preserving the
+    /// original dirty ids for the vanilla hotbar grid.
+    /// </summary>
+    private sealed class BagContentsSlotGrid : GuiElementItemSlotGrid
+    {
+        private readonly InventoryBase owner;
+        private readonly HashSet<int> visibleIds;
+        private bool refreshRequested = true;
+
+        public BagContentsSlotGrid(
+            ICoreClientAPI api,
+            InventoryBase owner,
+            Action<object> sendPacket,
+            int columns,
+            int[] visibleSlots,
+            ElementBounds bounds)
+            : base(api, owner, sendPacket, columns, visibleSlots, bounds)
+        {
+            this.owner = owner;
+            visibleIds = new HashSet<int>(visibleSlots);
+        }
+
+        public void RequestRefresh()
+        {
+            refreshRequested = true;
+        }
+
+        public override void PostRenderInteractiveElements(float deltaTime)
+        {
+            List<int> hiddenDirtyIds = new List<int>();
+            foreach (int dirtyId in owner.DirtySlots)
+            {
+                if (!visibleIds.Contains(dirtyId)) hiddenDirtyIds.Add(dirtyId);
+            }
+
+            foreach (int dirtyId in hiddenDirtyIds) owner.DirtySlots.Remove(dirtyId);
+            if (refreshRequested)
+            {
+                foreach (int visibleId in visibleIds) owner.DirtySlots.Add(visibleId);
+            }
+
+            try
+            {
+                base.PostRenderInteractiveElements(deltaTime);
+                refreshRequested = false;
+            }
+            finally
+            {
+                foreach (int dirtyId in hiddenDirtyIds) owner.DirtySlots.Add(dirtyId);
+            }
+        }
     }
 }

@@ -25,6 +25,11 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](https://github.com/s
 
 - Reject bags and backpacks from the offhand. F08 pickup does not use general
   inventory routing, so a full bag bar cannot overflow into the offhand.
+- Guard selective bag grids from backpack equip-slot dirty notifications,
+  preventing `ComposeSlotOverlays` from receiving an invalid slot index.
+- Match vanilla contained-bag dialogs with a four-column contents grid.
+- Report bag-placement validation through chat instead of Vintage Story's
+  in-game error HUD, whose misplaced hover background produced detached bars.
 
 ### Known issues
 

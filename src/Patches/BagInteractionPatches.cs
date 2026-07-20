@@ -138,10 +138,7 @@ public static class BagInteractionPatches
         {
             if (((BlockEntity)__instance).Api is ICoreClientAPI errorApi)
             {
-                errorApi.TriggerIngameError(
-                    typeof(BagInteractionPatches),
-                    "nocompatiblebagslot",
-                    Lang.Get("burdened:no-compatible-bag-slot"));
+                errorApi.ShowChatMessage(Lang.Get("burdened:no-compatible-bag-slot"));
             }
 
             // The gesture belongs to the floor bag even when it cannot move;

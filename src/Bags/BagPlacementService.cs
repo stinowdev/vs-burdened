@@ -18,10 +18,7 @@ internal static class BagPlacementService
         BlockSelection? selection = api.World.Player.CurrentBlockSelection;
         if (selection?.Face != BlockFacing.UP)
         {
-            api.TriggerIngameError(
-                typeof(BagPlacementService),
-                "lookatblock",
-                "Look at the top of a block to place the bag.");
+            api.ShowChatMessage(Lang.Get("burdened:look-at-block-to-place-bag"));
             return false;
         }
 

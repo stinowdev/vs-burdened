@@ -1,5 +1,6 @@
 {
   "burdened:modname": "Burdened",
   "burdened:disabled-slots-cleared": "Burdened: items from disabled slots were returned to your inventory or dropped at your feet.",
-  "burdened:no-compatible-bag-slot": "No compatible bag slot is available."
+  "burdened:no-compatible-bag-slot": "No compatible bag slot is available.",
+  "burdened:look-at-block-to-place-bag": "Look at the top of a block to place the bag."
 }
