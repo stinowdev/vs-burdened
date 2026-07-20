@@ -1,4 +1,5 @@
 # Burdened
+<img width="480" height="320" alt="Burdened" src="https://github.com/user-attachments/assets/91542e3a-2351-4324-b76e-9ca5c29fac0c" />
 
 A code mod for [Vintage Story](https://www.vintagestory.at/) **1.22** that makes
 carrying deliberate: fewer hotbar and bag-equip slots, enforced by the server
