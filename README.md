@@ -87,3 +87,6 @@ dotnet build                # debug build into bin/Debug
 
 See [LICENSE](LICENSE). Personal non-commercial use and PRs back to this repo
 are allowed; redistribution / modpacks need prior written permission.
+
+---
+You can support this and other projects [here](https://patreon.com/stinow). Thank you.
