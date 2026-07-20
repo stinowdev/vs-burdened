@@ -13,6 +13,7 @@
 | F07 | Auto-pickup flows into equipped bags (vanilla priority) | `autoPickupToBags` | true | server |
 | F08 | Placeable bags: right-click opens, sneak-interact picks up, contents+arrangement preserved | `placeableBags` | true | universal |
 | F09 | Remember container dialog placement per container identity | `rememberDialogPlacement` | true | client |
+| F10 | Sneak-click while selecting bag slot opens its inventory | `openBagsFromHotbar` | true | client |
 
 ## Locked decisions
 

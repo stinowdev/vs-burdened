@@ -36,7 +36,7 @@ Required on both client and server.
 | ✓ | **F03** / **D03**: Immersive L/B/R bag slots (rules only; meshes later) | 0.2.0 |
 | ✓ | **F06** / **D06**: Offhand holds anything (usability stays vanilla) | 0.2.0 |
 | ✓ | **F04** / **D05**: Hide bag contents in the E inventory dialog | 0.3.0-pre1 |
-| | **D04, F07-F09**: on-body meshes, placeable bags, … | planned |
+| | **D04, F07-F10**: on-body meshes, placeable bags, … | planned |
 
 #### HotbarSlots: 2, BagSlots: 1
 <img width="536" alt="image" src="https://github.com/user-attachments/assets/7c4fb772-8cc7-43cc-9c5a-2307a4b2b6bc" />
