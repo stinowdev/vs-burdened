@@ -12,6 +12,7 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](https://github.com/s
 - F07 - Auto-pickup flows into equipped bags with vanilla priority (D07)
 - F08 - Placeable bags: right-click opens, sneak-interact picks up (D08, D09)
 - F09 - Remember container dialog placement per container identity (D10)
+- F10 - Sneak-click while selecting bag slot opens its inventory
 
 ## [v0.3.0-pre1](https://github.com/stinowdev/vs-burdened/releases/tag/v0.3.0-pre1) - 2026-07-20
 
