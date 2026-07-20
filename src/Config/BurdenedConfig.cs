@@ -25,8 +25,9 @@ public class BurdenedConfig
     // F03: L (waist bag) / B (backpack) / R (waist bag) slots + on-body rendering.
     public bool ImmersiveCarryingMode { get; set; } = false;
 
-    // F04: the inventory dialog ("E") shows only the crafting grid and the bag
-    // equip slots; bag contents require placing the bag in the world.
+    // F04 / D05: the inventory dialog ("E") shows only crafting; bag contents
+    // are hidden. Bag-equip slots stay on the hotbar HUD. Access bag storage
+    // by placing the bag (F08) once that ships.
     public bool HideBagContentsInDialog { get; set; } = true;
 
     // F06: the offhand slot accepts any item (usability stays vanilla).

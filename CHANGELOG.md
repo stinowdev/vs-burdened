@@ -9,10 +9,19 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](https://github.com/s
 ### Planned
 
 - D04 - Immersive on-body bag rendering (static meshes on back/waist)
-- F04 - Hide bag contents in the inventory dialog (D05)
 - F07 - Auto-pickup flows into equipped bags with vanilla priority (D07)
 - F08 - Placeable bags: right-click opens, sneak-interact picks up (D08, D09)
 - F09 - Remember container dialog placement per container identity (D10)
+
+## [v0.3.0-pre1](https://github.com/stinowdev/vs-burdened/releases/tag/v0.3.0-pre1) - 2026-07-20
+
+### Added
+
+- F04 / D05 - Hide bag contents in the inventory dialog: when
+  `HideBagContentsInDialog` is true (default), pressing E shows only the
+  crafting grid (and output). Bag-equip slots stay on the hotbar HUD; bag
+  contents are not listed in the dialog. Set the key to `false` to restore
+  the vanilla bag-contents grid next to crafting.
 
 ## [v0.2.0](https://github.com/stinowdev/vs-burdened/releases/tag/v0.2.0) - 2026-07-19
 

@@ -49,7 +49,8 @@ public class BurdenedModSystem : ModSystem
         ConfigReceived?.Invoke(Config);
         // Config often arrives while still on the connecting screen.
         // LevelFinalize will recompose once the world is up.
-        RecomposeHotbarHud(); //TODO: This is not working as expected.	
+        RecomposeHotbarHud(); //TODO: This is not working as expected.
+        if (capi != null) InventoryDialogPatches.RecomposeIfPresent(capi);
     }
 
     private void RecomposeHotbarHud()
@@ -128,6 +129,7 @@ public class BurdenedModSystem : ModSystem
         OffhandPatches.Apply(harmony, api.Logger);
         HotbarHudPatches.Apply(harmony, api);
         HotbarScrollPatches.Apply(harmony, api);
+        InventoryDialogPatches.Apply(harmony, api);
 
         // Grey the locked slots whenever the config becomes known.
         // On the sync (ConfigReceived) and again once the world is ready
@@ -138,6 +140,7 @@ public class BurdenedModSystem : ModSystem
         {
             slotVisuals?.TryApply();
             RecomposeHotbarHud();
+            InventoryDialogPatches.RecomposeIfPresent(api);
         };
 
         api.Logger.Notification("[{0}] client side loaded.", ModId);
@@ -183,6 +186,7 @@ public class BurdenedModSystem : ModSystem
         OffhandPatches.Reset();
         HotbarHudPatches.Reset();
         HotbarScrollPatches.Reset();
+        InventoryDialogPatches.Reset();
         SlotLocks.Config = null;
 
         slotVisuals = null;
