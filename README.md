@@ -36,7 +36,13 @@ Required on both client and server.
 | ✓ | **F06** / **D06**: Offhand holds anything (usability stays vanilla) | unreleased |
 | | **D04, F04, F07-F09**: on-body meshes, placeable bags, … | planned |
 
-<img width="1025" height="237" alt="image" src="https://github.com/user-attachments/assets/ffc86af3-d9a6-4ad9-aaaa-0579c6c984f0" />
+#### HotbarSlots: 2, BagSlots: 1
+<img width="536" alt="image" src="https://github.com/user-attachments/assets/7c4fb772-8cc7-43cc-9c5a-2307a4b2b6bc" />
+
+
+#### Immersive mode: true
+<img width="536" alt="image" src="https://github.com/user-attachments/assets/4b315e23-ab1b-47f0-a525-03cb4197f422" />
+<img width="536" alt="image" src="https://github.com/user-attachments/assets/74ae724f-3fed-4aca-a664-3319669ca326" />
 
 ## Configuration
 
