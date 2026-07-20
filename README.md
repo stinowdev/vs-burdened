@@ -26,14 +26,14 @@ Required on both client and server.
 
 | | Feature | Version |
 |---|---|---|
-| ✓ | **F01**: Reduced hotbar slots (`HotbarSlots`, 1–10) | 0.1.0 |
-| ✓ | **F02**: Reduced bag-equip slots (`BagSlots`, 1–4) | 0.1.0 |
+| ✓ | **F01**: Reduced hotbar slots (`HotbarSlots`, 1-10) | 0.1.0 |
+| ✓ | **F02**: Reduced bag-equip slots (`BagSlots`, 1-4) | 0.1.0 |
 | ✓ | Server-enforced locks + config sync on join | 0.1.0 |
 | ✓ | Item ejection from newly locked slots (D02), never deleted | 0.1.0 |
 | ✓ | Hotbar HUD repack (only usable slots, vanilla-style border) | 0.1.0 |
-| ✓ | **F05**: Concise hotbar scroll (skip locked slots, wrap both ways) | unreleased |
-| ✓ | **F03** / **D03**: Immersive L/B/R bag slots (rules; meshes = D04 later) | unreleased |
-| ✓ | **F06** / **D06**: Offhand holds anything (usability stays vanilla) | unreleased |
+| ✓ | **F05**: Concise hotbar scroll (skip locked slots, wrap both ways) | 0.2.0 |
+| ✓ | **F03** / **D03**: Immersive L/B/R bag slots (rules only; meshes later) | 0.2.0 |
+| ✓ | **F06** / **D06**: Offhand holds anything (usability stays vanilla) | 0.2.0 |
 | | **D04, F04, F07-F09**: on-body meshes, placeable bags, … | planned |
 
 #### HotbarSlots: 2, BagSlots: 1

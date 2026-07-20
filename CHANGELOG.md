@@ -6,6 +6,19 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](https://github.com/s
 
 ## [Unreleased]
 
+### Planned
+
+- D04 - Immersive on-body bag rendering (static meshes on back/waist)
+- F04 - Hide bag contents in the inventory dialog (D05)
+- F07 - Auto-pickup flows into equipped bags with vanilla priority (D07)
+- F08 - Placeable bags: right-click opens, sneak-interact picks up (D08, D09)
+- F09 - Remember container dialog placement per container identity (D10)
+
+## [v0.2.0](https://github.com/stinowdev/vs-burdened/releases/tag/v0.2.0) - 2026-07-19
+
+Immersive bag rules, concise scroll, and offhand flexibility. Immersive mode is
+**rules only** in this release (no on-body bag meshes yet; that is D04).
+
 ### Added
 
 - F05 - Concise hotbar scroll: mouse wheel skips locked hotbar/bag-equip slots
@@ -16,23 +29,20 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](https://github.com/s
   when `ImmersiveCarryingMode` is true, bag-equip is fixed to three typed slots
   **L / B / R** (`BagSlots` is ignored). **B** accepts only `backpack-normal`,
   `backpack-sturdy`, and `hunterbackpack`. **L** and **R** accept other
-  bag-class storage (baskets, sacks, …) and never those three backpacks. Wrong
-  items are rejected by the server and ejected on join; the HUD shows the three
-  slots with role icons. Backpack icon added to slot B when enabled.
+  bag-class storage (baskets, sacks, etc.) and never those three backpacks.
+  Wrong items are rejected by the server and ejected on join; the HUD shows the
+  three slots with role icons. Backpack icon added to slot B when enabled.
 - F06 / D06 - Offhand holds anything: when `OffhandHoldsAnything` is true
   (default), the offhand slot accepts any item. Usability stays vanilla
   (holding only; no dual-wield tool use). Auto-pickup suitability is unchanged
   so items are not steered into the offhand.
 
-### Planned
+### Fixed
 
-- D04 - Immersive on-body bag rendering (static meshes on back/waist)
-- F04 - Hide bag contents in the inventory dialog (D05)
-- F07 - Auto-pickup flows into equipped bags with vanilla priority (D07)
-- F08 - Placeable bags: right-click opens, sneak-interact picks up (D08, D09)
-- F09 - Remember container dialog placement per container identity (D10)
-
-
+- Hotbar HUD right-border smear when the strip is shrunk below vanilla width
+  (re-bake static texture at the new size before recompose).
+- Crash on join when config sync tried to recompose the hotbar HUD before the
+  player inventory existed.
 
 ## [v0.1.0](https://github.com/stinowdev/vs-burdened/releases/tag/v0.1.0) - 2026-07-18
 
@@ -63,4 +73,3 @@ vanilla-style borders at any width.
 - Locked-slot visuals: locked hotbar and bag-equip slots are tinted dark and
 drawn as unavailable; if the bar shrinks under the current selection, the
 active slot is pulled back into range.
-

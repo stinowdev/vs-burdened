@@ -4,7 +4,7 @@
 		<!-- Sync with resources/modinfo.json -->
 		<ModId>burdened</ModId>
 		<ModName>Burdened</ModName>
-		<Version>0.1.0</Version>
+		<Version>0.2.0</Version>
 
 		<!-- Vintage Story 1.22 -->
 		<TargetFramework>net10.0</TargetFramework>

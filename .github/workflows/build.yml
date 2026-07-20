@@ -2,8 +2,8 @@ name: Build Release
 
 # Primary path: on main, create + push a version tag → draft release with zip.
 #   git checkout main && git pull
-#   git tag v0.1.0
-#   git push origin v0.1.0
+#   git tag v0.2.0
+#   git push origin v0.2.0
 # Then open the draft on GitHub, paste release notes, Publish.
 #
 # Manual rebuild: Actions → Build Release → Run workflow.
@@ -16,7 +16,7 @@ on:
       version:
         description: "Mod version (used for the zip name / release tag)"
         required: true
-        default: "0.1.0"
+        default: "0.2.0"
       game_version:
         description: "Vintage Story version to build against"
         required: true
