@@ -76,14 +76,15 @@ in the offhand; bags and backpacks are rejected. Auto-pickup and shift-click
 never target the offhand. You still only *use* the main hand as in vanilla.
 
 `HideBagContentsInDialog` (default `true`) makes E show crafting only; bag
-contents stay out of that dialog. Bag-equip slots remain on the hotbar. Set
-to `false` for the vanilla bag-contents grid beside crafting.
+contents stay out of that compact dialog. Bag-equip slots remain on the hotbar.
+Set to `false` for the vanilla bag-contents grid beside crafting.
 
 `ImprovedBagInteractions` (default `true`) enables the complete bag interaction
 remap: right-click opens floor or equipped bags; Shift+right-click picks up a
 floor bag or places a selected equipped bag; Shift-click on an equipped HUD
 slot also places it. Rejected pickup requests leave the floor bag untouched,
-and multiple equipped bags can be open simultaneously.
+and multiple equipped bags can be open simultaneously in vanilla-style
+contained-bag windows.
 
 Other keys (`AutoPickupToBags`, `RememberDialogPlacement`) are reserved for
 upcoming features. See [FEATURES.md](FEATURES.md) for the interaction contract.

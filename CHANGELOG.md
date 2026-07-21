@@ -40,7 +40,10 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](https://github.com/s
   `BagInventory` reload. This removes the one-frame null-slot race in
   `ComposeSlotOverlays` with multiple bag windows open.
 - Match vanilla contained-bag dialogs with a four-column contents grid and use
-  stable, non-overlapping positions for simultaneously open equipped bags.
+  the same inset/title spacing for equipped bags; keep stable, non-overlapping
+  positions for simultaneously open windows.
+- Tighten the crafting-only inventory dialog with a proportional output-slot
+  gap and no oversized empty area below it.
 - Consume the residual world-interaction packet after custom equipped-bag
   placement and initialize a received contained-bag workspace before vanilla
   deserializes it. This prevents duplicate `Backpack Contents` windows and the

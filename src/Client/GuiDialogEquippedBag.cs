@@ -90,18 +90,20 @@ internal sealed class GuiDialogEquippedBag : GuiDialog
 
     private void Compose()
     {
-        // Vanilla ground-stored bag dialogs use four columns. The four equip
-        // positions use a stable 2x2 layout so simultaneously open bags do not
-        // cascade over one another.
-        int columns = Math.Min(4, Math.Max(1, viewInventory.Count));
+        // Match GuiDialogBlockEntityInventory: contained bags always reserve
+        // four columns, use a six-pixel inset, and leave title-bar clearance.
+        // The four equip positions retain a stable 2x2 screen layout.
+        const int columns = 4;
         int rows = (int)Math.Ceiling(viewInventory.Count / (double)columns);
         double padding = GuiStyle.ElementToDialogPadding;
+        double slotPadding = GuiElementItemSlotGridBase.unscaledSlotPadding;
 
         ElementBounds gridBounds = ElementStdBounds.SlotGrid(
-            EnumDialogArea.None, 0, 32, columns, rows);
+            EnumDialogArea.None, slotPadding, slotPadding, columns, rows);
+        ElementBounds insetBounds = gridBounds.ForkBoundingParent(6, 6, 6, 6);
         (double offsetX, double offsetY) = DialogOffset(bagIndex);
-        ElementBounds dialogBounds = gridBounds
-            .ForkBoundingParent(padding, padding, padding, padding)
+        ElementBounds dialogBounds = insetBounds
+            .ForkBoundingParent(padding, padding + 20, padding, padding)
             .WithAlignment(EnumDialogArea.CenterMiddle)
             .WithFixedAlignmentOffset(offsetX, offsetY);
 
@@ -112,7 +114,8 @@ internal sealed class GuiDialogEquippedBag : GuiDialog
         GuiComposer composer = capi.Gui
             .CreateCompo($"burdened-equipped-bag-{bagIndex}", dialogBounds)
             .AddShadedDialogBG(ElementBounds.Fill)
-            .AddDialogTitleBar(title, () => TryClose());
+            .AddDialogTitleBar(title, () => TryClose())
+            .AddInset(insetBounds);
 
         contentsGrid = new GuiElementItemSlotGrid(
             capi, viewInventory, SendInventoryPacket, columns, visibleSlots, gridBounds);

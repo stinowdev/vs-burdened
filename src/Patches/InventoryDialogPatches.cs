@@ -143,13 +143,14 @@ public static class InventoryDialogPatches
         ElementBounds craftingBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0.0, 0.0, 3, 3);
         ElementBounds outputBounds = ElementStdBounds.SlotGrid(EnumDialogArea.None, 0.0, 0.0, 1, 1);
 
+        const double outputGap = 10.0;
         ElementBounds dialogBounds = craftingBounds.ForkBoundingParent(
             pad,
             pad + 30.0,
             pad,
-            pad + 20.0 + outputBounds.fixedHeight + 20.0);
+            pad + outputGap + outputBounds.fixedHeight);
 
-        outputBounds.FixedUnder(craftingBounds, 20.0);
+        outputBounds.FixedUnder(craftingBounds, outputGap);
         outputBounds.fixedX = craftingBounds.fixedX + slotPad + slotSize;
 
         if (clientApi.Settings.Bool["immersiveMouseMode"])

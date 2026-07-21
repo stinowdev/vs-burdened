@@ -7,7 +7,7 @@
 | F01 | Reduced hotbar slots (1..10) | `HotbarSlots` | 10 | server enforces, client hides |
 | F02 | Reduced bag-equip slots (1..4) | `BagSlots` | 4 | server enforces, client hides |
 | F03 | Immersive carrying mode (L/B/R rules; on-body rendering is D04) | `ImmersiveCarryingMode` | false | universal |
-| F04 | Hide bag contents in inventory dialog | `HideBagContentsInDialog` | true | client (server-synced rule) |
+| F04 | Hide bag contents in a compact crafting-only inventory dialog | `HideBagContentsInDialog` | true | client (server-synced rule) |
 | F05 | Concise hotbar scroll (skip locked slots, wrap both ways) | - (follows F01) | - | client |
 | F06 | Offhand manually holds any non-bag item | `OffhandHoldsAnything` | true | server enforces |
 | F07 | Auto-pickup flows into equipped bags (vanilla priority) | `AutoPickupToBags` | true | server |
@@ -39,6 +39,7 @@ arrangement are preserved.
 | Bag slot selected + Shift + RMB on a block | Place the bag (also shown in held help) |
 
 Ctrl remains the F05 bag-slot select/scroll modifier; Shift is the floor action modifier.
+Equipped bag windows match the four-column inset layout used by placed bags.
 
 ## Locked decisions
 
