@@ -135,6 +135,7 @@ public class BurdenedModSystem : ModSystem
         InventoryDialogPatches.Apply(harmony, api);
         BagInteractionPatches.ApplyShared(harmony, api.Logger);
         BagInteractionPatches.ApplyClient(harmony, api);
+        BagRenderPatches.Apply(harmony, api.Logger);
 
         // Grey the locked slots whenever the config becomes known.
         // On the sync (ConfigReceived) and again once the world is ready
@@ -198,6 +199,7 @@ public class BurdenedModSystem : ModSystem
         HotbarScrollPatches.Reset();
         InventoryDialogPatches.Reset();
         BagInteractionPatches.Reset();
+        BagRenderPatches.Reset();
         GuiDialogEquippedBag.CloseAll();
         SlotLocks.Config = null;
 

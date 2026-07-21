@@ -25,6 +25,8 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](https://github.com/s
 
 ### Fixed
 
+- Hide a selected equipped bag from the player's worn backpack shape while
+  vanilla renders that bag in the active hand, with immersive mode on or off.
 - Reject bags and backpacks from the offhand. F08 pickup does not use general
   inventory routing, so a full bag bar cannot overflow into the offhand.
 - Make floor-bag pickup server-authoritative. The client no longer predicts the

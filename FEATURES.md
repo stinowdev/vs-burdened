@@ -40,6 +40,8 @@ arrangement are preserved.
 
 Ctrl remains the F05 bag-slot select/scroll modifier; Shift is the floor action modifier.
 Equipped bag windows match the four-column inset layout used by placed bags.
+While an equipped bag slot is selected, its worn copy is hidden and only its
+active-hand rendering remains. This applies with immersive mode on or off.
 
 ## Locked decisions
 

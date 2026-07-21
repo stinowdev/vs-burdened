@@ -84,7 +84,8 @@ remap: right-click opens floor or equipped bags; Shift+right-click picks up a
 floor bag or places a selected equipped bag; Shift-click on an equipped HUD
 slot also places it. Rejected pickup requests leave the floor bag untouched,
 and multiple equipped bags can be open simultaneously in vanilla-style
-contained-bag windows.
+contained-bag windows. Selecting an equipped bag hides its worn copy while it
+is rendered in the player's hand, in either carrying mode.
 
 Other keys (`AutoPickupToBags`, `RememberDialogPlacement`) are reserved for
 upcoming features. See [FEATURES.md](FEATURES.md) for the interaction contract.
