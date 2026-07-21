@@ -37,16 +37,14 @@ public class BurdenedConfig
     // hotbar first, then bag contents). Off = hotbar only.
     public bool AutoPickupToBags { get; set; } = true;
 
-    // F08: floor bags open with RMB and move to a compatible bag-equip slot
-    // with literal Ctrl+RMB. Contents and arrangement remain on the bag stack.
-    public bool PlaceableBags { get; set; } = true;
+    // F08 / F10: Burdened's complete bag interaction contract: floor bags open
+    // with RMB and Shift+RMB equips them; equipped bags open with RMB and
+    // Shift+click/RMB places them. Contents remain on the bag stack.
+    public bool ImprovedBagInteractions { get; set; } = true;
 
     // F09: remember each container's dialog placement (fixed/movable + position)
     // by container identity, surviving pickup and re-placement. Client-side QoL.
     public bool RememberDialogPlacement { get; set; } = true;
-
-    // F10: equipped bag slots open with RMB and place with Ctrl+click/RMB.
-    public bool OpenBagsFromHotbar { get; set; } = true;
 
     /// <summary>
     /// Bag-equip slots the player may use right now. Immersive mode always

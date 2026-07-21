@@ -9,32 +9,38 @@ using Vintagestory.Common;
 namespace Burdened.Client;
 
 /// <summary>
-/// A selective view over the player's existing backpack inventory. It owns no
-/// inventory state or packet protocol; slot clicks use the normal player
-/// inventory packets.
+/// A per-bag view over the player's backpack inventory. Each dialog owns its
+/// GUI dirty state while slot operations are delegated to the real inventory.
 /// </summary>
 internal sealed class GuiDialogEquippedBag : GuiDialog
 {
     private static readonly Dictionary<int, GuiDialogEquippedBag> Dialogs = new();
 
     private readonly InventoryPlayerBackpacks backpacks;
+    private readonly BagViewInventory viewInventory;
     private readonly int bagIndex;
-    private readonly int[] contentSlotIds;
     private readonly int collectibleId;
-    private BagContentsSlotGrid? contentsGrid;
+    private GuiElementItemSlotGrid? contentsGrid;
+    private bool remapQueued;
+    private bool disposed;
 
-    private GuiDialogEquippedBag(ICoreClientAPI api, InventoryPlayerBackpacks backpacks, int bagIndex)
+    private GuiDialogEquippedBag(
+        ICoreClientAPI api,
+        InventoryPlayerBackpacks backpacks,
+        int bagIndex,
+        int[] contentSlotIds)
         : base(api)
     {
         this.backpacks = backpacks;
         this.bagIndex = bagIndex;
-        contentSlotIds = BagSupport.ContentSlotIds(backpacks, bagIndex);
         collectibleId = backpacks.bagSlots[bagIndex].Itemstack!.Collectible.Id;
+        viewInventory = new BagViewInventory(api, backpacks, bagIndex, contentSlotIds);
         backpacks.SlotModified += OnBackpackSlotModified;
         Compose();
     }
 
     public override string ToggleKeyCombinationCode => null!;
+    public override bool PrefersUngrabbedMouse => false;
 
     public static void Toggle(ICoreClientAPI api, int bagIndex)
     {
@@ -55,13 +61,11 @@ internal sealed class GuiDialogEquippedBag : GuiDialog
             return;
         }
 
-        GuiDialogEquippedBag dialog = new GuiDialogEquippedBag(api, backpacks, bagIndex);
-        if (dialog.contentSlotIds.Length == 0)
-        {
-            dialog.Dispose();
-            return;
-        }
+        int[] contentSlotIds = BagSupport.ContentSlotIds(backpacks, bagIndex);
+        if (contentSlotIds.Length == 0) return;
 
+        GuiDialogEquippedBag dialog = new GuiDialogEquippedBag(
+            api, backpacks, bagIndex, contentSlotIds);
         Dialogs[bagIndex] = dialog;
         dialog.TryOpen();
     }
@@ -86,29 +90,42 @@ internal sealed class GuiDialogEquippedBag : GuiDialog
 
     private void Compose()
     {
-        // Vanilla ground-stored bag dialogs use four columns.
-        int columns = Math.Min(4, Math.Max(1, contentSlotIds.Length));
-        int rows = (int)Math.Ceiling(contentSlotIds.Length / (double)columns);
+        // Vanilla ground-stored bag dialogs use four columns. The four equip
+        // positions use a stable 2x2 layout so simultaneously open bags do not
+        // cascade over one another.
+        int columns = Math.Min(4, Math.Max(1, viewInventory.Count));
+        int rows = (int)Math.Ceiling(viewInventory.Count / (double)columns);
         double padding = GuiStyle.ElementToDialogPadding;
 
         ElementBounds gridBounds = ElementStdBounds.SlotGrid(
             EnumDialogArea.None, 0, 32, columns, rows);
+        (double offsetX, double offsetY) = DialogOffset(bagIndex);
         ElementBounds dialogBounds = gridBounds
             .ForkBoundingParent(padding, padding, padding, padding)
             .WithAlignment(EnumDialogArea.CenterMiddle)
-            .WithFixedAlignmentOffset((bagIndex - 1.5) * 70, (bagIndex % 2) * 45 - 22.5);
+            .WithFixedAlignmentOffset(offsetX, offsetY);
 
         string title = backpacks.bagSlots[bagIndex].GetStackName();
+        int[] visibleSlots = new int[viewInventory.Count];
+        for (int i = 0; i < visibleSlots.Length; i++) visibleSlots[i] = i;
+
         GuiComposer composer = capi.Gui
             .CreateCompo($"burdened-equipped-bag-{bagIndex}", dialogBounds)
             .AddShadedDialogBG(ElementBounds.Fill)
             .AddDialogTitleBar(title, () => TryClose());
 
-        contentsGrid = new BagContentsSlotGrid(
-            capi, backpacks, SendInventoryPacket, columns, contentSlotIds, gridBounds);
+        contentsGrid = new GuiElementItemSlotGrid(
+            capi, viewInventory, SendInventoryPacket, columns, visibleSlots, gridBounds);
         composer.AddInteractiveElement(contentsGrid, "contents");
         GuiElementItemSlotGridBase.UpdateLastSlotGridFlag(composer);
         SingleComposer = composer.Compose();
+    }
+
+    private static (double X, double Y) DialogOffset(int index)
+    {
+        double x = index % 2 == 0 ? -180 : 180;
+        double y = index / 2 == 0 ? -120 : 120;
+        return (x, y);
     }
 
     private void SendInventoryPacket(object packet)
@@ -118,18 +135,78 @@ internal sealed class GuiDialogEquippedBag : GuiDialog
 
     private void OnBackpackSlotModified(int slotId)
     {
-        if (slotId != bagIndex) return;
+        // Equipping/unequipping any bag reloads BagInventory and can renumber
+        // every content slot id and replace the ItemSlotBagContent instances.
+        // Remap in this callback: queueing it leaves one render pass where the
+        // view can resolve a stale parent id to null.
+        if (slotId < backpacks.bagSlots.Length)
+        {
+            viewInventory.ClearDirty();
+            if (TryRemapNow()) return;
+            QueueRemapOrClose();
+            return;
+        }
 
-        contentsGrid?.RequestRefresh();
+        // The view has independent dirty state, so one dialog cannot consume or
+        // reinterpret another dialog's (or the hotbar's) dirty slot ids.
+        viewInventory.MarkAllDirty();
+    }
+
+    private void QueueRemapOrClose()
+    {
+        if (remapQueued) return;
+        remapQueued = true;
+        capi.Event.EnqueueMainThreadTask(RemapOrClose, "burdened-remap-equipped-bag");
+    }
+
+    private void RemapOrClose()
+    {
+        remapQueued = false;
+        if (!Dialogs.ContainsKey(bagIndex)) return;
+        if (TryRemapNow()) return;
+        Close(bagIndex);
+    }
+
+    private bool TryRemapNow()
+    {
+        if (!Dialogs.ContainsKey(bagIndex)
+            || bagIndex < 0
+            || bagIndex >= backpacks.bagSlots.Length)
+        {
+            return false;
+        }
 
         ItemSlot equip = backpacks.bagSlots[bagIndex];
-        int[] currentIds = BagSupport.ContentSlotIds(backpacks, bagIndex);
         if (equip.Empty
             || !BagSupport.IsBag(equip.Itemstack)
-            || equip.Itemstack.Collectible.Id != collectibleId
-            || currentIds.Length != contentSlotIds.Length)
+            || equip.Itemstack.Collectible.Id != collectibleId)
         {
-            Close(bagIndex);
+            return false;
+        }
+
+        int[] currentIds = BagSupport.ContentSlotIds(backpacks, bagIndex);
+        if (currentIds.Length != viewInventory.Count)
+        {
+            return false;
+        }
+
+        viewInventory.Remap(currentIds);
+        RefreshGridSlotReferences();
+        return true;
+    }
+
+    private void RefreshGridSlotReferences()
+    {
+        if (contentsGrid == null) return;
+
+        // BagInventory reload creates new ItemSlotBagContent objects. The grid
+        // caches the objects separately from the inventory indexer, so refresh
+        // both caches together with the numeric mapping.
+        for (int localId = 0; localId < viewInventory.Count; localId++)
+        {
+            ItemSlot current = viewInventory[localId];
+            contentsGrid.availableSlots[localId] = current;
+            contentsGrid.renderedSlots[localId] = current;
         }
     }
 
@@ -141,64 +218,99 @@ internal sealed class GuiDialogEquippedBag : GuiDialog
 
     public override void Dispose()
     {
+        if (disposed) return;
+        disposed = true;
         backpacks.SlotModified -= OnBackpackSlotModified;
         base.Dispose();
     }
 
     /// <summary>
-    /// InventoryPlayerBackpacks reports bag-content changes by dirtying the
-    /// owning equip-slot id. A normal selective grid assumes every dirty id is
-    /// visible and crashes when it receives that equip id. This adapter maps
-    /// the notification to this bag's visible content ids while preserving the
-    /// original dirty ids for the vanilla hotbar grid.
+    /// Presents local ids 0..N to one GUI. Item slots remain owned by the real
+    /// player inventory and activation is translated back to the current real
+    /// slot id, preserving vanilla player-inventory packets.
     /// </summary>
-    private sealed class BagContentsSlotGrid : GuiElementItemSlotGrid
+    private sealed class BagViewInventory : InventoryGeneric
     {
-        private readonly InventoryBase owner;
-        private readonly HashSet<int> visibleIds;
-        private bool refreshRequested = true;
+        private readonly InventoryPlayerBackpacks parent;
+        private int[] parentSlotIds;
 
-        public BagContentsSlotGrid(
+        public BagViewInventory(
             ICoreClientAPI api,
-            InventoryBase owner,
-            Action<object> sendPacket,
-            int columns,
-            int[] visibleSlots,
-            ElementBounds bounds)
-            : base(api, owner, sendPacket, columns, visibleSlots, bounds)
+            InventoryPlayerBackpacks parent,
+            int bagIndex,
+            int[] parentSlotIds)
+            : base(parentSlotIds.Length, "burdenedbagview", $"{api.World.Player.PlayerUID}-{bagIndex}", api)
         {
-            this.owner = owner;
-            visibleIds = new HashSet<int>(visibleSlots);
+            this.parent = parent;
+            this.parentSlotIds = (int[])parentSlotIds.Clone();
+            MarkAllDirty();
         }
 
-        public void RequestRefresh()
+        public override int Count => parentSlotIds.Length;
+
+        public override ItemSlot this[int slotId]
         {
-            refreshRequested = true;
+            // A server inventory update can replace BagInventory between GUI
+            // callbacks. The local empty slot is a render-safe fallback until
+            // the synchronous remap callback refreshes the mapping.
+            get => parent[ParentSlotId(slotId)] ?? base[slotId];
+            set => parent[ParentSlotId(slotId)] = value;
         }
 
-        public override void PostRenderInteractiveElements(float deltaTime)
+        public override int GetSlotId(ItemSlot slot)
         {
-            List<int> hiddenDirtyIds = new List<int>();
-            foreach (int dirtyId in owner.DirtySlots)
+            int parentId = parent.GetSlotId(slot);
+            return Array.IndexOf(parentSlotIds, parentId);
+        }
+
+        public override object ActivateSlot(
+            int slotId,
+            ItemSlot sourceSlot,
+            ref ItemStackMoveOperation op)
+        {
+            int parentSlotId = ParentSlotId(slotId);
+            if (parentSlotId < 0 || parentSlotId >= parent.Count || parent[parentSlotId] == null)
             {
-                if (!visibleIds.Contains(dirtyId)) hiddenDirtyIds.Add(dirtyId);
+                return null!;
             }
 
-            foreach (int dirtyId in hiddenDirtyIds) owner.DirtySlots.Remove(dirtyId);
-            if (refreshRequested)
+            return parent.ActivateSlot(parentSlotId, sourceSlot, ref op);
+        }
+
+        public override void PerformNotifySlot(int slotId)
+        {
+            parent.PerformNotifySlot(ParentSlotId(slotId));
+        }
+
+        public void Remap(int[] newParentSlotIds)
+        {
+            if (newParentSlotIds.Length != parentSlotIds.Length)
             {
-                foreach (int visibleId in visibleIds) owner.DirtySlots.Add(visibleId);
+                throw new ArgumentException("Bag view capacity cannot change while composed.", nameof(newParentSlotIds));
             }
 
-            try
+            parentSlotIds = (int[])newParentSlotIds.Clone();
+            MarkAllDirty();
+        }
+
+        public void MarkAllDirty()
+        {
+            for (int i = 0; i < Count; i++) DirtySlots.Add(i);
+        }
+
+        public void ClearDirty()
+        {
+            DirtySlots.Clear();
+        }
+
+        private int ParentSlotId(int localSlotId)
+        {
+            if (localSlotId < 0 || localSlotId >= parentSlotIds.Length)
             {
-                base.PostRenderInteractiveElements(deltaTime);
-                refreshRequested = false;
+                throw new ArgumentOutOfRangeException(nameof(localSlotId));
             }
-            finally
-            {
-                foreach (int dirtyId in hiddenDirtyIds) owner.DirtySlots.Add(dirtyId);
-            }
+
+            return parentSlotIds[localSlotId];
         }
     }
 }

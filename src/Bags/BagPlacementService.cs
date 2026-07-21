@@ -1,6 +1,7 @@
 using System;
 using Burdened.Inventory;
 using Burdened.Network;
+using Burdened.Patches;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -38,7 +39,7 @@ internal static class BagPlacementService
 
     public static void Place(ICoreServerAPI api, IServerPlayer player, PlaceEquippedBagPacket packet)
     {
-        if (SlotLocks.Config?.OpenBagsFromHotbar != true) return;
+        if (SlotLocks.Config?.ImprovedBagInteractions != true) return;
         if (packet.BagIndex < 0 || packet.BagIndex >= SlotLocks.Config.EffectiveBagSlots()) return;
         if (packet.FaceIndex != BlockFacing.UP.Index) return;
 
@@ -102,6 +103,7 @@ internal static class BagPlacementService
         }
 
         placed.DetermineStorageProperties(placed.Inventory[0]);
+        BagInteractionPatches.SuppressNextFloorInteraction(player, placePos);
         placed.MarkDirty(true);
         source.MarkDirty();
 

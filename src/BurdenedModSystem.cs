@@ -115,7 +115,8 @@ public class BurdenedModSystem : ModSystem
         api.Network
             .RegisterChannel(ModId)
             .RegisterMessageType<ConfigSyncPacket>()
-            .RegisterMessageType<PlaceEquippedBagPacket>();
+            .RegisterMessageType<PlaceEquippedBagPacket>()
+            .RegisterMessageType<PickupFloorBagPacket>();
     }
 
     public override void StartClientSide(ICoreClientAPI api)
@@ -166,6 +167,8 @@ public class BurdenedModSystem : ModSystem
         serverChannel = api.Network.GetChannel(ModId);
         serverChannel.SetMessageHandler<PlaceEquippedBagPacket>(
             (player, packet) => BagPlacementService.Place(api, player, packet));
+        serverChannel.SetMessageHandler<PickupFloorBagPacket>(
+            (player, packet) => BagPickupService.Pickup(api, player, packet));
 
         api.Event.PlayerJoin += OnPlayerJoin;
         api.Event.PlayerNowPlaying += OnPlayerNowPlaying;

@@ -14,27 +14,39 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](https://github.com/s
 
 ### Added
 
+- F08 / F10 use one `ImprovedBagInteractions` flag for the complete floor and
+  equipped bag interaction contract.
 - F08 / D08 / D09 - Floor bags: right-click opens through the vanilla
-  contained-bag workspace; Ctrl+right-click transfers directly into a
+  contained-bag workspace; Shift+right-click transfers directly into a
   compatible empty bag-equip slot and otherwise leaves the bag placed.
-- F10 - Equipped bag slots: right-click opens independent selective views over
-  the existing backpack inventory; Ctrl-click or selected-bag Ctrl+RMB places
+- F10 - Equipped bag slots: right-click opens independent mapped views over
+  the existing backpack inventory; Shift-click or selected-bag Shift+RMB places
   directly from the equip slot into vanilla ground storage.
 
 ### Fixed
 
 - Reject bags and backpacks from the offhand. F08 pickup does not use general
   inventory routing, so a full bag bar cannot overflow into the offhand.
-- Guard selective bag grids from backpack equip-slot dirty notifications,
-  preventing `ComposeSlotOverlays` from receiving an invalid slot index.
-- Match vanilla contained-bag dialogs with a four-column contents grid.
+- Make floor-bag pickup server-authoritative. The client no longer predicts the
+  item transfer or removes ground storage; the server removes the block only
+  after exactly one bag reaches a compatible empty equip slot, and audits both
+  successful and rejected requests.
+- Give every equipped-bag dialog its own local slot map and GUI dirty state;
+  clicks still delegate to the real player backpack inventory. This prevents
+  one window from consuming another window's updates or passing equip-slot ids
+  into `ComposeSlotOverlays`.
+- Remap open equipped-bag dialogs when any bag is equipped/unequipped/placed so
+  content slot ids and cached slot objects are replaced synchronously with the
+  `BagInventory` reload. This removes the one-frame null-slot race in
+  `ComposeSlotOverlays` with multiple bag windows open.
+- Match vanilla contained-bag dialogs with a four-column contents grid and use
+  stable, non-overlapping positions for simultaneously open equipped bags.
+- Consume the residual world-interaction packet after custom equipped-bag
+  placement and initialize a received contained-bag workspace before vanilla
+  deserializes it. This prevents duplicate `Backpack Contents` windows and the
+  NRE in `InventoryGeneric.FromTreeAttributes`.
 - Report bag-placement validation through chat instead of Vintage Story's
   in-game error HUD, whose misplaced hover background produced detached bars.
-
-### Known issues
-
-- Opening inventory from hotbar is breaking on backpack (straight line)
-- burdened:no-compatible-bag-slot warning is adding black artifacts to the screen
 
 
 ## [v0.3.0-pre1](https://github.com/stinowdev/vs-burdened/releases/tag/v0.3.0-pre1) - 2026-07-20

@@ -11,9 +11,9 @@
 | F05 | Concise hotbar scroll (skip locked slots, wrap both ways) | - (follows F01) | - | client |
 | F06 | Offhand manually holds any non-bag item | `OffhandHoldsAnything` | true | server enforces |
 | F07 | Auto-pickup flows into equipped bags (vanilla priority) | `AutoPickupToBags` | true | server |
-| F08 | Floor bag interaction remap (open / pick up; bags are already placeable in vanilla) | `PlaceableBags` | true | universal |
+| F08 | Floor bag interaction remap (open / pick up; bags are already placeable in vanilla) | `ImprovedBagInteractions` | true | universal |
 | F09 | Remember container dialog placement per container identity | `RememberDialogPlacement` | true | client |
-| F10 | Hotbar bag slots: right-click opens, Ctrl-click places directly from the equip slot | `OpenBagsFromHotbar` | true | client (+ server place) |
+| F10 | Hotbar bag slots: right-click opens, Shift-click places directly from the equip slot | `ImprovedBagInteractions` | true | client (+ server place) |
 
 ## Bag interactions (F08 + F10)
 
@@ -26,8 +26,7 @@ arrangement are preserved.
 | Input | Action |
 |---|---|
 | Right-click | Open inventory (chest-like; vanilla used Ctrl+RMB) |
-| Alt + right-click | Open inventory (same; Alt is not server-synced, arrives as non-Ctrl) |
-| Ctrl + right-click | Pick up into a compatible empty bag-equip slot; otherwise leave it placed |
+| Shift + right-click | Server-authoritative pickup into a compatible empty bag-equip slot; otherwise leave it placed |
 
 ### On the hotbar HUD (equipped) — F10
 
@@ -35,11 +34,11 @@ arrangement are preserved.
 |---|---|
 | Right-click (hover bag slot, empty mouse) | Toggle that bag's inventory open/closed |
 | Right-click additional bag slots | Open their inventories alongside existing bag dialogs |
-| Ctrl + click (hover bag slot, empty mouse) | Place the bag on the looked-at block |
+| Shift + click (hover bag slot, empty mouse) | Place the bag on the looked-at block |
 | Bag slot selected (Ctrl-scroll) + RMB on empty/non-interactive target | Toggle that bag's inventory |
-| Bag slot selected + Ctrl + RMB on a block | Place the bag (also shown in held help) |
+| Bag slot selected + Shift + RMB on a block | Place the bag (also shown in held help) |
 
-Ctrl stays free for F05 bag-slot select/scroll when not clicking a bag slot to place.
+Ctrl remains the F05 bag-slot select/scroll modifier; Shift is the floor action modifier.
 
 ## Locked decisions
 
@@ -53,7 +52,7 @@ Ctrl stays free for F05 bag-slot select/scroll when not clicking a bag slot to p
 | D06 | Offhand accepts any non-bag item by manual placement; bags/backpacks and automatic best-slot routing are excluded. Usability stays vanilla (holding only). |
 | D07 | Auto-pickup keeps vanilla priority: hotbar first, then bag contents. |
 | D08 | Interaction remaps apply to **bags only**. Chests/vessels keep vanilla behavior entirely. |
-| D09 | Bag place/pick-up modifier is **Ctrl** (literal), not sneak: floor Ctrl+right-click picks up only into a compatible bag-equip slot; HUD Ctrl-click places. Open is right-click (and Alt+right-click on the floor). |
+| D09 | Bag place/pick-up modifier is **Shift**: floor Shift+right-click requests a server-authoritative pickup only into a compatible bag-equip slot; rejection leaves the floor bag untouched. HUD Shift-click places. Open is right-click. |
 | D10 | Container GUI placement memory: when the player sets a container's dialog from fixed to movable and positions it, that placement is remembered **per container identity** (not per block position), surviving pickup/re-placement. Applies to our placed bags and, where identity can persist, vanilla containers. |
 
 ## Config

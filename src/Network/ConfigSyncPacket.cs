@@ -16,9 +16,8 @@ public class ConfigSyncPacket
     public bool HideBagContentsInDialog;
     public bool OffhandHoldsAnything;
     public bool AutoPickupToBags;
-    public bool PlaceableBags;
+    public bool ImprovedBagInteractions;
     public bool RememberDialogPlacement;
-    public bool OpenBagsFromHotbar;
 
     public static ConfigSyncPacket From(BurdenedConfig config)
     {
@@ -30,9 +29,8 @@ public class ConfigSyncPacket
             HideBagContentsInDialog = config.HideBagContentsInDialog,
             OffhandHoldsAnything = config.OffhandHoldsAnything,
             AutoPickupToBags = config.AutoPickupToBags,
-            PlaceableBags = config.PlaceableBags,
+            ImprovedBagInteractions = config.ImprovedBagInteractions,
             RememberDialogPlacement = config.RememberDialogPlacement,
-            OpenBagsFromHotbar = config.OpenBagsFromHotbar,
         };
     }
         
@@ -46,9 +44,8 @@ public class ConfigSyncPacket
             HideBagContentsInDialog = HideBagContentsInDialog,
             OffhandHoldsAnything = OffhandHoldsAnything,
             AutoPickupToBags = AutoPickupToBags,
-            PlaceableBags = PlaceableBags,
+            ImprovedBagInteractions = ImprovedBagInteractions,
             RememberDialogPlacement = RememberDialogPlacement,
-            OpenBagsFromHotbar = OpenBagsFromHotbar,
         };
         config.Sanitize();
         return config;
