@@ -4,6 +4,7 @@ using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.Common;
+using Vintagestory.Client.NoObf;
 using Vintagestory.GameContent;
 
 namespace Burdened.Patches;
@@ -34,6 +35,20 @@ public static class BagRenderPatches
                 prefix: new HarmonyMethod(AccessTools.Method(typeof(BagRenderPatches), nameof(Prefix))),
                 postfix: new HarmonyMethod(AccessTools.Method(typeof(BagRenderPatches), nameof(Postfix))),
                 finalizer: new HarmonyMethod(AccessTools.Method(typeof(BagRenderPatches), nameof(Finalizer))));
+
+            var activeSlotSetter = AccessTools.PropertySetter(
+                typeof(ClientPlayerInventoryManager),
+                nameof(ClientPlayerInventoryManager.ActiveHotbarSlotNumber));
+            harmony.Patch(
+                activeSlotSetter,
+                postfix: new HarmonyMethod(AccessTools.Method(typeof(BagRenderPatches), nameof(ActiveSlotChanged))));
+
+            var serverSlotChange = AccessTools.Method(
+                typeof(ClientPlayerInventoryManager),
+                nameof(ClientPlayerInventoryManager.SetActiveHotbarSlotNumberFromServer));
+            harmony.Patch(
+                serverSlotChange,
+                postfix: new HarmonyMethod(AccessTools.Method(typeof(BagRenderPatches), nameof(ActiveSlotChanged))));
 
             logger.Notification("[{0}] selected bag render patch applied.", BurdenedModSystem.ModId);
         }
@@ -72,6 +87,19 @@ public static class BagRenderPatches
     {
         __state?.Restore();
         return __exception;
+    }
+
+    /// <summary>
+    /// The selected item is rendered by the hand renderer, while the body mesh
+    /// is cached. Invalidate that mesh whenever the active slot changes so the
+    /// selected bag is removed from the worn shape immediately.
+    /// </summary>
+    public static void ActiveSlotChanged(ClientPlayerInventoryManager __instance)
+    {
+        if (__instance.player?.Entity is EntityPlayer entityPlayer)
+        {
+            entityPlayer.MarkShapeModified();
+        }
     }
 
     public sealed class HiddenBagState
