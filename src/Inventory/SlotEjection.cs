@@ -77,7 +77,8 @@ public static class SlotEjection
 
         // This respects Burdened's slot locks + taxonomy via CanHold/suitability,
         // so items only ever land in still-usable slots.
-        if (!player.InventoryManager.TryGiveItemstack(stack, true))
+        player.InventoryManager.TryGiveItemstack(stack, true);
+        if (stack.StackSize > 0)
         {
             sapi.World.SpawnItemEntity(stack, player.Entity.Pos.XYZ.Add(0, 0.5, 0));
         }
