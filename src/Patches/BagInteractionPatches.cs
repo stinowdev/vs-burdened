@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Burdened.Bags;
 using Burdened.Client;
 using Burdened.Inventory;
@@ -22,7 +23,8 @@ public static class BagInteractionPatches
 {
     private static readonly object Gate = new object();
     private static readonly Dictionary<PlacementInteractionKey, long> PendingPlacementInteractions = new();
-    private static readonly HashSet<BlockEntityContainedBagWorkspace> InitializedClientWorkspaces = new();
+    private static ConditionalWeakTable<BlockEntityContainedBagWorkspace, object>
+        initializedClientWorkspaces = new();
     private static readonly FieldInfo? GridInventoryField =
         AccessTools.Field(typeof(GuiElementItemSlotGridBase), "inventory");
 
@@ -98,7 +100,7 @@ public static class BagInteractionPatches
             clientApplied = false;
             capi = null;
             PendingPlacementInteractions.Clear();
-            InitializedClientWorkspaces.Clear();
+            initializedClientWorkspaces = new ConditionalWeakTable<BlockEntityContainedBagWorkspace, object>();
         }
     }
 
@@ -183,7 +185,10 @@ public static class BagInteractionPatches
             {
                 if (blockEntity.Api.Side == EnumAppSide.Client)
                 {
-                    lock (Gate) InitializedClientWorkspaces.Add(workspace);
+                    lock (Gate)
+                    {
+                        initializedClientWorkspaces.GetValue(workspace, static _ => new object());
+                    }
                 }
                 workspace.OpenHeldBag(player);
             }
@@ -235,7 +240,7 @@ public static class BagInteractionPatches
 
         lock (Gate)
         {
-            if (InitializedClientWorkspaces.Contains(__instance)) return;
+            if (initializedClientWorkspaces.TryGetValue(__instance, out _)) return;
         }
 
         if (___slotId < 0 || ___slotId >= ___be.Inventory.Count) return;
@@ -246,7 +251,10 @@ public static class BagInteractionPatches
             bagSlot.Itemstack.Collectible.GetBehavior<CollectibleBehaviorGroundStoredHeldBag>();
         if (behavior == null || !__instance.TryLoadBagInv(bagSlot, behavior)) return;
 
-        lock (Gate) InitializedClientWorkspaces.Add(__instance);
+        lock (Gate)
+        {
+            initializedClientWorkspaces.GetValue(__instance, static _ => new object());
+        }
     }
 
     private static bool ConsumePlacementInteraction(IPlayer player, BlockPos position)

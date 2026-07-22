@@ -32,6 +32,8 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](https://github.com/s
 
 ### Fixed
 
+- Track initialized contained-bag workspaces weakly so removed ground storage
+can be collected during long sessions.
 - Reset the active selection when a config change locks the selected hotbar or
   bag-equip slot, including immersive mode changes.
 - Use one vanilla-equippable-bag classification for immersive slot roles and
