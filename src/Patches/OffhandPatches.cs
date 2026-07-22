@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Burdened.Bags;
 using Burdened.Inventory;
 using HarmonyLib;
 using Vintagestory.API.Common;
+using Vintagestory.Common;
 
 namespace Burdened.Patches;
 
@@ -13,8 +15,8 @@ namespace Burdened.Patches;
 /// <see cref="InventoryBase.CanContain"/>). Usability stays vanilla: this
 /// only opens placement into the slot; tools/weapons are not used from offhand.
 ///
-/// Suitability is left alone so auto-pickup / "best slot" does not dump
-/// random items into the offhand.
+/// Automatic best-slot routing is filtered separately so auto-pickup and
+/// shift-click never use the offhand as an overflow destination.
 /// </summary>
 public static class OffhandPatches
 {
@@ -36,6 +38,11 @@ public static class OffhandPatches
                 AccessTools.Method(typeof(ItemSlot), nameof(ItemSlot.CanTakeFrom),
                     new[] { typeof(ItemSlot), typeof(EnumMergePriority) }),
                 prefix: new HarmonyMethod(AccessTools.Method(typeof(OffhandPatches), nameof(CanTakeFromPrefix))));
+            patched += TryPatch(harmony, logger,
+                AccessTools.Method(typeof(InventoryBase), nameof(InventoryBase.GetBestSuitedSlot),
+                    new[] { typeof(ItemSlot), typeof(ItemStackMoveOperation), typeof(List<ItemSlot>) }),
+                postfix: new HarmonyMethod(AccessTools.Method(
+                    typeof(OffhandPatches), nameof(BestSuitedSlotPostfix))));
 
             logger.Notification("[{0}] offhand patches applied to {1} method(s).", BurdenedModSystem.ModId, patched);
         }
@@ -123,18 +130,40 @@ public static class OffhandPatches
         return false;
     }
 
+    /// <summary>
+    /// Manual moves call the slot acceptance methods directly. Automatic
+    /// routing uses GetBestSuitedSlot, so discard an offhand result here while
+    /// broad offhand holding is enabled.
+    /// </summary>
+    public static void BestSuitedSlotPostfix(InventoryBase __instance, ref WeightedSlot __result)
+    {
+        if (SlotLocks.Config?.OffhandHoldsAnything != true
+            || __instance is not InventoryPlayerHotbar
+            || __result.slot is not ItemSlotOffhand)
+        {
+            return;
+        }
+
+        __result = new WeightedSlot();
+    }
+
     private static bool AppliesTo(ItemSlot slot)
     {
         return slot is ItemSlotOffhand
             && SlotLocks.Config?.OffhandHoldsAnything == true;
     }
 
-    private static int TryPatch(Harmony harmony, ILogger logger, MethodInfo? target, HarmonyMethod? prefix)
+    private static int TryPatch(
+        Harmony harmony,
+        ILogger logger,
+        MethodInfo? target,
+        HarmonyMethod? prefix = null,
+        HarmonyMethod? postfix = null)
     {
         if (target == null) return 0;
         try
         {
-            harmony.Patch(target, prefix: prefix);
+            harmony.Patch(target, prefix: prefix, postfix: postfix);
             return 1;
         }
         catch (Exception e)
