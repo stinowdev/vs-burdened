@@ -1,113 +1,120 @@
 # Burdened
+
 <img width="480" height="320" alt="Burdened" src="https://github.com/user-attachments/assets/91542e3a-2351-4324-b76e-9ca5c29fac0c" />
 
-A code mod for [Vintage Story](https://www.vintagestory.at/) **1.22** that makes
-carrying deliberate: fewer hotbar and bag-equip slots, enforced by the server
-and reflected cleanly on the client HUD.
+Burdened is a universal code mod for Vintage Story that makes carrying more
+deliberate: fewer usable hotbar and bag-equip slots, immersive bag roles, and
+direct interaction with equipped or placed bags. The server owns the rules and
+syncs them to every client.
 
-Everything is configured via `ModConfig/burdened.json`. The server owns the
-file and syncs it to clients on join; the client never reads the config itself.
+## Compatibility
 
-This mod is **standalone** (D01). Using it alongside Immersive Backpacks,
-Wilderlands Onus Moderatus, or Immersive Modular Backpacks may break playability.
+- Tested against Vintage Story **1.22.3**.
+- Required on both the client and server.
+- Standalone, with no dependency on other carrying or inventory mods.
+- Mods such as Immersive Backpacks, Wilderlands Onus Moderatus, and Immersive
+  Modular Backpacks modify overlapping behavior and may not be compatible.
 
-See [FEATURES.md](FEATURES.md) for the full roadmap and design decisions, and
-[CHANGELOG.md](CHANGELOG.md) for release notes.
+Burdened patches some private game methods. Other Vintage Story patch versions
+should be treated as unverified until they pass the release regression matrix.
 
-## Install
+## Installation
 
-1. Grab the latest `burdened_*.zip` from
-   [Releases](https://github.com/stinowdev/vs-burdened/releases/latest).
-2. Drop the zip into your Vintage Story `Mods` folder.
-3. Restart the game (or the server, then reconnect).
-
-Required on both client and server.
+1. Download the latest `burdened_*.zip` from
+   [GitHub Releases](https://github.com/stinowdev/vs-burdened/releases/latest).
+2. Place the zip in the Vintage Story `Mods` directory.
+3. Restart the game, or restart the server and reconnect.
 
 ## Features
 
-| | Feature | Version |
-|---|---|---|
-| ✓ | **F01**: Reduced hotbar slots (`HotbarSlots`, 1-10) | 0.1.0 |
-| ✓ | **F02**: Reduced bag-equip slots (`BagSlots`, 1-4) | 0.1.0 |
-| ✓ | Server-enforced locks + config sync on join | 0.1.0 |
-| ✓ | Item ejection from newly locked slots (D02), never deleted | 0.1.0 |
-| ✓ | Hotbar HUD repack (only usable slots, vanilla-style border) | 0.1.0 |
-| ✓ | **F05**: Concise hotbar scroll (skip locked slots, wrap both ways) | 0.2.0 |
-| ✓ | **F03** / **D03**: Immersive L/B/R bag slots (rules only; meshes later) | 0.2.0 |
-| ✓ | **F06** / **D06**: Offhand manually holds non-bag items (usability stays vanilla) | 0.2.0 |
-| ✓ | **F04** / **D05**: Hide bag contents in the E inventory dialog | 0.3.0-pre1 |
-| ✓ | **F08** / **D09**: Floor bag open/pickup remap | unreleased |
-| ✓ | **F10**: Hotbar bag right-click open / Shift-click place | unreleased |
-| | **D04, F07, F09**: on-body meshes, auto-pickup, dialog memory | planned |
+| Feature | Available since |
+|---|---|
+| **F01**: Configurable usable hotbar slots | 0.1.0 |
+| **F02**: Configurable usable bag-equip slots | 0.1.0 |
+| Server-enforced slot locks and safe ejection from newly locked slots | 0.1.0 |
+| **F03**: Immersive L/B/R bag role rules | 0.2.0 |
+| **F05**: Concise hotbar scrolling across usable slots | 0.2.0 |
+| **F06**: Manual offhand storage for non-bag items | 0.2.0 |
+| **F04**: Compact crafting-only inventory dialog | 0.3.0 |
+| **F08**: Direct open and pickup interaction for placed bags | 0.3.0 |
+| **F10**: Open or place bags directly from equipped slots | 0.3.0 |
 
-#### HotbarSlots: 2, BagSlots: 1
-<img width="536" alt="image" src="https://github.com/user-attachments/assets/7c4fb772-8cc7-43cc-9c5a-2307a4b2b6bc" />
+### Compact slots
 
+<img width="536" alt="Two hotbar slots and one bag slot" src="https://github.com/user-attachments/assets/7c4fb772-8cc7-43cc-9c5a-2307a4b2b6bc" />
 
-#### Immersive mode: true
-<img width="536" alt="image" src="https://github.com/user-attachments/assets/4b315e23-ab1b-47f0-a525-03cb4197f422" />
-<img width="536" alt="image" src="https://github.com/user-attachments/assets/74ae724f-3fed-4aca-a664-3319669ca326" />
+### Immersive mode
+
+<img width="536" alt="Immersive carrying slots" src="https://github.com/user-attachments/assets/4b315e23-ab1b-47f0-a525-03cb4197f422" />
+<img width="536" alt="Immersive carrying slot roles" src="https://github.com/user-attachments/assets/74ae724f-3fed-4aca-a664-3319669ca326" />
 
 ## Configuration
 
-Created on first run at:
-
-`%APPDATA%\VintagestoryData\ModConfig\burdened.json`
-
-Keys that do something in the current build:
+The server creates `%APPDATA%\VintagestoryData\ModConfig\burdened.json` on
+first run. In singleplayer, the local game is the server. Restart or reconnect
+after editing the file so clients receive the updated rules.
 
 ```json
 {
-  "HotbarSlots": 2,
-  "BagSlots": 1,
+  "HotbarSlots": 10,
+  "BagSlots": 4,
   "ImmersiveCarryingMode": false,
-  "OffhandHoldsAnything": true,
   "HideBagContentsInDialog": true,
+  "OffhandHoldsAnything": true,
   "ImprovedBagInteractions": true
 }
 ```
 
-When `ImmersiveCarryingMode` is `true`, bag-equip becomes three typed slots
-(L / B / R) and `BagSlots` is ignored. **B** accepts only leather / sturdy /
-hunter backpacks; **L** and **R** accept other bag-class storage (not those three).
+- `HotbarSlots` allows 1 through 10 usable hotbar slots.
+- `BagSlots` allows 1 through 4 usable bag-equip slots.
+- `ImmersiveCarryingMode` replaces `BagSlots` with three typed slots: L and R
+  accept waist bags, while B accepts the leather, sturdy, and hunter backpacks.
+- `HideBagContentsInDialog` removes bag contents from the E inventory dialog;
+  equipped bags remain available from the hotbar HUD.
+- `OffhandHoldsAnything` allows manual placement of non-bag items in the
+  offhand. Bags and automatic inventory routing are always excluded.
+- `ImprovedBagInteractions` enables the complete F08/F10 interaction contract.
 
-`OffhandHoldsAnything` (default `true`) lets you manually put any non-bag item
-in the offhand. Every item vanilla recognizes as an equippable held bag is
-rejected, even if it cannot be placed on the ground. Auto-pickup and
-shift-click never target the offhand. You still only *use* the main hand as in
-vanilla.
+## Bag interactions
 
-`HideBagContentsInDialog` (default `true`) makes E show crafting only; bag
-contents stay out of that compact dialog. Bag-equip slots remain on the hotbar.
-Set to `false` for the vanilla bag-contents grid beside crafting.
+| Location | Input | Action |
+|---|---|---|
+| Placed bag | Right-click | Open the bag inventory |
+| Placed bag | Shift + right-click | Equip into a compatible empty bag slot |
+| Equipped bag slot | Right-click | Toggle that bag inventory |
+| Equipped bag slot | Shift + click | Place the bag on the targeted block |
+| Selected equipped bag | Shift + right-click | Place the bag on the targeted block |
 
-`ImprovedBagInteractions` (default `true`) enables the complete bag interaction
-remap: right-click opens floor or equipped bags; Shift+right-click picks up a
-floor bag or places a selected equipped bag; Shift-click on an equipped HUD
-slot also places it. Rejected pickup requests leave the floor bag untouched,
-and multiple equipped bags can be open simultaneously in vanilla-style
-contained-bag windows. The remap applies to equippable held bags that expose
-vanilla's ground-storage bag behaviors. Selecting an equipped bag hides its
-worn copy while it is rendered in the player's hand, in either carrying mode.
+Multiple equipped bags can remain open at the same time. Selecting an equipped
+bag hides its worn copy while the game renders it in the active hand. Rejected
+pickup or placement requests leave the bag and its contents untouched.
 
-Other keys (`AutoPickupToBags`, `RememberDialogPlacement`) are reserved for
-upcoming features. See [FEATURES.md](FEATURES.md) for the interaction contract.
+## Documentation
 
-Edit on the server (or in singleplayer), then restart / rejoin so clients pick
-up the synced values.
+- [FEATURES.md](FEATURES.md) tracks implementation status and design decisions.
+- [CHANGELOG.md](CHANGELOG.md) records release changes and known limitations.
+- [docs/TESTING.md](docs/TESTING.md) defines the release regression matrix.
 
 ## Building
 
+`resources/modinfo.json` is the source of truth for release metadata.
+
 ```powershell
-dotnet build                # debug build into bin/Debug
-./build.ps1                 # release build + Releases/burdened_<version>.zip
-./build.ps1 -Deploy         # also copy the zip into the game's Mods folder
+dotnet build
+./build.ps1
+./build.ps1 -Deploy
 ```
+
+The build script creates `Releases/burdened_<version>.zip`. `-Deploy` also
+copies that package into the active Vintage Story `Mods` directory.
 
 ## License
 
-See [LICENSE](LICENSE). Personal non-commercial use and PRs back to this repo
-are allowed; redistribution / modpacks need prior written permission.
+See [LICENSE](LICENSE). Personal non-commercial use and pull requests back to
+this repository are allowed. Redistribution and modpacks require prior written
+permission.
 
----
-You can support this and other projects [here](https://patreon.com/stinow). Thank you.
+## Support
+
+You can support Burdened and other projects on
+[Patreon](https://patreon.com/stinow).
