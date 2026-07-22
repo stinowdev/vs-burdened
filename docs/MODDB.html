@@ -1,0 +1,141 @@
+<h2>Burdened</h2>
+<p><img src="https://github.com/user-attachments/assets/91542e3a-2351-4324-b76e-9ca5c29fac0c" alt="Burdened"
+    width="400" /></p>
+<h3>Make every carried slot matter</h3>
+<p>Burdened reshapes Vintage Story's carrying loop around fewer, meaningful slots and bags you interact with directly.
+</p>
+<p>It does not add per-item weight. Instead, it makes the hotbar, bag bar, offhand, and placed bags behave like one
+  coherent carrying system.</p>
+<p>The intent is simple: preparation and bag choice should matter without putting your items at risk.</p>
+<h3>What Burdened changes</h3>
+<ul>
+  <li><strong>Configurable carrying space:</strong> choose between 1 and 10 usable hotbar slots and 1 and 4 bag-equip
+    slots. The HUD contracts around the available slots, scrolling skips locked positions, and the server enforces the
+    same rules for every player.</li>
+  <li><strong>Immersive bag roles:</strong> replace the normal bag bar with three typed slots, <strong>L / B /
+      R</strong>. The back slot accepts leather, sturdy, and hunter backpacks; the left and right slots accept other
+    equippable bags such as baskets and sacks.</li>
+  <li><strong>Bags as physical storage:</strong> open equipped bags from the hotbar, keep multiple bag windows open,
+    place equipped bags into the world, and pick placed bags directly back into a compatible equip slot.</li>
+  <li><strong>A focused inventory screen:</strong> optionally remove bag contents from the inventory dialog so pressing
+    <strong>E</strong> opens a compact crafting-only window. Equipped bags remain available from the hotbar.</li>
+  <li><strong>Useful, bounded offhand storage:</strong> manually place non-bag items in the offhand. Bags are rejected,
+    and automatic pickup never uses it as an overflow destination.</li>
+  <li><strong>Safe slot reduction:</strong> if configuration locks an occupied slot, Burdened first moves its item into
+    valid inventory space, then drops it at the player's feet if necessary. Items are never intentionally deleted.</li>
+</ul>
+<p>When an equipped bag is selected, it is shown in the player's hand without also appearing as a worn duplicate.</p>
+<h3>Bag controls</h3>
+<table style="width: 72.5209%; border-collapse: collapse;" border="1" cellpadding="6">
+  <thead>
+    <tr>
+      <th style="text-align: left; width: 21.7645%;" scope="col">Where</th>
+      <th style="text-align: left; width: 16.8964%;" scope="col">Input</th>
+      <th style="text-align: left; width: 61.3404%;" scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="width: 21.7645%;">Placed bag</td>
+      <td style="width: 16.8964%;">Right click</td>
+      <td style="width: 61.3404%;">Open its inventory</td>
+    </tr>
+    <tr>
+      <td style="width: 21.7645%;">Placed bag</td>
+      <td style="width: 16.8964%;">Shift + right click</td>
+      <td style="width: 61.3404%;">Equip it into a compatible empty bag slot</td>
+    </tr>
+    <tr>
+      <td style="width: 21.7645%;">Equipped bag slot</td>
+      <td style="width: 16.8964%;">Right click</td>
+      <td style="width: 61.3404%;">Open or close that bag's inventory</td>
+    </tr>
+    <tr>
+      <td style="width: 21.7645%;">Equipped bag slot</td>
+      <td style="width: 16.8964%;">Shift + click</td>
+      <td style="width: 61.3404%;">Place it on the targeted block</td>
+    </tr>
+    <tr>
+      <td style="width: 21.7645%;">Selected equipped bag</td>
+      <td style="width: 16.8964%;">Shift + right click</td>
+      <td style="width: 61.3404%;">Place it on the targeted block</td>
+    </tr>
+  </tbody>
+</table>
+<p>&nbsp;</p>
+<p>Use <strong>Ctrl + mouse wheel</strong> to move the active selection between equipped bag slots. Multiple equipped
+  bags can remain open at the same time. If a pickup or placement is rejected, the bag and its contents remain at the
+  source.</p>
+<h3>Configuration</h3>
+<p>Burdened creates the following server-owned file on first run:</p>
+<p><code>%APPDATA%\VintagestoryData\ModConfig\burdened.json</code></p>
+<p>In singleplayer, your local game is the server. Restart the server or reconnect after editing the file so every
+  client receives the effective settings.</p>
+<table style="width: 72.1027%; border-collapse: collapse; height: 153.312px;" border="1" cellpadding="6">
+  <thead>
+    <tr style="height: 20.1875px;">
+      <th style="width: 27.1457%; height: 20.1875px; text-align: left;" scope="col">Setting</th>
+      <th style="width: 13.4731%; height: 20.1875px; text-align: left;" scope="col">Default</th>
+      <th style="width: 59.3812%; height: 20.1875px; text-align: left;" scope="col">Effect</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="height: 22.1875px;">
+      <td style="width: 27.1457%; height: 22.1875px;"><code>HotbarSlots</code></td>
+      <td style="width: 13.4731%; height: 22.1875px;"><code>10</code></td>
+      <td style="width: 59.3812%; height: 22.1875px;">Number of usable hotbar slots, from 1 to 10</td>
+    </tr>
+    <tr style="height: 22.1875px;">
+      <td style="width: 27.1457%; height: 22.1875px;"><code>BagSlots</code></td>
+      <td style="width: 13.4731%; height: 22.1875px;"><code>4</code></td>
+      <td style="width: 59.3812%; height: 22.1875px;">Number of usable bag-equip slots, from 1 to 4</td>
+    </tr>
+    <tr style="height: 22.1875px;">
+      <td style="width: 27.1457%; height: 22.1875px;"><code>ImmersiveCarryingMode</code></td>
+      <td style="width: 13.4731%; height: 22.1875px;"><code>false</code></td>
+      <td style="width: 59.3812%; height: 22.1875px;">Uses the typed L / B / R bag layout instead of
+        <code>BagSlots</code></td>
+    </tr>
+    <tr style="height: 22.1875px;">
+      <td style="width: 27.1457%; height: 22.1875px;"><code>HideBagContentsInDialog</code></td>
+      <td style="width: 13.4731%; height: 22.1875px;"><code>true</code></td>
+      <td style="width: 59.3812%; height: 22.1875px;">Keeps bag contents out of the E inventory dialog</td>
+    </tr>
+    <tr style="height: 22.1875px;">
+      <td style="width: 27.1457%; height: 22.1875px;"><code>OffhandHoldsAnything</code></td>
+      <td style="width: 13.4731%; height: 22.1875px;"><code>true</code></td>
+      <td style="width: 59.3812%; height: 22.1875px;">Allows manual offhand storage for non-bag items</td>
+    </tr>
+    <tr style="height: 22.1875px;">
+      <td style="width: 27.1457%; height: 22.1875px;"><code>ImprovedBagInteractions</code></td>
+      <td style="width: 13.4731%; height: 22.1875px;"><code>true</code></td>
+      <td style="width: 59.3812%; height: 22.1875px;">Enables direct opening, placing, and pickup of bags</td>
+    </tr>
+  </tbody>
+</table>
+<h3>Compatibility and installation</h3>
+<ul>
+  <li>Tested against <strong>Vintage Story 1.22.3</strong>.</li>
+  <li>Required on both the client and server. Clients and servers should use the same Burdened version.</li>
+  <li>Standalone, with no required dependencies.</li>
+  <li>Mods that alter the same inventory, hotbar, bag-slot, or worn-bag behavior may conflict. This includes Immersive
+    Backpacks, Wilderlands Onus Moderatus, and Immersive Modular Backpacks.</li>
+</ul>
+<p>Download the matching zip from the <strong>Files</strong> tab or use 1-click install. For a manual installation,
+  place the zip in the Vintage Story <code>Mods</code> directory without unpacking it, then restart the game or server.
+</p>
+<h3>More information</h3>
+<ul>
+  <li><a href="https://github.com/stinowdev/vs-burdened" target="_blank" rel="noopener noreferrer"> Source and full
+      documentation </a></li>
+  <li><a href="https://github.com/stinowdev/vs-burdened/blob/main/CHANGELOG.md" target="_blank"
+      rel="noopener noreferrer"> Release history </a></li>
+  <li><a href="https://github.com/stinowdev/vs-burdened/blob/main/FEATURES.md" target="_blank"
+      rel="noopener noreferrer"> Feature status and design decisions </a></li>
+  <li><a href="https://github.com/stinowdev/vs-burdened/issues" target="_blank" rel="noopener noreferrer"> Bug reports
+      and feature requests </a></li>
+  <li><a href="https://patreon.com/stinow" target="_blank" rel="noopener noreferrer"> Support development on Patreon
+    </a></li>
+</ul>
+<p>&nbsp;</p>
+<p><em>Burdened is actively developed. The public mod remains free.</em></p>
