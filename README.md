@@ -7,8 +7,6 @@ deliberate: fewer usable hotbar and bag-equip slots, immersive bag roles, and
 direct interaction with equipped or placed bags. The server owns the rules and
 syncs them to every client.
 
-<img width="1280" alt="image" src="https://github.com/user-attachments/assets/152af418-42e8-4450-8d5b-34be2b04a34b" />
-
 ## Compatibility
 
 - Tested against Vintage Story **1.22.3**.
@@ -41,14 +39,18 @@ should be treated as unverified until they pass the release regression matrix.
 | **F08**: Direct open and pickup interaction for placed bags | 0.3.0 |
 | **F10**: Open or place bags directly from equipped slots | 0.3.0 |
 
-### Compact slots
+#### Compact slots
 
 <img width="536" alt="Two hotbar slots and one bag slot" src="https://github.com/user-attachments/assets/7c4fb772-8cc7-43cc-9c5a-2307a4b2b6bc" />
 
-### Immersive mode
+#### Immersive mode
 
 <img width="536" alt="Immersive carrying slots" src="https://github.com/user-attachments/assets/4b315e23-ab1b-47f0-a525-03cb4197f422" />
 <img width="536" alt="Immersive carrying slot roles" src="https://github.com/user-attachments/assets/74ae724f-3fed-4aca-a664-3319669ca326" />
+
+#### Improved bag interactions
+
+<img width="720" alt="image" src="https://github.com/user-attachments/assets/152af418-42e8-4450-8d5b-34be2b04a34b" />
 
 ## Configuration
 
@@ -116,7 +118,7 @@ See [LICENSE](LICENSE). Personal non-commercial use and pull requests back to
 this repository are allowed. Redistribution and modpacks require prior written
 permission.
 
-## Support
+### Support
 
 You can support Burdened and other projects on
 [Patreon](https://patreon.com/stinow).
