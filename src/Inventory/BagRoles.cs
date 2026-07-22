@@ -34,38 +34,13 @@ public static class BagRoles
         };
     }
 
-    /// <summary>
-    /// D03 back whitelist: leather backpack, sturdy backpack, hunter backpack.
-    /// TODO: Make whitelisted backpacks configurable / mod expandable
-    /// </summary>
-    public static bool IsTrueBackpack(ItemStack? stack)
-    {
-        string? path = stack?.Collectible?.Code?.Path;
-        if (path == null) return false;
-        return path == "backpack-normal"
-            || path == "backpack-sturdy"
-            || path == "hunterbackpack";
-    }
-
-    /// <summary>
-    /// Bag-class storage that is not one of the three true backpacks
-    /// (baskets, linen sack, mining bag, quiver, etc.).
-    /// TODO: Make whitelisted waist bags configurable / mod expandable
-    /// </summary>
-    public static bool IsWaistBag(ItemStack? stack)
-    {
-        if (stack?.Collectible == null || IsTrueBackpack(stack)) return false;
-        if (stack.Collectible.GetCollectibleInterface<IHeldBag>() == null) return false;
-        return (stack.Collectible.GetStorageFlags(stack) & EnumItemStorageFlags.Backpack) != 0;
-    }
-
     public static bool Accepts(Role role, ItemStack? stack)
     {
         if (stack == null) return true;
         return role switch
         {
-            Role.Back => IsTrueBackpack(stack),
-            Role.Waist => IsWaistBag(stack),
+            Role.Back => BagClassifier.IsTrueBackpack(stack),
+            Role.Waist => BagClassifier.IsWaistBag(stack),
             _ => false,
         };
     }

@@ -10,15 +10,13 @@ namespace Burdened.Bags;
 
 internal static class BagSupport
 {
-    public static bool IsBag(ItemStack? stack)
+    public static bool SupportsGroundInteractions(ItemStack? stack)
     {
-        if (stack?.Collectible == null) return false;
+        if (stack?.Collectible is not CollectibleObject collectible
+            || !BagClassifier.IsEquippableBag(stack)) return false;
 
-        IHeldBag? heldBag = stack.Collectible.GetCollectibleInterface<IHeldBag>();
-        return heldBag != null
-            && heldBag.GetQuantitySlots(stack) > 0
-            && stack.Collectible.GetBehavior<CollectibleBehaviorGroundStorable>() != null
-            && stack.Collectible.GetBehavior<CollectibleBehaviorGroundStoredHeldBag>() != null;
+        return collectible.GetBehavior<CollectibleBehaviorGroundStorable>() != null
+            && collectible.GetBehavior<CollectibleBehaviorGroundStoredHeldBag>() != null;
     }
 
     public static int? EquipIndexOf(IPlayer player, ItemSlot? slot)

@@ -25,6 +25,8 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](https://github.com/s
 
 ### Fixed
 
+- Use one vanilla-equippable-bag classification for immersive slot roles and
+  offhand rejection, while checking ground-interaction support separately.
 - Hide a selected equipped bag from the player's worn backpack shape while
   vanilla renders that bag in the active hand, with immersive mode on or off.
 - Reject bags and backpacks from the offhand. F08 pickup does not use general

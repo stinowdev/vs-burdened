@@ -72,8 +72,10 @@ When `ImmersiveCarryingMode` is `true`, bag-equip becomes three typed slots
 hunter backpacks; **L** and **R** accept other bag-class storage (not those three).
 
 `OffhandHoldsAnything` (default `true`) lets you manually put any non-bag item
-in the offhand; bags and backpacks are rejected. Auto-pickup and shift-click
-never target the offhand. You still only *use* the main hand as in vanilla.
+in the offhand. Every item vanilla recognizes as an equippable held bag is
+rejected, even if it cannot be placed on the ground. Auto-pickup and
+shift-click never target the offhand. You still only *use* the main hand as in
+vanilla.
 
 `HideBagContentsInDialog` (default `true`) makes E show crafting only; bag
 contents stay out of that compact dialog. Bag-equip slots remain on the hotbar.
@@ -84,8 +86,9 @@ remap: right-click opens floor or equipped bags; Shift+right-click picks up a
 floor bag or places a selected equipped bag; Shift-click on an equipped HUD
 slot also places it. Rejected pickup requests leave the floor bag untouched,
 and multiple equipped bags can be open simultaneously in vanilla-style
-contained-bag windows. Selecting an equipped bag hides its worn copy while it
-is rendered in the player's hand, in either carrying mode.
+contained-bag windows. The remap applies to equippable held bags that expose
+vanilla's ground-storage bag behaviors. Selecting an equipped bag hides its
+worn copy while it is rendered in the player's hand, in either carrying mode.
 
 Other keys (`AutoPickupToBags`, `RememberDialogPlacement`) are reserved for
 upcoming features. See [FEATURES.md](FEATURES.md) for the interaction contract.

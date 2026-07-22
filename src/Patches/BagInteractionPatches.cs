@@ -151,7 +151,8 @@ public static class BagInteractionPatches
         if (SlotLocks.Config?.ImprovedBagInteractions != true) return true;
 
         ItemSlot? floorSlot = __instance.GetSlotAt(bs);
-        if (floorSlot == null || floorSlot.Empty || !BagSupport.IsBag(floorSlot.Itemstack)) return true;
+        if (floorSlot == null || floorSlot.Empty
+            || !BagSupport.SupportsGroundInteractions(floorSlot.Itemstack)) return true;
 
         BlockEntity blockEntity = __instance;
         if (blockEntity.Api.Side == EnumAppSide.Server
@@ -239,7 +240,7 @@ public static class BagInteractionPatches
 
         if (___slotId < 0 || ___slotId >= ___be.Inventory.Count) return;
         ItemSlot bagSlot = ___be.Inventory[___slotId];
-        if (bagSlot.Empty || !BagSupport.IsBag(bagSlot.Itemstack)) return;
+        if (bagSlot.Empty || !BagSupport.SupportsGroundInteractions(bagSlot.Itemstack)) return;
 
         CollectibleBehaviorGroundStoredHeldBag? behavior =
             bagSlot.Itemstack.Collectible.GetBehavior<CollectibleBehaviorGroundStoredHeldBag>();
@@ -284,7 +285,9 @@ public static class BagInteractionPatches
         if (slotId < 0 || slotId >= backpacks.bagSlots.Length) return true;
 
         ItemSlot slot = backpacks.bagSlots[slotId];
-        if (slot.Empty || !BagSupport.IsBag(slot.Itemstack) || SlotLocks.IsLocked(slot)) return true;
+        if (slot.Empty
+            || !BagSupport.SupportsGroundInteractions(slot.Itemstack)
+            || SlotLocks.IsLocked(slot)) return true;
         if (!api.World.Player.InventoryManager.MouseItemSlot.Empty) return true;
 
         if (shiftPressed && (mouseButton == EnumMouseButton.Left || mouseButton == EnumMouseButton.Right))
@@ -316,7 +319,7 @@ public static class BagInteractionPatches
         if (byEntity?.World == null || !firstEvent) return true;
         if (SlotLocks.Config?.ImprovedBagInteractions != true
             || itemslot == null
-            || !BagSupport.IsBag(itemslot.Itemstack))
+            || !BagSupport.SupportsGroundInteractions(itemslot.Itemstack))
         {
             return true;
         }
@@ -363,7 +366,7 @@ public static class BagInteractionPatches
     {
         if (capi == null
             || SlotLocks.Config?.ImprovedBagInteractions != true
-            || !BagSupport.IsBag(inSlot?.Itemstack)
+            || !BagSupport.SupportsGroundInteractions(inSlot?.Itemstack)
             || BagSupport.EquipIndexOf(capi.World.Player, inSlot) == null)
         {
             return;
@@ -399,7 +402,8 @@ public static class BagInteractionPatches
         }
 
         ItemSlot? slot = groundStorage.GetSlotAt(selection);
-        if (slot == null || slot.Empty || !BagSupport.IsBag(slot.Itemstack)) return;
+        if (slot == null || slot.Empty
+            || !BagSupport.SupportsGroundInteractions(slot.Itemstack)) return;
 
         __result = new[]
         {

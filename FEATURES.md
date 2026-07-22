@@ -54,7 +54,7 @@ active-hand rendering remains. This applies with immersive mode on or off.
 | D05 | Inventory dialog ("E") hides the bag **contents** grid only; bag equip slots stay visible. Concise-scroll (F05) behavior is kept consistent with this. |
 | D06 | Offhand accepts any non-bag item by manual placement; bags/backpacks and automatic best-slot routing are excluded. Usability stays vanilla (holding only). |
 | D07 | Auto-pickup keeps vanilla priority: hotbar first, then bag contents. |
-| D08 | Interaction remaps apply to **bags only**. Chests/vessels keep vanilla behavior entirely. |
+| D08 | Interaction remaps apply only to equippable held bags with vanilla ground-storage bag behaviors. Chests/vessels keep vanilla behavior entirely. |
 | D09 | Bag place/pick-up modifier is **Shift**: floor Shift+right-click requests a server-authoritative pickup only into a compatible bag-equip slot; rejection leaves the floor bag untouched. HUD Shift-click places. Open is right-click. |
 | D10 | Container GUI placement memory: when the player sets a container's dialog from fixed to movable and positions it, that placement is remembered **per container identity** (not per block position), surviving pickup/re-placement. Applies to our placed bags and, where identity can persist, vanilla containers. |
 

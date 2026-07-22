@@ -41,7 +41,7 @@ internal static class BagPickupService
         if (groundStorage.StorageProps?.Layout != EnumGroundStorageLayout.SingleCenter) return;
 
         ItemSlot floorSlot = groundStorage.Inventory[0];
-        if (floorSlot.Empty || !BagSupport.IsBag(floorSlot.Itemstack)) return;
+        if (floorSlot.Empty || !BagSupport.SupportsGroundInteractions(floorSlot.Itemstack)) return;
 
         if (!BlockBehaviorReinforcable.AllowRightClickPickup(api.World, position, player)) return;
 

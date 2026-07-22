@@ -56,7 +56,7 @@ internal sealed class GuiDialogEquippedBag : GuiDialog
             || bagIndex < 0
             || bagIndex >= backpacks.bagSlots.Length
             || backpacks.bagSlots[bagIndex].Empty
-            || !BagSupport.IsBag(backpacks.bagSlots[bagIndex].Itemstack))
+            || !BagSupport.SupportsGroundInteractions(backpacks.bagSlots[bagIndex].Itemstack))
         {
             return;
         }
@@ -181,7 +181,7 @@ internal sealed class GuiDialogEquippedBag : GuiDialog
 
         ItemSlot equip = backpacks.bagSlots[bagIndex];
         if (equip.Empty
-            || !BagSupport.IsBag(equip.Itemstack)
+            || !BagSupport.SupportsGroundInteractions(equip.Itemstack)
             || equip.Itemstack.Collectible.Id != collectibleId)
         {
             return false;

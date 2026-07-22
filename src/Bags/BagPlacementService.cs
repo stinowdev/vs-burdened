@@ -51,7 +51,9 @@ internal static class BagPlacementService
         }
 
         ItemSlot source = backpacks.bagSlots[packet.BagIndex];
-        if (source.Empty || SlotLocks.IsLocked(source) || !BagSupport.IsBag(source.Itemstack)) return;
+        if (source.Empty
+            || SlotLocks.IsLocked(source)
+            || !BagSupport.SupportsGroundInteractions(source.Itemstack)) return;
 
         CollectibleBehaviorGroundStorable? groundBehavior =
             source.Itemstack.Collectible.GetBehavior<CollectibleBehaviorGroundStorable>();

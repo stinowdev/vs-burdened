@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Burdened.Bags;
 using Burdened.Inventory;
 using HarmonyLib;
 using Vintagestory.API.Common;
@@ -55,7 +54,7 @@ public static class OffhandPatches
 
     public static bool CanHoldPrefix(ItemSlot __instance, ItemSlot sourceSlot, ref bool __result)
     {
-        if (__instance is ItemSlotOffhand && BagSupport.IsBag(sourceSlot?.Itemstack))
+        if (__instance is ItemSlotOffhand && BagClassifier.IsEquippableBag(sourceSlot?.Itemstack))
         {
             __result = false;
             return false;
@@ -90,7 +89,7 @@ public static class OffhandPatches
 
     public static bool CanTakeFromPrefix(ItemSlot __instance, ItemSlot sourceSlot, EnumMergePriority priority, ref bool __result)
     {
-        if (__instance is ItemSlotOffhand && BagSupport.IsBag(sourceSlot?.Itemstack))
+        if (__instance is ItemSlotOffhand && BagClassifier.IsEquippableBag(sourceSlot?.Itemstack))
         {
             __result = false;
             return false;
