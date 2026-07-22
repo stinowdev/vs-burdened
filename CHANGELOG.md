@@ -32,8 +32,10 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](https://github.com/s
 
 ### Fixed
 
+- Rebuild the player shape only when selection enters or leaves an equipped
+  bag, avoiding unnecessary tessellation during ordinary hotbar changes.
 - Track initialized contained-bag workspaces weakly so removed ground storage
-can be collected during long sessions.
+  can be collected during long sessions.
 - Reset the active selection when a config change locks the selected hotbar or
   bag-equip slot, including immersive mode changes.
 - Use one vanilla-equippable-bag classification for immersive slot roles and
