@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 Feature (F) and decision (D) numbers refer to [FEATURES.md](FEATURES.md).
 
-## [Unreleased]
+## [v0.3.0]
 
 ### Added
 
