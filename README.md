@@ -1,11 +1,13 @@
 # Burdened
 
-<img width="480" height="320" alt="Burdened" src="https://github.com/user-attachments/assets/91542e3a-2351-4324-b76e-9ca5c29fac0c" />
+<img width="400" alt="Burdened" src="https://github.com/user-attachments/assets/91542e3a-2351-4324-b76e-9ca5c29fac0c" />
 
 Burdened is a universal code mod for Vintage Story that makes carrying more
 deliberate: fewer usable hotbar and bag-equip slots, immersive bag roles, and
 direct interaction with equipped or placed bags. The server owns the rules and
 syncs them to every client.
+
+<img width="1280" alt="image" src="https://github.com/user-attachments/assets/152af418-42e8-4450-8d5b-34be2b04a34b" />
 
 ## Compatibility
 
