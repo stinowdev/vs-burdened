@@ -32,23 +32,29 @@ public static class BagRenderPatches
 
             harmony.Patch(
                 target,
-                prefix: new HarmonyMethod(AccessTools.Method(typeof(BagRenderPatches), nameof(Prefix))),
-                postfix: new HarmonyMethod(AccessTools.Method(typeof(BagRenderPatches), nameof(Postfix))),
-                finalizer: new HarmonyMethod(AccessTools.Method(typeof(BagRenderPatches), nameof(Finalizer))));
+                prefix: new HarmonyMethod(AccessTools.Method(typeof(BagRenderPatches), nameof(TessellationPrefix))),
+                postfix: new HarmonyMethod(AccessTools.Method(typeof(BagRenderPatches), nameof(TessellationPostfix))),
+                finalizer: new HarmonyMethod(AccessTools.Method(typeof(BagRenderPatches), nameof(TessellationFinalizer))));
 
             var activeSlotSetter = AccessTools.PropertySetter(
                 typeof(ClientPlayerInventoryManager),
                 nameof(ClientPlayerInventoryManager.ActiveHotbarSlotNumber));
             harmony.Patch(
                 activeSlotSetter,
-                postfix: new HarmonyMethod(AccessTools.Method(typeof(BagRenderPatches), nameof(ActiveSlotChanged))));
+                prefix: new HarmonyMethod(AccessTools.Method(
+                    typeof(BagRenderPatches), nameof(ActiveSlotChangingPrefix))),
+                postfix: new HarmonyMethod(AccessTools.Method(
+                    typeof(BagRenderPatches), nameof(ActiveSlotChangedPostfix))));
 
             var serverSlotChange = AccessTools.Method(
                 typeof(ClientPlayerInventoryManager),
                 nameof(ClientPlayerInventoryManager.SetActiveHotbarSlotNumberFromServer));
             harmony.Patch(
                 serverSlotChange,
-                postfix: new HarmonyMethod(AccessTools.Method(typeof(BagRenderPatches), nameof(ActiveSlotChanged))));
+                prefix: new HarmonyMethod(AccessTools.Method(
+                    typeof(BagRenderPatches), nameof(ActiveSlotChangingPrefix))),
+                postfix: new HarmonyMethod(AccessTools.Method(
+                    typeof(BagRenderPatches), nameof(ActiveSlotChangedPostfix))));
 
             logger.Notification("[{0}] selected bag render patch applied.", BurdenedModSystem.ModId);
         }
@@ -59,31 +65,23 @@ public static class BagRenderPatches
         lock (Gate) applied = false;
     }
 
-    public static void Prefix(EntityBehaviorPlayerInventory __instance, ref HiddenBagState? __state)
+    public static void TessellationPrefix(
+        EntityBehaviorPlayerInventory __instance,
+        ref HiddenBagState? __state)
     {
         __state = null;
 
         IPlayer? player = (__instance.entity as EntityPlayer)?.Player;
-        if (player?.InventoryManager.GetOwnInventory(GlobalConstants.backpackInvClassName)
-                is not InventoryPlayerBackpacks backpacks)
-        {
-            return;
-        }
-
-        ItemSlot? activeSlot = player.InventoryManager.ActiveHotbarSlot;
-        if (activeSlot?.Itemstack == null
-            || Array.IndexOf(backpacks.bagSlots, activeSlot) < 0)
-        {
-            return;
-        }
+        ItemSlot? activeSlot = SelectedEquippedBagSlot(player);
+        if (activeSlot?.Itemstack == null) return;
 
         __state = new HiddenBagState(activeSlot, activeSlot.Itemstack);
         activeSlot.Itemstack = null;
     }
 
-    public static void Postfix(HiddenBagState? __state) => __state?.Restore();
+    public static void TessellationPostfix(HiddenBagState? __state) => __state?.Restore();
 
-    public static Exception? Finalizer(Exception? __exception, HiddenBagState? __state)
+    public static Exception? TessellationFinalizer(Exception? __exception, HiddenBagState? __state)
     {
         __state?.Restore();
         return __exception;
@@ -91,16 +89,45 @@ public static class BagRenderPatches
 
     /// <summary>
     /// The selected item is rendered by the hand renderer, while the body mesh
-    /// is cached. Invalidate that mesh whenever the active slot changes so the
-    /// selected bag is removed from the worn shape immediately.
+    /// is cached. Invalidate that mesh when selection enters or leaves an
+    /// equipped bag so its worn copy changes immediately.
     /// </summary>
-    public static void ActiveSlotChanged(ClientPlayerInventoryManager __instance)
+    public static void ActiveSlotChangingPrefix(
+        ClientPlayerInventoryManager __instance,
+        ref ActiveBagSelectionState __state)
     {
-        if (__instance.player?.Entity is EntityPlayer entityPlayer)
-        {
-            entityPlayer.MarkShapeModified();
-        }
+        __state = new ActiveBagSelectionState(
+            __instance.ActiveHotbarSlotNumber,
+            SelectedEquippedBagSlot(__instance.player) != null);
     }
+
+    public static void ActiveSlotChangedPostfix(
+        ClientPlayerInventoryManager __instance,
+        ActiveBagSelectionState __state)
+    {
+        if (__state.SlotNumber == __instance.ActiveHotbarSlotNumber) return;
+
+        bool selectedBagNow = SelectedEquippedBagSlot(__instance.player) != null;
+        if (!__state.SelectedBag && !selectedBagNow) return;
+
+        (__instance.player?.Entity as EntityPlayer)?.MarkShapeModified();
+    }
+
+    private static ItemSlot? SelectedEquippedBagSlot(IPlayer? player)
+    {
+        if (player?.InventoryManager.GetOwnInventory(GlobalConstants.backpackInvClassName)
+                is not InventoryPlayerBackpacks backpacks)
+        {
+            return null;
+        }
+
+        ItemSlot? activeSlot = player.InventoryManager.ActiveHotbarSlot;
+        if (activeSlot?.Itemstack == null) return null;
+
+        return Array.IndexOf(backpacks.bagSlots, activeSlot) >= 0 ? activeSlot : null;
+    }
+
+    public readonly record struct ActiveBagSelectionState(int SlotNumber, bool SelectedBag);
 
     public sealed class HiddenBagState
     {

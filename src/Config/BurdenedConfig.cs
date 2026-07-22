@@ -1,4 +1,4 @@
-﻿using Vintagestory.API.MathTools;
+using Vintagestory.API.MathTools;
 
 namespace Burdened.Config;
 
@@ -33,18 +33,10 @@ public class BurdenedConfig
     // F06 / D06: the offhand manually accepts non-bag items.
     public bool OffhandHoldsAnything { get; set; } = true;
 
-    // F07: picked-up items overflow into equipped bags (vanilla priority:
-    // hotbar first, then bag contents). Off = hotbar only.
-    public bool AutoPickupToBags { get; set; } = true;
-
     // F08 / F10: Burdened's complete bag interaction contract: floor bags open
     // with RMB and Shift+RMB equips them; equipped bags open with RMB and
     // Shift+click/RMB places them. Contents remain on the bag stack.
     public bool ImprovedBagInteractions { get; set; } = true;
-
-    // F09: remember each container's dialog placement (fixed/movable + position)
-    // by container identity, surviving pickup and re-placement. Client-side QoL.
-    public bool RememberDialogPlacement { get; set; } = true;
 
     /// <summary>
     /// Bag-equip slots the player may use right now. Immersive mode always

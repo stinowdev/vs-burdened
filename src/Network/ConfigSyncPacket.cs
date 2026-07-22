@@ -1,4 +1,4 @@
-﻿using Burdened.Config;
+using Burdened.Config;
 using ProtoBuf;
 
 namespace Burdened.Network;
@@ -7,17 +7,26 @@ namespace Burdened.Network;
 /// Server -> client on join: the effective sanitized config, so the
 /// client HUD/dialog/rendering mirror exactly what the server enforces.
 /// </summary>
-[ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
+[ProtoContract]
 public class ConfigSyncPacket
 {
+    [ProtoMember(1)]
     public int HotbarSlots;
+
+    [ProtoMember(2)]
     public int BagSlots;
+
+    [ProtoMember(3)]
     public bool ImmersiveCarryingMode;
+
+    [ProtoMember(4)]
     public bool HideBagContentsInDialog;
+
+    [ProtoMember(5)]
     public bool OffhandHoldsAnything;
-    public bool AutoPickupToBags;
+
+    [ProtoMember(6)]
     public bool ImprovedBagInteractions;
-    public bool RememberDialogPlacement;
 
     public static ConfigSyncPacket From(BurdenedConfig config)
     {
@@ -28,12 +37,10 @@ public class ConfigSyncPacket
             ImmersiveCarryingMode = config.ImmersiveCarryingMode,
             HideBagContentsInDialog = config.HideBagContentsInDialog,
             OffhandHoldsAnything = config.OffhandHoldsAnything,
-            AutoPickupToBags = config.AutoPickupToBags,
             ImprovedBagInteractions = config.ImprovedBagInteractions,
-            RememberDialogPlacement = config.RememberDialogPlacement,
         };
     }
-        
+
     public BurdenedConfig ToConfig()
     {
         var config = new BurdenedConfig
@@ -43,9 +50,7 @@ public class ConfigSyncPacket
             ImmersiveCarryingMode = ImmersiveCarryingMode,
             HideBagContentsInDialog = HideBagContentsInDialog,
             OffhandHoldsAnything = OffhandHoldsAnything,
-            AutoPickupToBags = AutoPickupToBags,
             ImprovedBagInteractions = ImprovedBagInteractions,
-            RememberDialogPlacement = RememberDialogPlacement,
         };
         config.Sanitize();
         return config;

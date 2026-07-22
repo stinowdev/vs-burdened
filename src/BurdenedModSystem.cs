@@ -40,7 +40,7 @@ public class BurdenedModSystem : ModSystem
     private void OnConfigSync(ConfigSyncPacket packet)
     {
         Config = packet.ToConfig();
-        
+
         SlotLocks.Config = Config;
 
         capi?.Logger.Notification(
@@ -48,9 +48,24 @@ public class BurdenedModSystem : ModSystem
             ModId, Config.HotbarSlots, Config.BagSlots, Config.ImmersiveCarryingMode);
 
         ConfigReceived?.Invoke(Config);
-        // Config often arrives while still on the connecting screen.
-        // LevelFinalize will recompose once the world is up.
-        RecomposeHotbarHud(); //TODO: This is not working as expected.
+    }
+
+    private void OnClientConfigReceived(BurdenedConfig _)
+    {
+        // Config may arrive on the connecting screen or outside the render
+        // callback. Queue one safe refresh; LevelFinalize covers an early sync.
+        capi?.Event.EnqueueMainThreadTask(RefreshClientUi, "burdened-refresh-client-ui");
+    }
+
+    private void OnLevelFinalize()
+    {
+        RefreshClientUi();
+    }
+
+    private void RefreshClientUi()
+    {
+        slotVisuals?.TryApply();
+        RecomposeHotbarHud();
         if (capi != null) InventoryDialogPatches.RecomposeIfPresent(capi);
     }
 
@@ -91,7 +106,7 @@ public class BurdenedModSystem : ModSystem
 
         // Writes back so the file always exists and reflects sanitized values
         api.StoreModConfig(config, ConfigFile);
-        
+
         return config;
     }
 
@@ -137,17 +152,10 @@ public class BurdenedModSystem : ModSystem
         BagInteractionPatches.ApplyClient(harmony, api);
         BagRenderPatches.Apply(harmony, api.Logger);
 
-        // Grey the locked slots whenever the config becomes known.
-        // On the sync (ConfigReceived) and again once the world is ready
-        // that second pass also recomposes the hotbar HUD if config arrived early.
+        // Refresh once config becomes known and again once the world is ready.
         slotVisuals = new SlotVisuals(api);
-        ConfigReceived += _ => slotVisuals?.TryApply();
-        api.Event.LevelFinalize += () =>
-        {
-            slotVisuals?.TryApply();
-            RecomposeHotbarHud();
-            InventoryDialogPatches.RecomposeIfPresent(api);
-        };
+        ConfigReceived += OnClientConfigReceived;
+        api.Event.LevelFinalize += OnLevelFinalize;
 
         api.Logger.Notification("[{0}] client side loaded.", ModId);
     }
@@ -181,6 +189,12 @@ public class BurdenedModSystem : ModSystem
 
     public override void Dispose()
     {
+        ConfigReceived -= OnClientConfigReceived;
+        if (capi != null)
+        {
+            capi.Event.LevelFinalize -= OnLevelFinalize;
+        }
+
         if (sapi != null)
         {
             sapi.Event.PlayerJoin -= OnPlayerJoin;
@@ -192,7 +206,7 @@ public class BurdenedModSystem : ModSystem
             harmony.UnpatchAll(ModId);
             harmony = null;
         }
-        
+
         SlotLockPatches.Reset();
         OffhandPatches.Reset();
         HotbarHudPatches.Reset();

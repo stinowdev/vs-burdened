@@ -2,15 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-Feature (F) and decision (D) numbers refer to [FEATURES.md](https://github.com/stinowdev/vs-burdened/blob/main/FEATURES.md).
+Feature (F) and decision (D) numbers refer to [FEATURES.md](FEATURES.md).
 
-## [Unreleased]
-
-### Planned
-
-- D04 - Immersive on-body bag rendering (static meshes on back/waist)
-- F07 - Auto-pickup flows into equipped bags with vanilla priority (D07)
-- F09 - Remember container dialog placement per container identity (D10)
+## [v0.3.0]
 
 ### Added
 
@@ -23,8 +17,24 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](https://github.com/s
   the existing backpack inventory; Shift-click or selected-bag Shift+RMB places
   directly from the equip slot into vanilla ground storage.
 
+### Changed
+
+- Declare Vintage Story 1.22.3 as the tested compatibility baseline.
+- Keep only implemented settings in the runtime configuration. F07 auto-pickup
+  policy and F09 dialog placement memory remain documented roadmap items.
+- Use explicit sequential protobuf field numbers and network version 1.2.0 for
+  the final 0.3.0 protocol. Clients and servers must update together.
+
 ### Fixed
 
+- Refresh config-dependent client UI through one main-thread path and remove
+  client event subscriptions during disposal.
+- Rebuild the player shape only when selection enters or leaves an equipped
+  bag, avoiding unnecessary tessellation during ordinary hotbar changes.
+- Track initialized contained-bag workspaces weakly so removed ground storage
+  can be collected during long sessions.
+- Reset the active selection when a config change locks the selected hotbar or
+  bag-equip slot, including immersive mode changes.
 - Use one vanilla-equippable-bag classification for immersive slot roles and
   offhand rejection, while checking ground-interaction support separately.
 - Hide a selected equipped bag from the player's worn backpack shape while
@@ -55,6 +65,12 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](https://github.com/s
 - Report bag-placement validation through chat instead of Vintage Story's
   in-game error HUD, whose misplaced hover background produced detached bars.
 
+### Known limitations
+
+- Equipped-bag placement resolves the selected equip slot when the server
+  handles the request. Under extreme latency, replacing that slot first could
+  place the replacement bag. Existing validation still prevents duplication,
+  item loss, or placement of an invalid item.
 
 ## [v0.3.0-pre1](https://github.com/stinowdev/vs-burdened/releases/tag/v0.3.0-pre1) - 2026-07-20
 

@@ -1,32 +1,18 @@
 name: Build Release
 
-# Primary path: on main, create + push a version tag → draft release with zip.
-#   git checkout main && git pull
-#   git tag v0.3.0-pre1
-#   git push origin v0.3.0-pre1
-# Then open the draft on GitHub, paste release notes, Publish.
-#
-# Manual rebuild: Actions → Build Release → Run workflow.
+# Primary path: tag a commit on main with the version declared in modinfo.json.
+# The workflow builds that exact metadata and creates a draft GitHub release.
+# Manual runs use the metadata from the selected branch without override inputs.
 on:
   push:
     tags:
       - "v*"
   workflow_dispatch:
-    inputs:
-      version:
-        description: "Mod version (used for the zip name / release tag)"
-        required: true
-        default: "0.3.0-pre1"
-      game_version:
-        description: "Vintage Story version to build against"
-        required: true
-        default: "1.22.0"
 
 permissions:
   contents: write
 
 env:
-  MOD_ID: burdened
   CSPROJ: Burdened.csproj
 
 jobs:
@@ -45,31 +31,34 @@ jobs:
         run: |
           git fetch origin main
           if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
-            echo "::error::Tag ${{ github.ref_name }} does not point at a commit on main. Create the tag from main and push it again."
+            echo "::error::Tag ${{ github.ref_name }} does not point at a commit on main."
             exit 1
           fi
-          echo "Tag ${{ github.ref_name }} → $GITHUB_SHA is on main."
+          echo "Tag ${{ github.ref_name }} -> $GITHUB_SHA is on main."
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "10.0.x"
 
-      - name: Resolve versions
+      - name: Resolve release metadata
         id: vars
         shell: bash
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            VERSION="${{ github.event.inputs.version }}"
-            GAME_VERSION="${{ github.event.inputs.game_version }}"
-          else
-            VERSION="${GITHUB_REF_NAME#v}"
-            GAME_VERSION="$(jq -r '.dependencies.game' resources/modinfo.json)"
+          MOD_ID="$(jq -r '.modid' resources/modinfo.json)"
+          VERSION="$(jq -r '.version' resources/modinfo.json)"
+          GAME_VERSION="$(jq -r '.dependencies.game' resources/modinfo.json)"
+
+          if [[ "$GITHUB_REF" == refs/tags/* ]] && [[ "$GITHUB_REF_NAME" != "v$VERSION" ]]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match modinfo.json version $VERSION."
+            exit 1
           fi
+
+          echo "mod_id=$MOD_ID" >> "$GITHUB_OUTPUT"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "game_version=$GAME_VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
-          echo "Building $MOD_ID v$VERSION against game $GAME_VERSION"
+          echo "Building $MOD_ID v$VERSION against Vintage Story $GAME_VERSION"
 
       - name: Download Vintage Story server
         shell: bash
@@ -82,26 +71,18 @@ jobs:
           tar -xzf "$RUNNER_TEMP/vs_server.tar.gz" -C "$RUNNER_TEMP/vs"
           echo "VINTAGE_STORY=$RUNNER_TEMP/vs" >> "$GITHUB_ENV"
 
-      - name: Stamp version into modinfo.json
-        shell: bash
-        run: |
-          VERSION="${{ steps.vars.outputs.version }}"
-          tmp="$(mktemp)"
-          jq --arg v "$VERSION" '.version = $v' resources/modinfo.json > "$tmp"
-          mv "$tmp" resources/modinfo.json
-          cat resources/modinfo.json
-
       - name: Build
-        run: dotnet build $CSPROJ -c Release
+        run: dotnet build $CSPROJ -c Release -p:Version=${{ steps.vars.outputs.version }}
 
       - name: Package
         id: package
         shell: bash
         run: |
+          MOD_ID="${{ steps.vars.outputs.mod_id }}"
           VERSION="${{ steps.vars.outputs.version }}"
           ZIP_NAME="${MOD_ID}_${VERSION}.zip"
           mkdir -p Releases
-          # Zip the build output (DLL + modinfo.json + assets), skipping debug files.
+          # Package the build output while excluding development-only files.
           ( cd bin/Release && zip -r "$GITHUB_WORKSPACE/Releases/$ZIP_NAME" . -x '*.pdb' -x '*.deps.json' )
           echo "zip_name=$ZIP_NAME" >> "$GITHUB_OUTPUT"
           echo "zip_path=Releases/$ZIP_NAME" >> "$GITHUB_OUTPUT"
@@ -112,7 +93,6 @@ jobs:
           name: ${{ steps.package.outputs.zip_name }}
           path: ${{ steps.package.outputs.zip_path }}
 
-      # Draft so the zip is ready immediately; edit notes on GitHub, then Publish.
       - name: Create draft release
         uses: softprops/action-gh-release@v2
         with:
@@ -123,4 +103,4 @@ jobs:
           generate_release_notes: false
           files: ${{ steps.package.outputs.zip_path }}
           body: |
-            <!-- Draft: paste the matching section from CHANGELOG.md, then Publish. -->
+            <!-- Paste the matching section from CHANGELOG.md, then publish. -->

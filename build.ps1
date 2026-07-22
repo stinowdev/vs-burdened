@@ -31,7 +31,7 @@ $modId = $modinfo.modid
 $version = $modinfo.version
 
 Write-Host "Building $modId v$version ($Configuration)..." -ForegroundColor Cyan
-dotnet build (Join-Path $root "Burdened.csproj") -c $Configuration
+dotnet build (Join-Path $root "Burdened.csproj") -c $Configuration -p:Version=$version
 if ($LASTEXITCODE -ne 0) { throw "dotnet build failed." }
 
 $outDir = Join-Path $root "bin\$Configuration"
