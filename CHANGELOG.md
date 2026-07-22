@@ -12,6 +12,13 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](https://github.com/s
 - F07 - Auto-pickup flows into equipped bags with vanilla priority (D07)
 - F09 - Remember container dialog placement per container identity (D10)
 
+### Known limitations
+
+- Equipped-bag placement resolves the selected equip slot when the server
+  handles the request. Under extreme latency, replacing that slot first could
+  place the replacement bag. Existing validation still prevents duplication,
+  item loss, or placement of an invalid item.
+
 ### Added
 
 - F08 / F10 use one `ImprovedBagInteractions` flag for the complete floor and
