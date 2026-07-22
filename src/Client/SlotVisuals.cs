@@ -72,9 +72,9 @@ public class SlotVisuals
             }
         }
 
-        // If the bar shrank under the current selection, pull it back in range.
-        if (player.InventoryManager.ActiveHotbarSlotNumber >= cfg.HotbarSlots
-            && player.InventoryManager.ActiveHotbarSlotNumber < SlotLocks.VanillaHotbarSlots)
+        // If either visible strip shrank under the current selection, pull the
+        // selection back to the first usable hotbar slot.
+        if (SlotLocks.IsLocked(player.InventoryManager.ActiveHotbarSlot))
         {
             player.InventoryManager.ActiveHotbarSlotNumber = 0;
         }
