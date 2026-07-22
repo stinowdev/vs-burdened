@@ -11,6 +11,8 @@ file and syncs it to clients on join; the client never reads the config itself.
 This mod is **standalone** (D01). Using it alongside Immersive Backpacks,
 Wilderlands Onus Moderatus, or Immersive Modular Backpacks may break playability.
 
+<img width="1280" alt="image" src="https://github.com/user-attachments/assets/152af418-42e8-4450-8d5b-34be2b04a34b" />
+
 See [FEATURES.md](FEATURES.md) for the full roadmap and design decisions, and
 [CHANGELOG.md](CHANGELOG.md) for release notes.
 
