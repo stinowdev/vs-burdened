@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 Feature (F) and decision (D) numbers refer to [FEATURES.md](FEATURES.md).
 
-## [v0.3.0]
+## [v0.3.0](https://github.com/stinowdev/vs-burdened/releases/tag/v0.3.0) - 2026-07-21
 
 ### Added
 
