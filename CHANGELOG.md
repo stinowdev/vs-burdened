@@ -11,7 +11,7 @@ placed without moving them through the inventory, and placed bags can be opened
 or equipped again.
 
 <img
-  width="720"
+  width="600"
   alt="Several equipped and placed bag inventories open at once"
   src="https://github.com/user-attachments/assets/152af418-42e8-4450-8d5b-34be2b04a34b"
 />
