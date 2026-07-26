@@ -64,25 +64,6 @@ pickup and placement.
 | D10 | Planned | F09 identifies a movable container independently of its world position. Pickup and replacement must not lose that identity. |
 | D11 | Active | Equipped-bag placement identifies the source by slot index. The server revalidates that slot when handling the request; no item fingerprint is sent. |
 
-## Roadmap notes
-
-### F09 container identity
-
-Vanilla appears to associate ground-storage window placement with a world
-position. F09 needs a durable container identity so two containers placed at
-the same position are not treated as the same container.
-
-## Patch inventory
-
-| Patch | Engine target | Kind | Side | Feature | Need |
-|---|---|---|---|---|---|
-| `SlotLockPatches` | `ItemSlot.CanHold` / `CanTakeFrom` hierarchy; player hotbar and backpack `GetSuitability` | Prefix / postfix | Both | F01 / F02 / F03 | Enforce rules across every slot-entry path |
-| `OffhandPatches` | `ItemSlot.CanHold`, `ItemSlot.CanTakeFrom`, `InventoryBase.GetBestSuitedSlot` | Prefix / postfix | Both | F06 / D06 | Change offhand storage without changing item use |
-| `HotbarHudPatches` | `HudHotbar.ComposeGuis` | Postfix | Client | F01 / F02 / F03 | Resize and relabel the existing HUD |
-| `HotbarScrollPatches` | `HudHotbar.moveToHotbarSlot`, `HudHotbar.OnKeySlot` | Prefix | Client | F05 | Replace the private vanilla selection ring |
-| `InventoryDialogPatches` | `GuiDialogInventory.ComposeSurvivalInvDialog` | Prefix | Client | F04 / D05 | Compose the existing private inventory dialog differently |
-| `BagInteractionPatches` | `BlockEntityGroundStorage.OnPlayerInteractStart`, held ground-storage behavior, slot clicks, help, contained workspace packets | Prefix / postfix | Both | F08 / F10 | Remap gestures while preserving vanilla bag storage |
-| `BagRenderPatches` | `EntityBehaviorPlayerInventory.OnTesselation`, client active-slot changes | Prefix / postfix / finalizer | Client | F10 | Suppress only the selected bag from the cached worn mesh |
 
 ## Configuration contract
 
