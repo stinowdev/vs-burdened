@@ -4,140 +4,102 @@ All notable changes to this project will be documented in this file.
 
 Feature (F) and decision (D) numbers refer to [FEATURES.md](FEATURES.md).
 
-## [v0.3.0]
+## [v0.3.0](https://github.com/stinowdev/vs-burdened/releases/tag/v0.3.0)
+
+This release is about using bags directly. Equipped bags can be opened or
+placed without moving them through the inventory, and placed bags can be opened
+or equipped again.
+
+<img
+  width="720"
+  alt="Several equipped and placed bag inventories open at once"
+  src="https://github.com/user-attachments/assets/152af418-42e8-4450-8d5b-34be2b04a34b"
+/>
 
 ### Added
 
-- F08 / F10 use one `ImprovedBagInteractions` flag for the complete floor and
-  equipped bag interaction contract.
-- F08 / D08 / D09 - Floor bags: right-click opens through the vanilla
-  contained-bag workspace; Shift+right-click transfers directly into a
-  compatible empty bag-equip slot and otherwise leaves the bag placed.
-- F10 - Equipped bag slots: right-click opens independent mapped views over
-  the existing backpack inventory; Shift-click or selected-bag Shift+RMB places
-  directly from the equip slot into vanilla ground storage.
+- F04 / D05 - The E inventory can show a compact crafting-only view. Set
+  `HideBagContentsInDialog` to `false` to restore the vanilla layout.
+- F08 / D08 / D09 - Right-click a placed bag to open it. Shift + right-click
+  equips it into a compatible empty bag slot.
+- F10 / D09 - Right-click an equipped bag slot to open it. Shift + click places
+  it on the targeted block. Several equipped bag windows can remain open.
 
 ### Changed
 
-- Declare Vintage Story 1.22.3 as the tested compatibility baseline.
-- Keep only implemented settings in the runtime configuration. F07 auto-pickup
-  policy and F09 dialog placement memory remain documented roadmap items.
-- Use explicit sequential protobuf field numbers and network version 1.2.0 for
-  the final 0.3.0 protocol. Clients and servers must update together.
+- F08 / F10 use one `ImprovedBagInteractions` setting.
+- Only implemented settings remain in `burdened.json`. F07 automatic pickup and
+  F09 remembered dialog placement remain planned.
+- Vintage Story **1.22.3** is the compatibility baseline for this release.
+- The network protocol is now version 1.2.0. Clients and servers must update
+  together.
 
 ### Fixed
 
-- Refresh config-dependent client UI through one main-thread path and remove
-  client event subscriptions during disposal.
-- Rebuild the player shape only when selection enters or leaves an equipped
-  bag, avoiding unnecessary tessellation during ordinary hotbar changes.
-- Track initialized contained-bag workspaces weakly so removed ground storage
-  can be collected during long sessions.
-- Reset the active selection when a config change locks the selected hotbar or
-  bag-equip slot, including immersive mode changes.
-- Use one vanilla-equippable-bag classification for immersive slot roles and
-  offhand rejection, while checking ground-interaction support separately.
-- Hide a selected equipped bag from the player's worn backpack shape while
-  vanilla renders that bag in the active hand, with immersive mode on or off.
-- Reject bags and backpacks from the offhand. F08 pickup does not use general
-  inventory routing, so a full bag bar cannot overflow into the offhand.
-- Make floor-bag pickup server-authoritative. The client no longer predicts the
-  item transfer or removes ground storage; the server removes the block only
-  after exactly one bag reaches a compatible empty equip slot, and audits both
-  successful and rejected requests.
-- Give every equipped-bag dialog its own local slot map and GUI dirty state;
-  clicks still delegate to the real player backpack inventory. This prevents
-  one window from consuming another window's updates or passing equip-slot ids
-  into `ComposeSlotOverlays`.
-- Remap open equipped-bag dialogs when any bag is equipped/unequipped/placed so
-  content slot ids and cached slot objects are replaced synchronously with the
-  `BagInventory` reload. This removes the one-frame null-slot race in
-  `ComposeSlotOverlays` with multiple bag windows open.
-- Match vanilla contained-bag dialogs with a four-column contents grid and use
-  the same inset/title spacing for equipped bags; keep stable, non-overlapping
-  positions for simultaneously open windows.
-- Tighten the crafting-only inventory dialog with a proportional output-slot
-  gap and no oversized empty area below it.
-- Consume the residual world-interaction packet after custom equipped-bag
-  placement and initialize a received contained-bag workspace before vanilla
-  deserializes it. This prevents duplicate `Backpack Contents` windows and the
-  NRE in `InventoryGeneric.FromTreeAttributes`.
-- Report bag-placement validation through chat instead of Vintage Story's
-  in-game error HUD, whose misplaced hover background produced detached bars.
+- Bag windows now stay attached to the correct bag while bags are equipped,
+  removed, or placed. This fixes stale contents, locked windows, and crashes
+  when several bags are open.
+- Placing an equipped bag no longer opens duplicate inventory windows or
+  crashes while loading its contents.
+- Failed pickup and placement leave the bag and its contents at the source.
+  Pickup also stays out of the offhand when no compatible bag slot is available.
+- Selecting an equipped bag shows it in the active hand without also showing
+  the worn copy on the player.
+- Equipped and placed bag windows now use the same four-column layout and
+  spacing. The crafting output slot also sits closer to the grid.
+- Config changes no longer leave the active selection on a locked slot.
+- Bag-placement errors now use chat instead of leaving detached bars beside the
+  hotbar.
 
 ### Known limitations
 
-- Equipped-bag placement resolves the selected equip slot when the server
-  handles the request. Under extreme latency, replacing that slot first could
-  place the replacement bag. Existing validation still prevents duplication,
-  item loss, or placement of an invalid item.
+- With extreme latency, replacing an equipped bag immediately after requesting
+  placement can place the replacement bag instead. This does not duplicate or
+  delete items.
 
-## [v0.3.0-pre1](https://github.com/stinowdev/vs-burdened/releases/tag/v0.3.0-pre1) - 2026-07-20
-
-### Added
-
-- F04 / D05 - Hide bag contents in the inventory dialog: when
-  `HideBagContentsInDialog` is true (default), pressing E shows only the
-  crafting grid (and output). Bag-equip slots stay on the hotbar HUD; bag
-  contents are not listed in the dialog. Set the key to `false` to restore
-  the vanilla bag-contents grid next to crafting.
-
-## [v0.2.0](https://github.com/stinowdev/vs-burdened/releases/tag/v0.2.0) - 2026-07-19
-
-Immersive bag rules, concise scroll, and offhand flexibility. Immersive mode is
-**rules only** in this release (no on-body bag meshes yet; that is D04).
+## [v0.3.0-pre1](https://github.com/stinowdev/vs-burdened/releases/tag/v0.3.0-pre1)
 
 ### Added
 
-- F05 - Concise hotbar scroll: mouse wheel skips locked hotbar/bag-equip slots
-  and wraps both ways within the usable set (Ctrl still reaches bag-equip
-  slots, limited to configured `BagSlots`). Number keys that target a locked
-  slot are ignored.
-- F03 / D03 - Immersive carrying mode (rules only; on-body meshes are D04 later):
-  when `ImmersiveCarryingMode` is true, bag-equip is fixed to three typed slots
-  **L / B / R** (`BagSlots` is ignored). **B** accepts only `backpack-normal`,
-  `backpack-sturdy`, and `hunterbackpack`. **L** and **R** accept other
-  bag-class storage (baskets, sacks, etc.) and never those three backpacks.
-  Wrong items are rejected by the server and ejected on join; the HUD shows the
-  three slots with role icons. Backpack icon added to slot B when enabled.
-- F06 / D06 - Offhand holds anything: when `OffhandHoldsAnything` is true
-  (default), the offhand slot accepts any item. Usability stays vanilla
-  (holding only; no dual-wield tool use). Auto-pickup suitability is unchanged
-  so items are not steered into the offhand.
+- F04 / D05 - Added the optional crafting-only E inventory. Bag-equip slots
+  remain on the hotbar, and `HideBagContentsInDialog=false` restores the
+  vanilla inventory layout.
+
+## [v0.2.0](https://github.com/stinowdev/vs-burdened/releases/tag/v0.2.0)
+
+This release defines the immersive carrying rules. It changes which bag slots
+are available, how they are selected, and what the offhand can hold.
+
+### Added
+
+- F03 / D03 - Immersive mode replaces the normal bag bar with L / B / R slots.
+  B accepts the normal, sturdy, and hunter backpacks. L and R accept other
+  equippable bags. Custom on-body rendering remains planned as D04.
+- F05 - Mouse-wheel selection skips locked slots and wraps across the usable
+  hotbar. Ctrl still includes available bag slots.
+- F06 / D06 - `OffhandHoldsAnything` allows non-bag items to be placed in the
+  offhand without adding dual-wield item use.
 
 ### Fixed
 
-- Hotbar HUD right-border smear when the strip is shrunk below vanilla width
-  (re-bake static texture at the new size before recompose).
-- Crash on join when config sync tried to recompose the hotbar HUD before the
-  player inventory existed.
+- The hotbar no longer leaves a smeared right border when configured below its
+  vanilla width.
+- Config sync during connection no longer tries to rebuild the hotbar before
+  the player inventory exists.
 
-## [v0.1.0](https://github.com/stinowdev/vs-burdened/releases/tag/v0.1.0) - 2026-07-18
+## [v0.1.0](https://github.com/stinowdev/vs-burdened/releases/tag/v0.1.0)
 
-First release. Standalone mod for Vintage Story 1.22 (D01), no dependencies on
-or patches into other mods.
+The first release establishes Burdened's smaller, server-owned carrying layout.
 
 ### Added
 
-- F01 - Reduced hotbar slots (`hotbarSlots`, 1..10, default 10). The server
-enforces the limit; the client hides the locked slots.
-- F02 - Reduced bag-equip slots (`bagSlots`, 1..4, default 4). The server
-enforces the limit; the client hides the locked slots.
-- Server-side config at `ModConfig/burdened.json`: created with defaults on
-first run, values clamped on load, synced to every client on join over the
-mod's network channel. The client never reads the file; it renders exactly
-what the server enforces.
-- Server-side slot locking: items cannot be placed into or taken from locked
-hotbar/bag slots, regardless of client state.
-- Item ejection (D02): when a player joins carrying items in slots the config
-has since disabled, those items are returned through the normal give path
-(allowed hotbar slots, then equipped bags); anything that does not fit is
-dropped at the player's feet. Bags are ejected before hotbar items so a
-hotbar item cannot overflow into a bag that is itself about to be
-unequipped. Items are never deleted.
-- Hotbar HUD repack: the hotbar strip shrinks to a tight, centered
-[offhand | hotbar | bags] cluster showing only the usable slots, with
-vanilla-style borders at any width.
-- Locked-slot visuals: locked hotbar and bag-equip slots are tinted dark and
-drawn as unavailable; if the bar shrinks under the current selection, the
-active slot is pulled back into range.
+- F01 - `HotbarSlots` controls how many of the ten hotbar slots can be used.
+- F02 - `BagSlots` controls how many of the four bag-equip slots can be used.
+- D02 - Items found in newly disabled slots move into valid inventory space or
+  drop at the player's feet. Bags are handled before hotbar items so they cannot
+  receive overflow while being unequipped.
+- The hotbar contracts into a centered offhand, hotbar, and bag cluster. Locked
+  slots are darkened, and the active selection returns to a usable slot when
+  needed.
+- The server owns `burdened.json` and sends the effective settings to every
+  client.
