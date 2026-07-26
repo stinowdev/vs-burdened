@@ -1,86 +1,92 @@
 # Burdened design
 
-This document tracks feature status and the design decisions that constrain
-future work. User-facing behavior belongs in [README.md](README.md); release history
-belongs in [CHANGELOG.md](CHANGELOG.md).
+This file defines what Burdened implements and the decisions that constrain
+future work. See [README.md](README.md) for player documentation and
+[CHANGELOG.md](CHANGELOG.md) for release history.
 
 ## Feature status
 
 | ID | Status | Feature | Config key | Default | Authority |
 |---|---|---|---|---|---|
-| F01 | Implemented | Reduced hotbar slots (1 through 10) | `HotbarSlots` | 10 | Server enforces, client renders |
-| F02 | Implemented | Reduced bag-equip slots (1 through 4) | `BagSlots` | 4 | Server enforces, client renders |
-| F03 | Implemented | Immersive L/B/R bag role rules; D04 visuals remain planned | `ImmersiveCarryingMode` | false | Universal |
-| F04 | Implemented | Compact crafting-only inventory dialog | `HideBagContentsInDialog` | true | Client, using server-synced config |
-| F05 | Implemented | Concise hotbar scroll across usable slots | Follows F01 | - | Client |
-| F06 | Implemented | Offhand manually accepts non-bag items | `OffhandHoldsAnything` | true | Server enforces |
-| F07 | Planned | Auto-pickup policy for equipped bag contents | - | - | Server |
-| F08 | Implemented | Placed bag open and pickup remap | `ImprovedBagInteractions` | true | Universal |
-| F09 | Planned | Remember container dialog placement per identity | - | - | Client |
-| F10 | Implemented | Open or place bags directly from equipped slots | `ImprovedBagInteractions` | true | Client input, server placement |
+| F01 | Implemented | Limit usable hotbar slots | `HotbarSlots` | `10` | Server enforces; client renders |
+| F02 | Implemented | Limit usable bag-equip slots | `BagSlots` | `4` | Server enforces; client renders |
+| F03 | Implemented | Assign immersive L / B / R bag roles | `ImmersiveCarryingMode` | `false` | Server validates; client labels |
+| F04 | Implemented | Show a compact crafting-only E inventory | `HideBagContentsInDialog` | `true` | Client UI from synced config |
+| F05 | Implemented | Scroll only through usable hotbar and bag slots | Follows F01 / F02 | - | Client input from synced config |
+| F06 | Implemented | Allow manual offhand storage for non-bag items | `OffhandHoldsAnything` | `true` | Server validates; client predicts |
+| F07 | Planned | Route automatic pickup into equipped bag contents | - | - | Server routes |
+| F08 | Implemented | Open and equip placed bags directly | `ImprovedBagInteractions` | `true` | Server transfers; client opens |
+| F09 | Planned | Remember container window positions by identity | - | - | Client |
+| F10 | Implemented | Open and place equipped bags directly | `ImprovedBagInteractions` | `true` | Server places; client opens |
 
-Planned features do not receive runtime config keys until their behavior is
-implemented.
+Planned features have no runtime settings.
 
-## Bag interaction contract (F08 and F10)
+## Bag interaction contract
 
-The interaction remap applies only to equippable held bags that expose the
-vanilla ground-storage bag behaviors described by D08. Chests, vessels, and
-other containers retain their vanilla behavior. Bag contents and arrangement
-remain attached to the item stack during every transition.
+F08 and F10 apply only to equippable bags that expose both vanilla
+ground-storage bag behaviors required by D08. Chests, vessels, and other
+containers keep their vanilla interactions.
 
-### Placed bags (F08)
+| Location | Input | Result | Authority |
+|---|---|---|---|
+| Placed bag | Right-click | Open its inventory | Vanilla workspace |
+| Placed bag | Shift + right-click | Equip into a compatible empty bag slot | Server |
+| Equipped bag slot | Right-click | Toggle that bag window | Client |
+| Equipped bag slot | Shift + click | Place on the targeted block | Server |
+| Selected equipped bag | Right-click | Toggle when the target does not consume the input | Client |
+| Selected equipped bag | Shift + right-click | Place on the targeted block | Server |
 
-| Input | Action |
-|---|---|
-| Right-click | Open through the vanilla contained-bag workspace |
-| Shift + right-click | Request a server-authoritative transfer into a compatible empty bag-equip slot |
+The following rules apply to every transition:
 
-If no compatible slot exists, the bag remains placed. Pickup never falls back
-to general inventory routing or the offhand.
+- Bag contents remain attached to the item stack.
+- A rejected pickup or placement leaves the source unchanged.
+- Floor pickup never falls back to general inventory routing or the offhand.
+- Several equipped bag windows may remain open at once.
+- A selected equipped bag remains visible in hand and is hidden from the worn
+  player mesh.
 
-### Equipped bags (F10)
-
-| Input | Action |
-|---|---|
-| Right-click a bag slot with an empty mouse cursor | Toggle that bag inventory |
-| Right-click another bag slot | Open it alongside existing bag dialogs |
-| Shift + click a bag slot with an empty mouse cursor | Place the bag on the targeted block |
-| Select a bag slot with Ctrl-scroll, then right-click | Toggle that bag inventory when the target does not consume the interaction |
-| Select a bag slot, then Shift + right-click a block | Place the bag on that block |
-
-Ctrl remains the F05 bag-slot selection modifier. Shift owns bag placement and
-pickup. Equipped bag windows use the four-column inset layout of placed bags.
-While an equipped bag is selected, its vanilla worn copy is hidden and its
-active-hand rendering remains visible, with immersive mode on or off.
+Ctrl remains the F05 modifier for selecting equipped bag slots. Shift owns bag
+pickup and placement.
 
 ## Locked decisions
 
 | ID | State | Decision |
 |---|---|---|
-| D01 | Active | Burdened is standalone and does not depend on or patch other inventory mods. |
-| D02 | Active | When configuration locks occupied slots, their items move into valid inventory space first and then drop on the ground. Items are never deleted. |
-| D03 | Active | Immersive mode exposes L/B/R. B accepts the normal, sturdy, and hunter backpacks. L/R accept other equippable bag-class storage items and reject those backpacks. |
-| D04 | Planned | Burdened-controlled on-body placement will build on or replace vanilla worn-bag rendering: B on the back, L/R at the waist, with the selected bag suppressed while rendered in hand. |
-| D05 | Active | The compact E dialog hides bag contents only. Bag-equip slots remain on the hotbar HUD. |
-| D06 | Active | The offhand accepts manual placement of non-bag items. Bags and automatic best-slot routing are excluded. Item use remains vanilla. |
-| D07 | Planned | F07 will preserve vanilla priority: hotbar first, then equipped bag contents. |
-| D08 | Active | Interaction remaps require both an equippable held bag and the vanilla ground-storage bag behaviors. |
-| D09 | Active | Shift is the placement and pickup modifier. Rejection leaves the source bag untouched. Open is right-click. |
-| D10 | Planned | F09 will remember movable dialog placement per durable container identity rather than per world position, including pickup and replacement where identity can persist. |
+| D01 | Active | Burdened is standalone. It does not depend on or patch another inventory mod. |
+| D02 | Active | Items in newly locked slots move into valid storage, then drop at the player's feet if no destination remains. They are never deleted. |
+| D03 | Active | Immersive mode exposes L / B / R. B accepts the normal, sturdy, and hunter backpacks. L and R accept other equippable bags. |
+| D04 | Planned | Custom on-body rendering will place B on the back and L / R at the waist. A selected bag remains hand-only. |
+| D05 | Active | The compact E inventory hides bag contents only. Bag-equip slots remain on the hotbar. |
+| D06 | Active | Bags are always rejected by the offhand. With `OffhandHoldsAnything=true`, non-bag items may be placed there manually and automatic best-slot routing excludes it. Item use remains vanilla. |
+| D07 | Planned | F07 preserves vanilla priority: hotbar first, then equipped bag contents. |
+| D08 | Active | Improved interactions require an equippable bag with both vanilla ground-storage bag behaviors. |
+| D09 | Active | Right-click opens. Shift picks up or places. Rejection leaves the source unchanged. |
+| D10 | Planned | F09 identifies a movable container independently of its world position. Pickup and replacement must not lose that identity. |
+| D11 | Active | Equipped-bag placement identifies the source by slot index. The server revalidates that slot when handling the request; no item fingerprint is sent. |
 
-## Design notes
+## Roadmap notes
 
 ### F09 container identity
 
-Vanilla ground-storage dialog placement appears to be associated with the
-supporting block or world position. F09 must verify that behavior and define a
-durable container identity before implementation. The implementation must not
-mistake two containers placed at the same location for the same container.
+Vanilla appears to associate ground-storage window placement with a world
+position. F09 needs a durable container identity so two containers placed at
+the same position are not treated as the same container.
+
+## Patch inventory
+
+| Patch | Engine target | Kind | Side | Feature | Need |
+|---|---|---|---|---|---|
+| `SlotLockPatches` | `ItemSlot.CanHold` / `CanTakeFrom` hierarchy; player hotbar and backpack `GetSuitability` | Prefix / postfix | Both | F01 / F02 / F03 | Enforce rules across every slot-entry path |
+| `OffhandPatches` | `ItemSlot.CanHold`, `ItemSlot.CanTakeFrom`, `InventoryBase.GetBestSuitedSlot` | Prefix / postfix | Both | F06 / D06 | Change offhand storage without changing item use |
+| `HotbarHudPatches` | `HudHotbar.ComposeGuis` | Postfix | Client | F01 / F02 / F03 | Resize and relabel the existing HUD |
+| `HotbarScrollPatches` | `HudHotbar.moveToHotbarSlot`, `HudHotbar.OnKeySlot` | Prefix | Client | F05 | Replace the private vanilla selection ring |
+| `InventoryDialogPatches` | `GuiDialogInventory.ComposeSurvivalInvDialog` | Prefix | Client | F04 / D05 | Compose the existing private inventory dialog differently |
+| `BagInteractionPatches` | `BlockEntityGroundStorage.OnPlayerInteractStart`, held ground-storage behavior, slot clicks, help, contained workspace packets | Prefix / postfix | Both | F08 / F10 | Remap gestures while preserving vanilla bag storage |
+| `BagRenderPatches` | `EntityBehaviorPlayerInventory.OnTesselation`, client active-slot changes | Prefix / postfix / finalizer | Client | F10 | Suppress only the selected bag from the cached worn mesh |
 
 ## Configuration contract
 
-The server stores `burdened.json` under the Vintage Story data directory,
-sanitizes it on load, and syncs the effective values to every client. The client
-does not read a separate local configuration. Only implemented and functional
-settings are serialized.
+The server loads and sanitizes `burdened.json` at startup, then sends the
+effective values to every client. Clients do not read a separate local
+configuration, and only implemented settings are serialized. After editing the
+file, restart the dedicated server or reopen the singleplayer world.

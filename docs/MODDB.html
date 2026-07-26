@@ -19,8 +19,8 @@
     place equipped bags into the world, and pick placed bags directly back into a compatible equip slot.</li>
   <li><strong>A focused inventory screen:</strong> optionally remove bag contents from the inventory dialog so pressing
     <strong>E</strong> opens a compact crafting-only window. Equipped bags remain available from the hotbar.</li>
-  <li><strong>Useful, bounded offhand storage:</strong> manually place non-bag items in the offhand. Bags are rejected,
-    and automatic pickup never uses it as an overflow destination.</li>
+  <li><strong>Useful, bounded offhand storage:</strong> manually place non-bag items in the offhand. Bags are rejected.
+    While this setting is enabled, automatic pickup does not use the offhand as an overflow destination.</li>
   <li><strong>Safe slot reduction:</strong> if configuration locks an occupied slot, Burdened first moves its item into
     valid inventory space, then drops it at the player's feet if necessary. Items are never intentionally deleted.</li>
 </ul>
@@ -69,8 +69,8 @@
 <h3>Configuration</h3>
 <p>Burdened creates the following server-owned file on first run:</p>
 <p><code>%APPDATA%\VintagestoryData\ModConfig\burdened.json</code></p>
-<p>In singleplayer, your local game is the server. Restart the server or reconnect after editing the file so every
-  client receives the effective settings.</p>
+<p>After editing the file, restart the dedicated server or reopen the singleplayer world so the server loads and sends
+  the updated settings.</p>
 <table style="width: 72.1027%; border-collapse: collapse; height: 153.312px;" border="1" cellpadding="6">
   <thead>
     <tr style="height: 20.1875px;">

@@ -22,12 +22,12 @@ public class BurdenedConfig
     // (that mode owns the bag slot semantics: L / B / R).
     public int BagSlots { get; set; } = MaxBagSlots;
 
-    // F03: L (waist bag) / B (backpack) / R (waist bag) slots + on-body rendering.
+    // F03 / D03: L (waist bag) / B (backpack) / R (waist bag) role rules.
     public bool ImmersiveCarryingMode { get; set; } = false;
 
     // F04 / D05: the inventory dialog ("E") shows only crafting; bag contents
-    // are hidden. Bag-equip slots stay on the hotbar HUD. Access bag storage
-    // by placing the bag (F08) once that ships.
+    // are hidden. Bag-equip slots stay on the hotbar HUD. F08 / F10 provide
+    // direct access to placed and equipped bag storage.
     public bool HideBagContentsInDialog { get; set; } = true;
 
     // F06 / D06: the offhand manually accepts non-bag items.

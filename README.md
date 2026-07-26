@@ -55,8 +55,8 @@ should be treated as unverified until they pass the release regression matrix.
 ## Configuration
 
 The server creates `%APPDATA%\VintagestoryData\ModConfig\burdened.json` on
-first run. In singleplayer, the local game is the server. Restart or reconnect
-after editing the file so clients receive the updated rules.
+first run. After editing it, restart the dedicated server or reopen the
+singleplayer world so the server loads and sends the updated rules.
 
 ```json
 {
@@ -76,7 +76,8 @@ after editing the file so clients receive the updated rules.
 - `HideBagContentsInDialog` removes bag contents from the E inventory dialog;
   equipped bags remain available from the hotbar HUD.
 - `OffhandHoldsAnything` allows manual placement of non-bag items in the
-  offhand. Bags and automatic inventory routing are always excluded.
+  offhand. Bags are always rejected. While this setting is enabled, automatic
+  inventory routing also excludes the offhand.
 - `ImprovedBagInteractions` enables the complete F08/F10 interaction contract.
 
 ## Bag interactions
@@ -98,7 +99,6 @@ pickup or placement requests leave the bag and its contents untouched.
 - [FEATURES.md](FEATURES.md) tracks implementation status and design decisions.
 - [CHANGELOG.md](CHANGELOG.md) records release changes and known limitations.
 - [docs/MODDB.html](docs/MODDB.html) is the maintained Mod DB page copy.
-- [docs/TESTING.md](docs/TESTING.md) defines the release regression matrix.
 
 ## Building
 
