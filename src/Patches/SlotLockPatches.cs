@@ -32,33 +32,37 @@ public static class SlotLockPatches
             if (applied) return;
             applied = true;
 
-            HarmonyMethod rejectPrefix = new HarmonyMethod(
-                AccessTools.Method(typeof(SlotLockPatches), nameof(RejectWhenLockedPrefix)));
-            HarmonyMethod taxonomyPrefix = new HarmonyMethod(
-                AccessTools.Method(typeof(SlotLockPatches), nameof(RejectWrongBagRolePrefix)));
+            HarmonyMethod? rejectPrefix =
+                PatchSupport.Hook(logger, typeof(SlotLockPatches), nameof(RejectWhenLockedPrefix));
+            HarmonyMethod? taxonomyPrefix =
+                PatchSupport.Hook(logger, typeof(SlotLockPatches), nameof(RejectWrongBagRolePrefix));
 
             int patched = 0;
             foreach (MethodInfo target in FindSlotOverrides(nameof(ItemSlot.CanHold)))
             {
-                patched += TryPatch(harmony, logger, target, prefix: rejectPrefix);
-                patched += TryPatch(harmony, logger, target, prefix: taxonomyPrefix);
+                string name = $"{target.DeclaringType?.FullName}.{target.Name}";
+                patched += PatchSupport.TryPatch(harmony, logger, target, name, prefix: rejectPrefix);
+                patched += PatchSupport.TryPatch(harmony, logger, target, name, prefix: taxonomyPrefix);
             }
             foreach (MethodInfo target in FindSlotOverrides(nameof(ItemSlot.CanTakeFrom)))
             {
-                patched += TryPatch(harmony, logger, target, prefix: rejectPrefix);
-                patched += TryPatch(harmony, logger, target, prefix: taxonomyPrefix);
+                string name = $"{target.DeclaringType?.FullName}.{target.Name}";
+                patched += PatchSupport.TryPatch(harmony, logger, target, name, prefix: rejectPrefix);
+                patched += PatchSupport.TryPatch(harmony, logger, target, name, prefix: taxonomyPrefix);
             }
 
-            HarmonyMethod suitabilityPostfix = new HarmonyMethod(
-                AccessTools.Method(typeof(SlotLockPatches), nameof(SuitabilityPostfix)));
+            HarmonyMethod? suitabilityPostfix =
+                PatchSupport.Hook(logger, typeof(SlotLockPatches), nameof(SuitabilityPostfix));
 
-            patched += TryPatch(harmony, logger,
+            patched += PatchSupport.TryPatch(harmony, logger,
                 AccessTools.Method(typeof(InventoryPlayerHotbar), "GetSuitability",
                     new[] { typeof(ItemSlot), typeof(ItemSlot), typeof(bool) }),
+                "InventoryPlayerHotbar.GetSuitability",
                 postfix: suitabilityPostfix);
-            patched += TryPatch(harmony, logger,
+            patched += PatchSupport.TryPatch(harmony, logger,
                 AccessTools.Method(typeof(InventoryPlayerBackpacks), "GetSuitability",
                     new[] { typeof(ItemSlot), typeof(ItemSlot), typeof(bool) }),
+                "InventoryPlayerBackpacks.GetSuitability",
                 postfix: suitabilityPostfix);
 
             logger.Notification("[{0}] slot lock patches applied to {1} method(s).", BurdenedModSystem.ModId, patched);
@@ -108,22 +112,6 @@ public static class SlotLockPatches
         }
     }
 
-    private static int TryPatch(Harmony harmony, ILogger logger, MethodInfo? target,
-        HarmonyMethod? prefix = null, HarmonyMethod? postfix = null)
-    {
-        if (target == null) return 0;
-        try
-        {
-            harmony.Patch(target, prefix: prefix, postfix: postfix);
-            return 1;
-        }
-        catch (Exception e)
-        {
-            logger.Warning("[{0}] Could not patch {1}.{2}: {3}",
-                BurdenedModSystem.ModId, target.DeclaringType?.FullName, target.Name, e.Message);
-            return 0;
-        }
-    }
 
     /// <summary>
     /// Every <see cref="ItemSlot"/>-derived type in the loaded assemblies that

@@ -12,6 +12,12 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](FEATURES.md).
   instead of patching the client inventory manager. Behavior is unchanged, and
   Burdened patches two fewer engine internals.
 
+### Fixed
+
+- A game method that Burdened can no longer find now disables only the feature
+  that needed it, instead of stopping the whole mod from loading. Each group of
+  patches reports how many it applied, and names anything it could not.
+
 ## [v0.3.0](https://github.com/stinowdev/vs-burdened/releases/tag/v0.3.0)
 
 This release is about using bags directly. Equipped bags can be opened or

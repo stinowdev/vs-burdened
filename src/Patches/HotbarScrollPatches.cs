@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Burdened.Bags;
@@ -36,13 +35,21 @@ public static class HotbarScrollPatches
             if (applied) return;
             applied = true;
 
-            harmony.Patch(
+            int patched = 0;
+            patched += PatchSupport.TryPatch(harmony, api.Logger,
                 AccessTools.Method(typeof(HudHotbar), nameof(HudHotbar.moveToHotbarSlot)),
-                prefix: new HarmonyMethod(AccessTools.Method(typeof(HotbarScrollPatches), nameof(MoveToHotbarSlotPrefix))));
+                "HudHotbar.moveToHotbarSlot",
+                prefix: PatchSupport.Hook(api.Logger, typeof(HotbarScrollPatches), nameof(MoveToHotbarSlotPrefix)));
 
-            harmony.Patch(
+            // Also invoked by MoveToHotbarSlotPrefix to reuse vanilla
+            // hand-action cancel, so a null here disables the whole ring
+            patched += PatchSupport.TryPatch(harmony, api.Logger,
                 OnKeySlotMethod,
-                prefix: new HarmonyMethod(AccessTools.Method(typeof(HotbarScrollPatches), nameof(OnKeySlotPrefix))));
+                "HudHotbar.OnKeySlot",
+                prefix: PatchSupport.Hook(api.Logger, typeof(HotbarScrollPatches), nameof(OnKeySlotPrefix)));
+
+            api.Logger.Notification(
+                "[{0}] hotbar scroll patches applied to {1} method(s).", BurdenedModSystem.ModId, patched);
         }
     }
 

@@ -26,17 +26,16 @@ public static class BagRenderPatches
             if (applied) return;
             applied = true;
 
-            var target = AccessTools.Method(
-                typeof(EntityBehaviorPlayerInventory),
-                nameof(EntityBehaviorPlayerInventory.OnTesselation));
+            int patched = PatchSupport.TryPatch(harmony, logger,
+                AccessTools.Method(typeof(EntityBehaviorPlayerInventory),
+                    nameof(EntityBehaviorPlayerInventory.OnTesselation)),
+                "EntityBehaviorPlayerInventory.OnTesselation",
+                prefix: PatchSupport.Hook(logger, typeof(BagRenderPatches), nameof(TessellationPrefix)),
+                postfix: PatchSupport.Hook(logger, typeof(BagRenderPatches), nameof(TessellationPostfix)),
+                finalizer: PatchSupport.Hook(logger, typeof(BagRenderPatches), nameof(TessellationFinalizer)));
 
-            harmony.Patch(
-                target,
-                prefix: new HarmonyMethod(AccessTools.Method(typeof(BagRenderPatches), nameof(TessellationPrefix))),
-                postfix: new HarmonyMethod(AccessTools.Method(typeof(BagRenderPatches), nameof(TessellationPostfix))),
-                finalizer: new HarmonyMethod(AccessTools.Method(typeof(BagRenderPatches), nameof(TessellationFinalizer))));
-
-            logger.Notification("[{0}] selected bag render patch applied.", BurdenedModSystem.ModId);
+            logger.Notification(
+                "[{0}] selected bag render patch applied to {1} method(s).", BurdenedModSystem.ModId, patched);
         }
     }
 

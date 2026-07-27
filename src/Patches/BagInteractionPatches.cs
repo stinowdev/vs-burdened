@@ -39,56 +39,60 @@ public static class BagInteractionPatches
             if (sharedApplied) return;
             sharedApplied = true;
 
-            MethodInfo? target = AccessTools.Method(
-                typeof(BlockEntityGroundStorage),
-                nameof(BlockEntityGroundStorage.OnPlayerInteractStart));
-            if (target == null)
-            {
-                logger.Warning("[{0}] Could not find the ground-storage interaction method.", BurdenedModSystem.ModId);
-                return;
-            }
+            int patched = 0;
+            patched += PatchSupport.TryPatch(harmony, logger,
+                AccessTools.Method(typeof(BlockEntityGroundStorage),
+                    nameof(BlockEntityGroundStorage.OnPlayerInteractStart)),
+                "BlockEntityGroundStorage.OnPlayerInteractStart",
+                prefix: PatchSupport.Hook(logger, typeof(BagInteractionPatches), nameof(FloorInteractPrefix)));
 
-            harmony.Patch(target, prefix: new HarmonyMethod(
-                AccessTools.Method(typeof(BagInteractionPatches), nameof(FloorInteractPrefix))));
-
-            harmony.Patch(
+            patched += PatchSupport.TryPatch(harmony, logger,
                 AccessTools.Method(typeof(CollectibleBehaviorGroundStorable),
                     nameof(CollectibleBehaviorGroundStorable.OnHeldInteractStart)),
-                prefix: new HarmonyMethod(AccessTools.Method(
-                    typeof(BagInteractionPatches), nameof(EquippedBagHeldInteractPrefix))));
+                "CollectibleBehaviorGroundStorable.OnHeldInteractStart",
+                prefix: PatchSupport.Hook(logger, typeof(BagInteractionPatches), nameof(EquippedBagHeldInteractPrefix)));
+
+            logger.Notification(
+                "[{0}] shared bag interaction patches applied to {1} method(s).", BurdenedModSystem.ModId, patched);
         }
     }
 
     public static void ApplyClient(Harmony harmony, ICoreClientAPI api)
     {
         capi = api;
+        ILogger logger = api.Logger;
         lock (Gate)
         {
             if (clientApplied) return;
             clientApplied = true;
 
-            harmony.Patch(
-                AccessTools.Method(typeof(GuiElementItemSlotGridBase), nameof(GuiElementItemSlotGridBase.SlotClick)),
-                prefix: new HarmonyMethod(AccessTools.Method(
-                    typeof(BagInteractionPatches), nameof(BagSlotClickPrefix))));
+            int patched = 0;
+            patched += PatchSupport.TryPatch(harmony, logger,
+                AccessTools.Method(typeof(GuiElementItemSlotGridBase),
+                    nameof(GuiElementItemSlotGridBase.SlotClick)),
+                "GuiElementItemSlotGridBase.SlotClick",
+                prefix: PatchSupport.Hook(logger, typeof(BagInteractionPatches), nameof(BagSlotClickPrefix)));
 
-            harmony.Patch(
+            patched += PatchSupport.TryPatch(harmony, logger,
                 AccessTools.Method(typeof(CollectibleBehaviorGroundStorable),
                     nameof(CollectibleBehaviorGroundStorable.GetHeldInteractionHelp)),
-                postfix: new HarmonyMethod(AccessTools.Method(
-                    typeof(BagInteractionPatches), nameof(EquippedBagHelpPostfix))));
+                "CollectibleBehaviorGroundStorable.GetHeldInteractionHelp",
+                postfix: PatchSupport.Hook(logger, typeof(BagInteractionPatches), nameof(EquippedBagHelpPostfix)));
 
-            harmony.Patch(
+            patched += PatchSupport.TryPatch(harmony, logger,
                 AccessTools.Method(typeof(BlockEntityContainedBagWorkspace),
                     nameof(BlockEntityContainedBagWorkspace.OnReceivedServerPacket)),
-                prefix: new HarmonyMethod(AccessTools.Method(
-                    typeof(BagInteractionPatches), nameof(ContainedBagPacketPrefix))));
+                "BlockEntityContainedBagWorkspace.OnReceivedServerPacket",
+                prefix: PatchSupport.Hook(logger, typeof(BagInteractionPatches), nameof(ContainedBagPacketPrefix)));
 
-            harmony.Patch(
+            patched += PatchSupport.TryPatch(harmony, logger,
                 AccessTools.Method(typeof(BlockGroundStorage),
                     nameof(BlockGroundStorage.GetPlacedBlockInteractionHelp)),
-                postfix: new HarmonyMethod(AccessTools.Method(
-                    typeof(BagInteractionPatches), nameof(FloorBagHelpPostfix))));
+                "BlockGroundStorage.GetPlacedBlockInteractionHelp",
+                postfix: PatchSupport.Hook(logger, typeof(BagInteractionPatches), nameof(FloorBagHelpPostfix)));
+
+            logger.Notification(
+                "[{0}] client bag interaction patches applied to {1} method(s).", BurdenedModSystem.ModId, patched);
         }
     }
 

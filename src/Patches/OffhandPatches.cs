@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Reflection;
 using Burdened.Inventory;
 using HarmonyLib;
 using Vintagestory.API.Common;
@@ -30,18 +28,20 @@ public static class OffhandPatches
             applied = true;
 
             int patched = 0;
-            patched += TryPatch(harmony, logger,
+            patched += PatchSupport.TryPatch(harmony, logger,
                 AccessTools.Method(typeof(ItemSlot), nameof(ItemSlot.CanHold)),
-                prefix: new HarmonyMethod(AccessTools.Method(typeof(OffhandPatches), nameof(CanHoldPrefix))));
-            patched += TryPatch(harmony, logger,
+                "ItemSlot.CanHold",
+                prefix: PatchSupport.Hook(logger, typeof(OffhandPatches), nameof(CanHoldPrefix)));
+            patched += PatchSupport.TryPatch(harmony, logger,
                 AccessTools.Method(typeof(ItemSlot), nameof(ItemSlot.CanTakeFrom),
                     new[] { typeof(ItemSlot), typeof(EnumMergePriority) }),
-                prefix: new HarmonyMethod(AccessTools.Method(typeof(OffhandPatches), nameof(CanTakeFromPrefix))));
-            patched += TryPatch(harmony, logger,
+                "ItemSlot.CanTakeFrom",
+                prefix: PatchSupport.Hook(logger, typeof(OffhandPatches), nameof(CanTakeFromPrefix)));
+            patched += PatchSupport.TryPatch(harmony, logger,
                 AccessTools.Method(typeof(InventoryBase), nameof(InventoryBase.GetBestSuitedSlot),
                     new[] { typeof(ItemSlot), typeof(ItemStackMoveOperation), typeof(List<ItemSlot>) }),
-                postfix: new HarmonyMethod(AccessTools.Method(
-                    typeof(OffhandPatches), nameof(BestSuitedSlotPostfix))));
+                "InventoryBase.GetBestSuitedSlot",
+                postfix: PatchSupport.Hook(logger, typeof(OffhandPatches), nameof(BestSuitedSlotPostfix)));
 
             logger.Notification("[{0}] offhand patches applied to {1} method(s).", BurdenedModSystem.ModId, patched);
         }
@@ -152,24 +152,4 @@ public static class OffhandPatches
             && SlotLocks.Config?.OffhandHoldsAnything == true;
     }
 
-    private static int TryPatch(
-        Harmony harmony,
-        ILogger logger,
-        MethodInfo? target,
-        HarmonyMethod? prefix = null,
-        HarmonyMethod? postfix = null)
-    {
-        if (target == null) return 0;
-        try
-        {
-            harmony.Patch(target, prefix: prefix, postfix: postfix);
-            return 1;
-        }
-        catch (Exception e)
-        {
-            logger.Warning("[{0}] Could not patch {1}.{2}: {3}",
-                BurdenedModSystem.ModId, target.DeclaringType?.FullName, target.Name, e.Message);
-            return 0;
-        }
-    }
 }

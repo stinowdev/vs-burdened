@@ -30,9 +30,13 @@ public static class HotbarHudPatches
             if (applied) return;
             applied = true;
 
-            harmony.Patch(
+            int patched = PatchSupport.TryPatch(harmony, api.Logger,
                 AccessTools.Method(typeof(HudHotbar), nameof(HudHotbar.ComposeGuis)),
-                postfix: new HarmonyMethod(AccessTools.Method(typeof(HotbarHudPatches), nameof(RepackPostfix))));
+                "HudHotbar.ComposeGuis",
+                postfix: PatchSupport.Hook(api.Logger, typeof(HotbarHudPatches), nameof(RepackPostfix)));
+
+            api.Logger.Notification(
+                "[{0}] hotbar HUD patches applied to {1} method(s).", BurdenedModSystem.ModId, patched);
         }
     }
 

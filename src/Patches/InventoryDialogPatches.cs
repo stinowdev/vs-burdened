@@ -52,9 +52,13 @@ public static class InventoryDialogPatches
             if (applied) return;
             applied = true;
 
-            harmony.Patch(
+            int patched = PatchSupport.TryPatch(harmony, api.Logger,
                 AccessTools.Method(typeof(GuiDialogInventory), "ComposeSurvivalInvDialog"),
-                prefix: new HarmonyMethod(AccessTools.Method(typeof(InventoryDialogPatches), nameof(ComposeSurvivalPrefix))));
+                "GuiDialogInventory.ComposeSurvivalInvDialog",
+                prefix: PatchSupport.Hook(api.Logger, typeof(InventoryDialogPatches), nameof(ComposeSurvivalPrefix)));
+
+            api.Logger.Notification(
+                "[{0}] inventory dialog patches applied to {1} method(s).", BurdenedModSystem.ModId, patched);
         }
     }
 
