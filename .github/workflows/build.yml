@@ -103,4 +103,4 @@ jobs:
           generate_release_notes: false
           files: ${{ steps.package.outputs.zip_path }}
           body: |
-            <!-- Paste the matching section from CHANGELOG.md, then publish. -->
+            See the [full changelog](https://github.com/stinowdev/vs-burdened/blob/main/CHANGELOG.md) for technical details.
