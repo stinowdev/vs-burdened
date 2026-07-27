@@ -17,6 +17,10 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](FEATURES.md).
 - A game method that Burdened can no longer find now disables only the feature
   that needed it, instead of stopping the whole mod from loading. Each group of
   patches reports how many it applied, and names anything it could not.
+- F03 / D03 - Immersive bag-role rules now attach to every slot type in the
+  game. 8 vanilla slot types refused the previous attachment and logged a
+  warning on every world load, and a bag-equip slot added by another mod could
+  have skipped the role rules with no sign that it had.
 
 ## [v0.3.0](https://github.com/stinowdev/vs-burdened/releases/tag/v0.3.0)
 

@@ -89,13 +89,17 @@ public static class SlotLockPatches
     }
 
     /// <summary>
-    /// F03/D03: immersive L/B/R taxonomy. Both <see cref="ItemSlot.CanHold"/> and
-    /// <see cref="ItemSlot.CanTakeFrom"/> take a source slot as their first
-    /// argument, so one prefix covers both.
+    /// F03/D03: keep immersive L/B/R bags to their own slots.
+    /// One prefix covers both <see cref="ItemSlot.CanHold"/> and
+    /// <see cref="ItemSlot.CanTakeFrom"/> (source slot is always arg 0).
+    ///
+    /// Bind by position, not name. Overrides rename that parameter
+    /// (<c>itemstackFromSourceSlot</c>, <c>slot</c>, …)... a name-bound
+    /// prefix would miss them and the role rules would never fire.
     /// </summary>
-    public static bool RejectWrongBagRolePrefix(ItemSlot __instance, ItemSlot sourceSlot, ref bool __result)
+    public static bool RejectWrongBagRolePrefix(ItemSlot __instance, ItemSlot __0, ref bool __result)
     {
-        if (BagRoles.CanEquipInSlot(__instance, sourceSlot?.Itemstack)) return true;
+        if (BagRoles.CanEquipInSlot(__instance, __0?.Itemstack)) return true;
         __result = false;
         return false;
     }
