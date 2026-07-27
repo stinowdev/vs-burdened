@@ -1,18 +1,18 @@
 using System;
+using Burdened.Bags;
 using HarmonyLib;
 using Vintagestory.API.Common;
-using Vintagestory.API.Config;
-using Vintagestory.API.Common.Entities;
-using Vintagestory.Common;
-using Vintagestory.Client.NoObf;
 using Vintagestory.GameContent;
 
 namespace Burdened.Patches;
 
 /// <summary>
-/// A selected bag-equip slot is rendered by vanilla as the active hand item.
-/// Exclude that same slot while vanilla composes the player's worn backpack
-/// shape so one bag is not shown on the body and in the hand simultaneously.
+/// F10: a selected bag-equip slot is rendered by vanilla as the active hand
+/// item. Exclude that same slot while vanilla composes the player's worn
+/// backpack shape so one bag is not shown on the body and in the hand at once.
+///
+/// D12 exception: the effect must wrap the vanilla body, which no behavior can.
+/// Client only. Runs on the client main thread, not a tesselation worker
 /// </summary>
 public static class BagRenderPatches
 {
@@ -36,26 +36,6 @@ public static class BagRenderPatches
                 postfix: new HarmonyMethod(AccessTools.Method(typeof(BagRenderPatches), nameof(TessellationPostfix))),
                 finalizer: new HarmonyMethod(AccessTools.Method(typeof(BagRenderPatches), nameof(TessellationFinalizer))));
 
-            var activeSlotSetter = AccessTools.PropertySetter(
-                typeof(ClientPlayerInventoryManager),
-                nameof(ClientPlayerInventoryManager.ActiveHotbarSlotNumber));
-            harmony.Patch(
-                activeSlotSetter,
-                prefix: new HarmonyMethod(AccessTools.Method(
-                    typeof(BagRenderPatches), nameof(ActiveSlotChangingPrefix))),
-                postfix: new HarmonyMethod(AccessTools.Method(
-                    typeof(BagRenderPatches), nameof(ActiveSlotChangedPostfix))));
-
-            var serverSlotChange = AccessTools.Method(
-                typeof(ClientPlayerInventoryManager),
-                nameof(ClientPlayerInventoryManager.SetActiveHotbarSlotNumberFromServer));
-            harmony.Patch(
-                serverSlotChange,
-                prefix: new HarmonyMethod(AccessTools.Method(
-                    typeof(BagRenderPatches), nameof(ActiveSlotChangingPrefix))),
-                postfix: new HarmonyMethod(AccessTools.Method(
-                    typeof(BagRenderPatches), nameof(ActiveSlotChangedPostfix))));
-
             logger.Notification("[{0}] selected bag render patch applied.", BurdenedModSystem.ModId);
         }
     }
@@ -72,7 +52,7 @@ public static class BagRenderPatches
         __state = null;
 
         IPlayer? player = (__instance.entity as EntityPlayer)?.Player;
-        ItemSlot? activeSlot = SelectedEquippedBagSlot(player);
+        ItemSlot? activeSlot = BagSupport.SelectedEquippedBagSlot(player);
         if (activeSlot?.Itemstack == null) return;
 
         __state = new HiddenBagState(activeSlot, activeSlot.Itemstack);
@@ -86,48 +66,6 @@ public static class BagRenderPatches
         __state?.Restore();
         return __exception;
     }
-
-    /// <summary>
-    /// The selected item is rendered by the hand renderer, while the body mesh
-    /// is cached. Invalidate that mesh when selection enters or leaves an
-    /// equipped bag so its worn copy changes immediately.
-    /// </summary>
-    public static void ActiveSlotChangingPrefix(
-        ClientPlayerInventoryManager __instance,
-        ref ActiveBagSelectionState __state)
-    {
-        __state = new ActiveBagSelectionState(
-            __instance.ActiveHotbarSlotNumber,
-            SelectedEquippedBagSlot(__instance.player) != null);
-    }
-
-    public static void ActiveSlotChangedPostfix(
-        ClientPlayerInventoryManager __instance,
-        ActiveBagSelectionState __state)
-    {
-        if (__state.SlotNumber == __instance.ActiveHotbarSlotNumber) return;
-
-        bool selectedBagNow = SelectedEquippedBagSlot(__instance.player) != null;
-        if (!__state.SelectedBag && !selectedBagNow) return;
-
-        (__instance.player?.Entity as EntityPlayer)?.MarkShapeModified();
-    }
-
-    private static ItemSlot? SelectedEquippedBagSlot(IPlayer? player)
-    {
-        if (player?.InventoryManager.GetOwnInventory(GlobalConstants.backpackInvClassName)
-                is not InventoryPlayerBackpacks backpacks)
-        {
-            return null;
-        }
-
-        ItemSlot? activeSlot = player.InventoryManager.ActiveHotbarSlot;
-        if (activeSlot?.Itemstack == null) return null;
-
-        return Array.IndexOf(backpacks.bagSlots, activeSlot) >= 0 ? activeSlot : null;
-    }
-
-    public readonly record struct ActiveBagSelectionState(int SlotNumber, bool SelectedBag);
 
     public sealed class HiddenBagState
     {

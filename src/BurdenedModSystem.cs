@@ -62,6 +62,26 @@ public class BurdenedModSystem : ModSystem
         RefreshClientUi();
     }
 
+    /// <summary>
+    /// F10 / D12: vanilla renders a selected bag as the active hand item and
+    /// BagRenderPatches hides its worn copy, but the body mesh is cached.
+    /// Invalidate it whenever selection enters or leaves an occupied bag-equip
+    /// slot.
+    /// </summary>
+    private void OnAfterActiveSlotChanged(ActiveSlotChangeEventArgs args)
+    {
+        if (args.FromSlot == args.ToSlot) return;
+
+        IClientPlayer? player = capi?.World?.Player;
+        if (player == null) return;
+
+        bool leftBag = BagSupport.EquippedBagSlotAt(player, args.FromSlot) != null;
+        bool enteredBag = BagSupport.EquippedBagSlotAt(player, args.ToSlot) != null;
+        if (!leftBag && !enteredBag) return;
+
+        (player.Entity as EntityPlayer)?.MarkShapeModified();
+    }
+
     private void RefreshClientUi()
     {
         slotVisuals?.TryApply();
@@ -156,6 +176,7 @@ public class BurdenedModSystem : ModSystem
         slotVisuals = new SlotVisuals(api);
         ConfigReceived += OnClientConfigReceived;
         api.Event.LevelFinalize += OnLevelFinalize;
+        api.Event.AfterActiveSlotChanged += OnAfterActiveSlotChanged;
 
         api.Logger.Notification("[{0}] client side loaded.", ModId);
     }
@@ -193,6 +214,7 @@ public class BurdenedModSystem : ModSystem
         if (capi != null)
         {
             capi.Event.LevelFinalize -= OnLevelFinalize;
+            capi.Event.AfterActiveSlotChanged -= OnAfterActiveSlotChanged;
         }
 
         if (sapi != null)

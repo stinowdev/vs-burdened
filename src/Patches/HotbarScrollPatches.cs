@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Burdened.Bags;
 using Burdened.Config;
 using Burdened.Inventory;
 using HarmonyLib;
@@ -163,10 +164,5 @@ public static class HotbarScrollPatches
         return bagIndex >= 0 && bagIndex < cfg.EffectiveBagSlots();
     }
 
-    private static int SkillOffset(IPlayer player)
-    {
-        IInventory? hotbar = player.InventoryManager.GetHotbarInventory();
-        if (hotbar == null || hotbar.Count <= 10) return 0;
-        return hotbar[10].Empty ? 0 : 1;
-    }
+    private static int SkillOffset(IPlayer player) => BagSupport.SkillSlotOffset(player);
 }

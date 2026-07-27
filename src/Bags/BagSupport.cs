@@ -19,6 +19,47 @@ internal static class BagSupport
             && collectible.GetBehavior<CollectibleBehaviorGroundStoredHeldBag>() != null;
     }
 
+    /// <summary>
+    /// Vanilla shifts the bag-equip range up by one when the skill slot at
+    /// hotbar index 10 is occupied. See PlayerInventoryManager.ActiveHotbarSlot,
+    /// which resolves the active number against the same offset (1.22.3).
+    /// </summary>
+    public static int SkillSlotOffset(IPlayer player)
+    {
+        IInventory? hotbar = player.InventoryManager.GetHotbarInventory();
+        if (hotbar == null || hotbar.Count <= SlotLocks.VanillaHotbarSlots) return 0;
+        return hotbar[SlotLocks.VanillaHotbarSlots].Empty ? 0 : 1;
+    }
+
+    /// <summary>
+    /// The occupied bag-equip slot addressed by an active hotbar slot number,
+    /// or null when that number addresses the hotbar, the skill slot, or an
+    /// empty bag slot. The active number spans hotbar 0..9, an optional skill
+    /// slot, then the bag-equip slots.
+    /// </summary>
+    public static ItemSlot? EquippedBagSlotAt(IPlayer? player, int activeSlotNumber)
+    {
+        if (player?.InventoryManager.GetOwnInventory(GlobalConstants.backpackInvClassName)
+                is not InventoryPlayerBackpacks backpacks)
+        {
+            return null;
+        }
+
+        int bagIndex = activeSlotNumber - SlotLocks.VanillaHotbarSlots - SkillSlotOffset(player);
+        if (bagIndex < 0 || bagIndex >= backpacks.bagSlots.Length) return null;
+
+        ItemSlot slot = backpacks.bagSlots[bagIndex];
+        return slot.Itemstack == null ? null : slot;
+    }
+
+    /// <summary>Whichever occupied bag-equip slot is selected right now, if any.</summary>
+    public static ItemSlot? SelectedEquippedBagSlot(IPlayer? player)
+    {
+        return player == null
+            ? null
+            : EquippedBagSlotAt(player, player.InventoryManager.ActiveHotbarSlotNumber);
+    }
+
     public static int? EquipIndexOf(IPlayer player, ItemSlot? slot)
     {
         if (slot == null

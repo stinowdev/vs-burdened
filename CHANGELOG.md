@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 Feature (F) and decision (D) numbers refer to [FEATURES.md](FEATURES.md).
 
+## [Unreleased]
+
+### Changed
+
+- F10 / D12 - Worn-bag visibility follows the game's own active-slot event
+  instead of patching the client inventory manager. Behavior is unchanged, and
+  Burdened patches two fewer engine internals.
+
 ## [v0.3.0](https://github.com/stinowdev/vs-burdened/releases/tag/v0.3.0)
 
 This release is about using bags directly. Equipped bags can be opened or

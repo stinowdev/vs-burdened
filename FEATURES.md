@@ -63,6 +63,7 @@ pickup and placement.
 | D09 | Active | Right-click opens. Shift picks up or places. Rejection leaves the source unchanged. |
 | D10 | Planned | F09 identifies a movable container independently of its world position. Pickup and replacement must not lose that identity. |
 | D11 | Active | Equipped-bag placement identifies the source by slot index. The server revalidates that slot when handling the request; no item fingerprint is sent. |
+| D12 | Active | An engine method is patched only where no event, behavior, or registered class reaches the same paths. Worn-bag invalidation uses `AfterActiveSlotChanged`, which already covers local and server-forced selection changes. |
 
 
 ## Configuration contract
