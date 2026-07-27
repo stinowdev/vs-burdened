@@ -21,6 +21,9 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](FEATURES.md).
   game. 8 vanilla slot types refused the previous attachment and logged a
   warning on every world load, and a bag-equip slot added by another mod could
   have skipped the role rules with no sign that it had.
+- F10 - A malformed placement request can no longer leave a placed bag that
+  cannot be opened or picked up again. The server checks the hit position it is
+  sent before deriving the bag's rotation from it.
 
 ## [v0.3.0](https://github.com/stinowdev/vs-burdened/releases/tag/v0.3.0)
 
