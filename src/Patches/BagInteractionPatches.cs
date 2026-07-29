@@ -158,7 +158,7 @@ public static class BagInteractionPatches
 
         ItemSlot? floorSlot = __instance.GetSlotAt(bs);
         if (floorSlot == null || floorSlot.Empty
-            || !BagSupport.SupportsGroundInteractions(floorSlot.Itemstack)) return true;
+            || !BagSupport.SupportsPlacedBagInteractions(floorSlot.Itemstack)) return true;
 
         BlockEntity blockEntity = __instance;
         if (blockEntity.Api.Side == EnumAppSide.Server
@@ -222,7 +222,10 @@ public static class BagInteractionPatches
             return false;
         }
 
-        BagPickupService.Request(pickupClient, blockEntity.Pos);
+        // GetSlotAt resolved which bag the player is pointing at, which the
+        // position alone cannot express for a two-slot layout.
+        BagPickupService.Request(
+            pickupClient, blockEntity.Pos, floorSlot.Inventory.GetSlotId(floorSlot));
 
         __result = true;
         return false;
@@ -249,7 +252,7 @@ public static class BagInteractionPatches
 
         if (___slotId < 0 || ___slotId >= ___be.Inventory.Count) return;
         ItemSlot bagSlot = ___be.Inventory[___slotId];
-        if (bagSlot.Empty || !BagSupport.SupportsGroundInteractions(bagSlot.Itemstack)) return;
+        if (bagSlot.Empty || !BagSupport.SupportsPlacedBagInteractions(bagSlot.Itemstack)) return;
 
         CollectibleBehaviorGroundStoredHeldBag? behavior =
             bagSlot.Itemstack.Collectible.GetBehavior<CollectibleBehaviorGroundStoredHeldBag>();
@@ -298,12 +301,15 @@ public static class BagInteractionPatches
 
         ItemSlot slot = backpacks.bagSlots[slotId];
         if (slot.Empty
-            || !BagSupport.SupportsGroundInteractions(slot.Itemstack)
+            || !BagSupport.SupportsEquippedBagWindow(slot.Itemstack)
             || SlotLocks.IsLocked(slot)) return true;
         if (!api.World.Player.InventoryManager.MouseItemSlot.Empty) return true;
 
         if (shiftPressed && (mouseButton == EnumMouseButton.Left || mouseButton == EnumMouseButton.Right))
         {
+            // A wall-mounted bag keeps vanilla's gesture
+            if (!BagSupport.SupportsBurdenedPlacement(slot.Itemstack)) return true;
+
             if (BagPlacementService.Request(api, slotId))
             {
                 GuiDialogEquippedBag.Close(slotId);
@@ -331,7 +337,7 @@ public static class BagInteractionPatches
         if (byEntity?.World == null || !firstEvent) return true;
         if (SlotLocks.Config?.ImprovedBagInteractions != true
             || itemslot == null
-            || !BagSupport.SupportsGroundInteractions(itemslot.Itemstack))
+            || !BagSupport.SupportsEquippedBagWindow(itemslot.Itemstack))
         {
             return true;
         }
@@ -340,11 +346,16 @@ public static class BagInteractionPatches
         int bagIndex = Array.IndexOf(backpacks.bagSlots, itemslot);
         if (bagIndex < 0) return true;
 
+        bool canPlace = BagSupport.SupportsBurdenedPlacement(itemslot.Itemstack);
+
         // The client sends the authoritative placement request. Consume the
         // matching vanilla held interaction on the server so Shift+RMB cannot
-        // run both placement paths.
+        // run both placement paths. A bag Burdened cannot place is left to
+        // vanilla on both sides, so its own gesture still reaches the server.
         if (byEntity.World.Side == EnumAppSide.Server)
         {
+            if (!canPlace) return true;
+
             handHandling = EnumHandHandling.PreventDefault;
             handling = EnumHandling.PreventSubsequent;
             return false;
@@ -356,6 +367,8 @@ public static class BagInteractionPatches
             || capi.Input.KeyboardKeyStateRaw[1]
             || capi.Input.KeyboardKeyStateRaw[2])
         {
+            if (!canPlace) return true;
+
             if (BagPlacementService.Request(capi, bagIndex))
             {
                 GuiDialogEquippedBag.Close(bagIndex);
@@ -363,6 +376,8 @@ public static class BagInteractionPatches
         }
         else
         {
+            // Plain right-click opens the bag, whether or not a block is
+            // targeted, and regardless of how the bag would be put down.
             GuiDialogEquippedBag.Toggle(capi, bagIndex);
         }
 
@@ -378,19 +393,30 @@ public static class BagInteractionPatches
     {
         if (capi == null
             || SlotLocks.Config?.ImprovedBagInteractions != true
-            || !BagSupport.SupportsGroundInteractions(inSlot?.Itemstack)
+            || !BagSupport.SupportsEquippedBagWindow(inSlot?.Itemstack)
             || BagSupport.EquipIndexOf(capi.World.Player, inSlot) == null)
         {
             return;
         }
 
+        WorldInteraction open = new WorldInteraction
+        {
+            ActionLangCode = "blockhelp-chest-open",
+            MouseButton = EnumMouseButton.Right,
+        };
+
+        if (!BagSupport.SupportsBurdenedPlacement(inSlot?.Itemstack))
+        {
+            // Only the opening one is added.
+            List<WorldInteraction> withOpen = new List<WorldInteraction>(__result.Length + 1) { open };
+            withOpen.AddRange(__result);
+            __result = withOpen.ToArray();
+            return;
+        }
+
         __result = new[]
         {
-            new WorldInteraction
-            {
-                ActionLangCode = "blockhelp-chest-open",
-                MouseButton = EnumMouseButton.Right,
-            },
+            open,
             new WorldInteraction
             {
                 ActionLangCode = "heldhelp-place",
@@ -414,7 +440,7 @@ public static class BagInteractionPatches
 
         ItemSlot? slot = groundStorage.GetSlotAt(selection);
         if (slot == null || slot.Empty
-            || !BagSupport.SupportsGroundInteractions(slot.Itemstack)) return;
+            || !BagSupport.SupportsPlacedBagInteractions(slot.Itemstack)) return;
 
         List<WorldInteraction> kept = new List<WorldInteraction>(__result.Length + 2)
         {

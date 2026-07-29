@@ -10,13 +10,46 @@ namespace Burdened.Bags;
 
 internal static class BagSupport
 {
-    public static bool SupportsGroundInteractions(ItemStack? stack)
+    /// <summary>
+    /// D08, first tier: open an equipped bag's own window. Needs only an
+    /// equippable bag. Placement ability does not matter here.
+    /// </summary>
+    public static bool SupportsEquippedBagWindow(ItemStack? stack)
+    {
+        return BagClassifier.IsEquippableBag(stack);
+    }
+
+    /// <summary>
+    /// D08, second tier: right-click to open, Shift+right-click to pick up a bag
+    /// already in the world. Both hit the exact slot under the cursor, so every
+    /// ground-storage layout works, including each half of a wall-mounted quiver.
+    /// </summary>
+    public static bool SupportsPlacedBagInteractions(ItemStack? stack)
     {
         if (stack?.Collectible is not CollectibleObject collectible
             || !BagClassifier.IsEquippableBag(stack)) return false;
 
         return collectible.GetBehavior<CollectibleBehaviorGroundStorable>() != null
             && collectible.GetBehavior<CollectibleBehaviorGroundStoredHeldBag>() != null;
+    }
+
+    /// <summary>
+    /// D08, third tier: Burdened places the bag itself from an equip slot or
+    /// the hand. Needs `SingleCenter`, because placement drops the bag in the
+    /// middle of the block above the target. It cannot do a wall mount or pick
+    /// a half-slot.
+    ///
+    /// Bags that need another layout keep vanilla placement. For the quiver
+    /// that is Ctrl+Shift against a wall.
+    /// </summary>
+    public static bool SupportsBurdenedPlacement(ItemStack? stack)
+    {
+        if (!SupportsPlacedBagInteractions(stack)) return false;
+
+        CollectibleBehaviorGroundStorable? groundStorable =
+            stack!.Collectible.GetBehavior<CollectibleBehaviorGroundStorable>();
+
+        return groundStorable?.StorageProps?.Layout == EnumGroundStorageLayout.SingleCenter;
     }
 
     /// <summary>

@@ -13,4 +13,10 @@ public sealed class PickupFloorBagPacket
 
     [ProtoMember(3)]
     public int Z;
+
+    /// <summary>
+    /// Which slot of the ground storage the player pointed at.
+    /// </summary>
+    [ProtoMember(4)]
+    public int SlotIndex;
 }

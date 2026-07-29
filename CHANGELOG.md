@@ -56,6 +56,12 @@ version 1.3.0.
   populated skep can only be carried in a bag slot, so the L / B / R rules were
   leaving it with nowhere to go. Bag slots now judge bags and pass everything
   else to the game's own rules, as they do outside immersive mode.
+- F08 / F10 / D08 - Wall-mounted bags such as the quiver work again.
+  A placed quiver now opens with right-click and picks up
+  with Shift + right-click, like every other bag. A selected one opens with
+  right-click whether or not a block is targeted, and an equipped one opens
+  from its slot. Putting it down stays vanilla: Ctrl + Shift against a wall,
+  which is a position Burdened cannot express.
 
 ### Upgrade notice
 

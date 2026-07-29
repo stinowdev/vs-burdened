@@ -23,9 +23,13 @@ Planned features have no runtime settings.
 
 ## Bag interaction contract
 
-F08 and F10 apply only to equippable bags that expose both vanilla
-ground-storage bag behaviors required by D08. Chests, vessels, and other
-containers keep their vanilla interactions.
+F08 and F10 apply to equippable bags that expose both vanilla ground-storage bag
+behaviors required by D08. Chests, vessels, and other containers keep their
+vanilla interactions.
+
+A bag that does not rest in the middle of its block, such as the wall-mounted
+quiver, is placed with vanilla's own gesture (Ctrl + Shift against a wall) and
+follows the table below for everything after that.
 
 | Location | Input | Result | Authority |
 |---|---|---|---|
@@ -102,7 +106,7 @@ make it equippable.
 | D05 | Active | The compact E inventory hides bag contents only. Bag-equip slots remain on the hotbar. |
 | D06 | Active | Bags are always rejected by the offhand. With `OffhandHoldsAnything=true`, non-bag items may be placed there manually and automatic best-slot routing excludes it. Item use remains vanilla. |
 | D07 | Planned | F07 preserves vanilla priority: hotbar first, then equipped bag contents. |
-| D08 | Active | Improved interactions require an equippable bag with both vanilla ground-storage bag behaviors. |
+| D08 | Active | F08 and F10 are gated in three tiers, because Burdened can remap more than it can perform. Opening an equipped bag's own window needs only an equippable bag. Opening and picking up a placed bag need both vanilla ground-storage bag behaviors, and work for any layout, because each resolves the exact slot the player points at. Burdened placing a bag itself also needs a `SingleCenter` layout, since the service can only target the middle of the block above. A bag that fails a tier keeps its vanilla gesture there: claiming an interaction that cannot be carried out leaves the bag stranded. |
 | D09 | Active | Right-click opens. Shift picks up or places. Rejection leaves the source unchanged. |
 | D10 | Planned | F09 identifies a movable container independently of its world position. Pickup and replacement must not lose that identity. |
 | D11 | Active | Equipped-bag placement identifies the source by slot index. The server revalidates that slot when handling the request; no item fingerprint is sent. |
