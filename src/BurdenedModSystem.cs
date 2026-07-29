@@ -123,6 +123,12 @@ public class BurdenedModSystem : ModSystem
 
         config ??= new BurdenedConfig();
         config.Sanitize();
+        
+        foreach (string rejected in config.RejectedRoleOverrides)
+        {
+            api.Logger.Warning(
+                "[{0}] Ignoring BagRoleOverrides entry: {1}", ModId, rejected);
+        }
 
         // Writes back so the file always exists and reflects sanitized values
         api.StoreModConfig(config, ConfigFile);

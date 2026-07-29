@@ -10,7 +10,8 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](FEATURES.md).
 
 - F03 / D13 - `BagRoleOverrides` assigns any bag to the B or L / R slots by item
   code, including bags from other mods and including vanilla. Codes accept `*`
-  wildcards, and the accepted roles are `back` and `waist`.
+  wildcards, and the accepted roles are `back` and `waist`. An entry the server
+  cannot use is named in the log at startup rather than ignored in silence.
 - F03 / D13 - Bag mods can ship a default with
   `"attributes": { "burdened": { "bagRole": "back" } }` in the item, so their
   bags land correctly with nothing configured. A `BagRoleOverrides` entry always

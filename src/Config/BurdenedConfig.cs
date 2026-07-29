@@ -52,6 +52,7 @@ public class BurdenedConfig
     public Dictionary<string, string>? BagRoleOverrides { get; set; }
 
     private readonly List<KeyValuePair<AssetLocation, string>> parsedRoleOverrides = new();
+    private readonly List<string> rejectedRoleOverrides = new();
 
     /// <summary>
     /// <see cref="BagRoleOverrides"/> parsed once by <see cref="Sanitize"/>.
@@ -60,6 +61,12 @@ public class BurdenedConfig
     /// </summary>
     [JsonIgnore]
     public IReadOnlyList<KeyValuePair<AssetLocation, string>> RoleOverrides => parsedRoleOverrides;
+
+    /// <summary>
+    /// Entries <see cref="Sanitize"/> discarded. The server reports them once at startup.
+    /// </summary>
+    [JsonIgnore]
+    public IReadOnlyList<string> RejectedRoleOverrides => rejectedRoleOverrides;
 
     /// <summary>
     /// Bag-equip slots the player may use right now. Immersive mode always
@@ -82,14 +89,24 @@ public class BurdenedConfig
     private void ParseRoleOverrides()
     {
         parsedRoleOverrides.Clear();
+        rejectedRoleOverrides.Clear();
         if (BagRoleOverrides == null) return;
 
         foreach (KeyValuePair<string, string> entry in BagRoleOverrides)
         {
-            if (string.IsNullOrWhiteSpace(entry.Key)) continue;
+            if (string.IsNullOrWhiteSpace(entry.Key))
+            {
+                rejectedRoleOverrides.Add("an entry with a blank item code");
+                continue;
+            }
 
             string role = entry.Value?.Trim().ToLowerInvariant() ?? string.Empty;
-            if (role != BackRole && role != WaistRole) continue;
+            if (role != BackRole && role != WaistRole)
+            {
+                rejectedRoleOverrides.Add(
+                    $"\"{entry.Key}\": \"{entry.Value}\" is not \"{BackRole}\" or \"{WaistRole}\"");
+                continue;
+            }
 
             AssetLocation? code;
             try
@@ -98,10 +115,15 @@ public class BurdenedConfig
             }
             catch (Exception)
             {
+                code = null;
+            }
+
+            if (code == null)
+            {
+                rejectedRoleOverrides.Add($"\"{entry.Key}\" is not a usable item code");
                 continue;
             }
 
-            if (code == null) continue;
             parsedRoleOverrides.Add(new KeyValuePair<AssetLocation, string>(code, role));
         }
     }

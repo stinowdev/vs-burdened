@@ -109,8 +109,9 @@ accepted roles are `back` and `waist`:
 ```
 
 Bag mods can also ship their own default so nothing needs configuring; an entry
-here always wins over it. Entries that name an unknown role are ignored, and
-listing an item that is not a bag does not make it equippable.
+here always wins over it. Listing an item that is not a bag does not make it
+equippable. Entries that name an unknown role are skipped, and each one is
+written to the server log at startup so a typo is easy to spot.
 
 ## Compatibility
 
