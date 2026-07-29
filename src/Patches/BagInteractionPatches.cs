@@ -398,7 +398,6 @@ public static class BagInteractionPatches
                 HotKeyCode = "shift",
             },
         };
-        handling = EnumHandling.PreventSubsequent;
     }
 
     public static void FloorBagHelpPostfix(
@@ -417,7 +416,7 @@ public static class BagInteractionPatches
         if (slot == null || slot.Empty
             || !BagSupport.SupportsGroundInteractions(slot.Itemstack)) return;
 
-        __result = new[]
+        List<WorldInteraction> kept = new List<WorldInteraction>(__result.Length + 2)
         {
             new WorldInteraction
             {
@@ -430,6 +429,23 @@ public static class BagInteractionPatches
                 MouseButton = EnumMouseButton.Right,
                 HotKeyCode = "shift",
             },
+        };
+
+        foreach (WorldInteraction interaction in __result)
+        {
+            if (!IsRemappedByImprovedInteractions(interaction)) kept.Add(interaction);
+        }
+
+        __result = kept.ToArray();
+    }
+
+    private static bool IsRemappedByImprovedInteractions(WorldInteraction interaction)
+    {
+        return interaction.ActionLangCode switch
+        {
+            "blockhelp-behavior-rightclickpickup" => interaction.HotKeyCode == null,
+            "blockhelp-chest-open" => interaction.HotKeyCode == "ctrl",
+            _ => false,
         };
     }
 }

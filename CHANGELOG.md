@@ -36,6 +36,9 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](FEATURES.md).
 - F10 - A malformed placement request can no longer leave a placed bag that
   cannot be opened or picked up again. The server checks the hit position it is
   sent before deriving the bag's rotation from it.
+- F08 / F10 - Interaction hints from other mods stay visible on bags. Burdened
+  now removes only the two vanilla hints its remap makes wrong and leaves the
+  rest of the list alone, instead of replacing all of it.
 
 ## [v0.3.0](https://github.com/stinowdev/vs-burdened/releases/tag/v0.3.0)
 
