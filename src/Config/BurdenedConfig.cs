@@ -49,7 +49,7 @@ public class BurdenedConfig
     // lookup. Codes may use wildcards ("othermod:rucksack-*") and an entry with
     // no domain is read as "game:". This is how a server owner classifies a bag
     // whose author never declared a role, or overrides one that declared wrong.
-    public Dictionary<string, string>? BagRoleOverrides { get; set; }
+    public Dictionary<string, string>? BagRoleOverrides { get; set; } = new();
 
     private readonly List<KeyValuePair<AssetLocation, string>> parsedRoleOverrides = new();
     private readonly List<string> rejectedRoleOverrides = new();
@@ -90,7 +90,7 @@ public class BurdenedConfig
     {
         parsedRoleOverrides.Clear();
         rejectedRoleOverrides.Clear();
-        if (BagRoleOverrides == null) return;
+        BagRoleOverrides ??= new Dictionary<string, string>();
 
         foreach (KeyValuePair<string, string> entry in BagRoleOverrides)
         {

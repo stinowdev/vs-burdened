@@ -1,15 +1,17 @@
-# Burdened
+# Burdened: Immersive Carrying
 
 <img
   width="400"
   alt="Burdened"
-  src="https://github.com/user-attachments/assets/91542e3a-2351-4324-b76e-9ca5c29fac0c"
+  src="https://i.imgur.com/EM0iv3w.png"
 />
 
 Burdened is a universal code mod for Vintage Story that makes carrying more
 deliberate through fewer usable slots, immersive bag roles, and direct bag
 interactions. It does not add per-item weight. The server owns the carrying
 rules and sends them to every client.
+
+You can also check the [original ModDB page](https://mods.vintagestory.at/burdened).
 
 ## Carrying space
 
@@ -21,10 +23,11 @@ its item moves into valid storage or drops at the player's feet.
 <img
   width="536"
   alt="A compact hotbar with two item slots and one bag slot"
-  src="https://github.com/user-attachments/assets/7c4fb772-8cc7-43cc-9c5a-2307a4b2b6bc"
+  src="https://i.imgur.com/kkV9aYR.png"
 />
 
-Immersive carrying mode replaces the normal bag bar with three roles:
+Immersive carrying mode replaces the normal bag bar with three slots across two
+roles:
 
 - **B** takes your pack: a bag worn on the back that holds anything, such as the
   leather, sturdy, and hunter backpacks.
@@ -38,13 +41,13 @@ Bags added by other mods are sorted the same way with no setup.
 <img
   width="536"
   alt="The immersive L, B, and R bag slots"
-  src="https://github.com/user-attachments/assets/4b315e23-ab1b-47f0-a525-03cb4197f422"
+  src="https://i.imgur.com/uU4LFRe.png"
 />
 
 <img
   width="536"
   alt="Items accepted by the immersive bag roles"
-  src="https://github.com/user-attachments/assets/74ae724f-3fed-4aca-a664-3319669ca326"
+  src="https://i.imgur.com/Aywlx48.png"
 />
 
 ## Bag interactions
@@ -60,17 +63,20 @@ as a worn duplicate.
 | Placed bag | Shift + right-click | Equip it into a compatible empty bag slot |
 | Equipped bag slot | Right-click | Open or close that bag |
 | Equipped bag slot | Shift + click | Place it on the targeted block |
+| Selected equipped bag | Right-click | Open or close the bag when the targeted block does not use the input |
 | Selected equipped bag | Shift + right-click | Place it on the targeted block |
 
 Use **Ctrl + mouse wheel** to include equipped bag slots in hotbar selection.
 Rejected pickup and placement leave the bag and its contents at the source.
 These interactions apply only to equippable bags that support vanilla ground
 storage. Chests, vessels, and other containers keep their normal behavior.
+Wall-mounted bags such as quivers keep their vanilla placement gesture:
+**Ctrl + Shift** against a wall.
 
 <img
   width="720"
   alt="Several equipped and placed bag inventories open at once"
-  src="https://github.com/user-attachments/assets/152af418-42e8-4450-8d5b-34be2b04a34b"
+  src="https://i.imgur.com/NpUYCqf.png"
 />
 
 ## Inventory and offhand
@@ -102,10 +108,15 @@ world so the server loads and sends the updated settings.
 
 ### Bag roles in immersive mode
 
-With `ImmersiveCarryingMode` on, the three vanilla backpacks go on the back and
-every other bag goes to the waist. `BagRoleOverrides` changes that for any item,
-including bags added by other mods. Codes accept `*` wildcards, and the two
-accepted roles are `back` and `waist`:
+With `ImmersiveCarryingMode` on, B accepts a general-purpose pack: an equippable
+bag the game wears at its `backpack` position that can also hold ordinary items.
+Other equippable bags use L / R, while items that are not bags keep their vanilla
+bag-slot rules. In Vintage Story 1.22.3, the normal, sturdy, and hunter backpacks
+use B.
+
+`BagRoleOverrides` changes the role of any bag, including bags added by other
+mods. Codes accept `*` wildcards, and a code without a domain uses `game:`. The
+two accepted roles are `back` and `waist`:
 
 ```json
 "BagRoleOverrides": {
@@ -114,23 +125,33 @@ accepted roles are `back` and `waist`:
 }
 ```
 
-Bag mods can also ship their own default so nothing needs configuring; an entry
-here always wins over it. Listing an item that is not a bag does not make it
-equippable. Entries that name an unknown role are skipped, and each one is
-written to the server log at startup so a typo is easy to spot.
+Bag mods can declare their own default role in item JSON:
+
+```json
+"attributes": { "burdened": { "bagRole": "back" } }
+```
+
+A server override always wins over that default. Listing an item that is not a
+bag does not make it equippable. Entries the server cannot use are skipped and
+written to the log at startup so a typo is easy to spot.
 
 ## Compatibility
 
-- Tested against Vintage Story **1.22.3**.
-- Required on both the client and server, and both must run the same version.
-  Burdened **0.4.0** changed the network protocol, so a client on an older
-  version cannot join a 0.4.0 server.
+- Built for Vintage Story **1.22.3**.
+- Required on both the client and server.
 - Standalone, with no required dependencies.
 - Immersive Backpacks, Wilderlands Onus Moderatus, and Immersive Modular
   Backpacks modify overlapping behavior and may not be compatible.
 
 Burdened patches private game methods. Other Vintage Story versions remain
 unverified until they pass the same review and in-game checks.
+
+### Upgrading from 0.3.0
+
+Existing worlds are unaffected because Burdened stores no save data of its own.
+Version 0.4.0 adds an empty `BagRoleOverrides` setting automatically and requires
+no manual migration. It also changes the network protocol, so clients and
+servers must both update to 0.4.0.
 
 ## Installation
 
