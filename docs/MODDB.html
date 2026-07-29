@@ -1,6 +1,5 @@
-<h2>Burdened</h2>
-<p><img src="https://github.com/user-attachments/assets/91542e3a-2351-4324-b76e-9ca5c29fac0c" alt="Burdened"
-    width="400" /></p>
+<h2>Burdened: Immersive Carrying</h2>
+<p><img src="https://i.imgur.com/EM0iv3w.png" alt="Burdened" width="400" height="267" /></p>
 <h3>Make every carried slot matter</h3>
 <p>Burdened reshapes Vintage Story's carrying loop around fewer, meaningful slots and bags you interact with directly.
 </p>
@@ -13,8 +12,10 @@
     slots. The HUD contracts around the available slots, scrolling skips locked positions, and the server enforces the
     same rules for every player.</li>
   <li><strong>Immersive bag roles:</strong> replace the normal bag bar with three typed slots, <strong>L / B /
-      R</strong>. The back slot accepts leather, sturdy, and hunter backpacks; the left and right slots accept other
-    equippable bags such as baskets and sacks.</li>
+      R</strong>. B accepts general-purpose packs, while L and R accept waist bags.</li>
+  <li><strong>Bags from other mods:</strong> a bag is placed by what it is, not by a list of names, so bags added by
+    other mods are sorted with no setup. Mods may declare their own default role, and the <code>BagRoleOverrides</code>
+    setting lets the server owner reassign any bag, including vanilla ones.</li>
   <li><strong>Bags as physical storage:</strong> open equipped bags from the hotbar, keep multiple bag windows open,
     place equipped bags into the world, and pick placed bags directly back into a compatible equip slot.</li>
   <li><strong>A focused inventory screen:</strong> optionally remove bag contents from the inventory dialog so pressing
@@ -24,14 +25,34 @@
   <li><strong>Safe slot reduction:</strong> if configuration locks an occupied slot, Burdened first moves its item into
     valid inventory space, then drops it at the player's feet if necessary. Items are never intentionally deleted.</li>
 </ul>
-<p>When an equipped bag is selected, it is shown in the player's hand without also appearing as a worn duplicate.</p>
+<p>&nbsp;</p>
+<p><img src="https://i.imgur.com/Rt5nxhb.jpeg" alt="" width="536" /></p>
+<p><em>When an equipped bag is selected, it is shown in the player's hand without also appearing as a worn
+    duplicate.</em></p>
+<p>&nbsp;</p>
+<p><img src="https://i.imgur.com/kkV9aYR.png" alt="" width="536" height="134" /></p>
+<p><em>Config: two usable hotbar slots and one bag slot. The hotbar contracts around whatever remains.</em></p>
+<p>&nbsp;</p>
+<p><em><img src="https://i.imgur.com/Olems24.png" alt="" width="533" height="408" /></em></p>
+<p><em>Works with quivers.</em></p>
+<p>&nbsp;</p>
+<p><em><img src="https://i.imgur.com/ablJp5a.png" alt="" width="541" height="118" /></em></p>
+<p><em>And populated skeps as well.</em></p>
+<h3>Immersive carrying&nbsp;</h3>
+<p>Immersive carrying mode replaces the four-slot bag bar with three typed slots. The back slot takes your pack. The
+  left and right slots take everything else, so a quiver or a mining bag never costs you the slot a backpack needs.</p>
+<p><img src="https://i.imgur.com/uU4LFRe.png" alt="" width="542" height="130" /></p>
+<p><em>The immersive L, B, and R bag slots.</em></p>
+<p>&nbsp;</p>
+<p><img src="https://i.imgur.com/Aywlx48.png" alt="" width="533" height="133" /></p>
+<p><em>Items accepted by the immersive bag roles.</em></p>
 <h3>Bag controls</h3>
-<table style="width: 72.5209%; border-collapse: collapse;" border="1" cellpadding="6">
+<table style="width: 72.5209%; border-collapse: collapse; border: 2px solid #6b563c;" border="1" cellpadding="6">
   <thead>
-    <tr>
-      <th style="text-align: left; width: 21.7645%;" scope="col">Where</th>
-      <th style="text-align: left; width: 16.8964%;" scope="col">Input</th>
-      <th style="text-align: left; width: 61.3404%;" scope="col">Action</th>
+    <tr style="background-color: #e3d7c2;">
+      <th style="text-align: left; width: 21.7645%; border-color: #6b563c;" scope="col">Where</th>
+      <th style="text-align: left; width: 16.8964%; border-color: #6b563c;" scope="col">Input</th>
+      <th style="text-align: left; width: 61.3404%; border-color: #6b563c;" scope="col">Action</th>
     </tr>
   </thead>
   <tbody>
@@ -57,26 +78,37 @@
     </tr>
     <tr>
       <td style="width: 21.7645%;">Selected equipped bag</td>
+      <td style="width: 16.8964%;">Right click</td>
+      <td style="width: 61.3404%;">Open or close the bag when the targeted block does not use the input</td>
+    </tr>
+    <tr>
+      <td style="width: 21.7645%;">Selected equipped bag</td>
       <td style="width: 16.8964%;">Shift + right click</td>
       <td style="width: 61.3404%;">Place it on the targeted block</td>
     </tr>
   </tbody>
 </table>
 <p>&nbsp;</p>
-<p>Use <strong>Ctrl + mouse wheel</strong> to move the active selection between equipped bag slots. Multiple equipped
+<p><img src="https://i.imgur.com/NpUYCqf.png" alt="" width="756" height="439" /></p>
+<p><em>Several equipped and placed bag inventories open at once.</em></p>
+<p>&nbsp;</p>
+<p>Use <strong>Ctrl + mouse wheel</strong> to include equipped bag slots in hotbar selection. Multiple equipped
   bags can remain open at the same time. If a pickup or placement is rejected, the bag and its contents remain at the
   source.</p>
+<p>Wall-mounted bags such as quivers keep their vanilla placement gesture: <strong>Ctrl + Shift</strong> against a
+  wall.</p>
 <h3>Configuration</h3>
 <p>Burdened creates the following server-owned file on first run:</p>
 <p><code>%APPDATA%\VintagestoryData\ModConfig\burdened.json</code></p>
 <p>After editing the file, restart the dedicated server or reopen the singleplayer world so the server loads and sends
   the updated settings.</p>
-<table style="width: 72.1027%; border-collapse: collapse; height: 153.312px;" border="1" cellpadding="6">
+<table style="width: 72.1027%; border-collapse: collapse; height: 153.312px; border: 2px solid #6b563c;" border="1"
+  cellpadding="6">
   <thead>
-    <tr style="height: 20.1875px;">
-      <th style="width: 27.1457%; height: 20.1875px; text-align: left;" scope="col">Setting</th>
-      <th style="width: 13.4731%; height: 20.1875px; text-align: left;" scope="col">Default</th>
-      <th style="width: 59.3812%; height: 20.1875px; text-align: left;" scope="col">Effect</th>
+    <tr style="height: 20.1875px; background-color: #e3d7c2;">
+      <th style="width: 27.1457%; height: 20.1875px; text-align: left; border-color: #6b563c;" scope="col">Setting</th>
+      <th style="width: 13.4731%; height: 20.1875px; text-align: left; border-color: #6b563c;" scope="col">Default</th>
+      <th style="width: 59.3812%; height: 20.1875px; text-align: left; border-color: #6b563c;" scope="col">Effect</th>
     </tr>
   </thead>
   <tbody>
@@ -111,19 +143,54 @@
       <td style="width: 13.4731%; height: 22.1875px;"><code>true</code></td>
       <td style="width: 59.3812%; height: 22.1875px;">Enables direct opening, placing, and pickup of bags</td>
     </tr>
+    <tr style="height: 22.1875px;">
+      <td style="width: 27.1457%; height: 22.1875px;"><code>BagRoleOverrides</code></td>
+      <td style="width: 13.4731%; height: 22.1875px;"><code>{}</code></td>
+      <td style="width: 59.3812%; height: 22.1875px;">Assigns bags to the back or waist slots by item code</td>
+    </tr>
+  </tbody>
+</table>
+<p>&nbsp;</p>
+<p><code>BagRoleOverrides</code> takes an item code and a role of <code>back</code> or <code>waist</code>. Codes accept
+  <code>*</code> wildcards, and an entry with no domain is read as <code>game:</code>. An entry naming an unknown role
+  is skipped and written to the server log at startup.</p>
+<table style="width: 72.1027%; border-collapse: collapse; background-color: #f4efe4; border: 1px solid #6b563c;"
+  cellpadding="12">
+  <tbody>
+    <tr>
+      <td>
+        <p style="margin: 0;"><code>"BagRoleOverrides": {</code></p>
+        <p style="margin: 0;"><code>&nbsp;&nbsp;"othermod:rucksack-*": "back",</code></p>
+        <p style="margin: 0;"><code>&nbsp;&nbsp;"game:backpack-sturdy": "waist"</code></p>
+        <p style="margin: 0;"><code>}</code></p>
+      </td>
+    </tr>
   </tbody>
 </table>
 <h3>Compatibility and installation</h3>
+<table style="width: 72.1027%; border-collapse: collapse; background-color: #f4efe4; border: 3px double #6b563c;"
+  cellpadding="14">
+  <tbody>
+    <tr>
+      <td>
+        <p style="margin: 0;">&nbsp;Version 0.4.0 changes the network protocol. Clients and servers must both run 0.4.0.
+          A client on an older version cannot join a 0.4.0 server.</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>&nbsp;</p>
 <ul>
   <li>Tested against <strong>Vintage Story 1.22.3</strong>.</li>
-  <li>Required on both the client and server. Clients and servers should use the same Burdened version.</li>
+  <li>Required on both the client and server.</li>
   <li>Standalone, with no required dependencies.</li>
   <li>Mods that alter the same inventory, hotbar, bag-slot, or worn-bag behavior may conflict. This includes Immersive
     Backpacks, Wilderlands Onus Moderatus, and Immersive Modular Backpacks.</li>
 </ul>
+<p>&nbsp;</p>
 <p>Download the matching zip from the <strong>Files</strong> tab or use 1-click install. For a manual installation,
-  place the zip in the Vintage Story <code>Mods</code> directory without unpacking it, then restart the game or server.
-</p>
+  place the zip in the Vintage Story <strong><code>Mods</code> </strong>directory without unpacking it, then restart the
+  game or server.</p>
 <h3>More information</h3>
 <ul>
   <li><a href="https://github.com/stinowdev/vs-burdened" target="_blank" rel="noopener noreferrer"> Source and full
@@ -134,8 +201,11 @@
       rel="noopener noreferrer"> Feature status and design decisions </a></li>
   <li><a href="https://github.com/stinowdev/vs-burdened/issues" target="_blank" rel="noopener noreferrer"> Bug reports
       and feature requests </a></li>
-  <li><a href="https://ko-fi.com/stinow" target="_blank" rel="noopener noreferrer"> Support development on Ko-fi
-    </a></li>
+  <li><a href="https://ko-fi.com/stinow" target="_blank" rel="noopener noreferrer"> Support development on Ko-fi </a>
+  </li>
 </ul>
 <p>&nbsp;</p>
 <p><em>Burdened is actively developed. The public mod remains free.</em></p>
+<p>&nbsp;</p>
+<p><em>Keywords: Carrying, Inventory, Immersion, Immersive, Bag, Quiver, Waist, Backpack, Burden, Carry, Hardcore,
+    Management, Realism, Mechanics, Improvement, GUI, Hotbar, Slot</em></p>
