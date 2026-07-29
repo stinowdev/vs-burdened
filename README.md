@@ -122,7 +122,9 @@ written to the server log at startup so a typo is easy to spot.
 ## Compatibility
 
 - Tested against Vintage Story **1.22.3**.
-- Required on both the client and server.
+- Required on both the client and server, and both must run the same version.
+  Burdened **0.4.0** changed the network protocol, so a client on an older
+  version cannot join a 0.4.0 server.
 - Standalone, with no required dependencies.
 - Immersive Backpacks, Wilderlands Onus Moderatus, and Immersive Modular
   Backpacks modify overlapping behavior and may not be compatible.

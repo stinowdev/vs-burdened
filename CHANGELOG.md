@@ -4,7 +4,14 @@ All notable changes to this project will be documented in this file.
 
 Feature (F) and decision (D) numbers refer to [FEATURES.md](FEATURES.md).
 
-## [Unreleased]
+## [v0.4.0](https://github.com/stinowdev/vs-burdened/releases/tag/v0.4.0)
+
+Bags from other mods now work with Burdened. A bag is placed on the back or at
+the waist by what it is rather than by a list of names, mods can ship their own
+placement, and `BagRoleOverrides` gives the server owner the last word.
+
+**Clients and servers must update together.** The network protocol moved to
+version 1.3.0.
 
 ### Added
 
@@ -49,6 +56,15 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](FEATURES.md).
   populated skep can only be carried in a bag slot, so the L / B / R rules were
   leaving it with nowhere to go. Bag slots now judge bags and pass everything
   else to the game's own rules, as they do outside immersive mode.
+
+### Upgrade notice
+
+- `BagRoleOverrides` is added to `burdened.json` and is empty by default. No
+  other setting changed, and no existing setting was renamed or removed.
+- Saved worlds are unaffected. Burdened stores no data of its own.
+- Every vanilla bag keeps the slot it had.
+- Clients and servers must both run 0.4.0. A client on 0.3.0 cannot join a
+  0.4.0 server.
 
 ## [v0.3.0](https://github.com/stinowdev/vs-burdened/releases/tag/v0.3.0)
 

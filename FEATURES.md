@@ -107,7 +107,7 @@ make it equippable.
 | D10 | Planned | F09 identifies a movable container independently of its world position. Pickup and replacement must not lose that identity. |
 | D11 | Active | Equipped-bag placement identifies the source by slot index. The server revalidates that slot when handling the request; no item fingerprint is sent. |
 | D12 | Active | An engine method is patched only where no event, behavior, or registered class reaches the same paths. Worn-bag invalidation uses `AfterActiveSlotChanged`, which already covers local and server-forced selection changes. |
-| D13 | Active | Extends D03. An immersive role is resolved as `BagRoleOverrides` in the config, then the item's own `burdened.bagRole` attribute, then the game's own attachment category. The server owner therefore always has the last word, and a bag mod still works with nothing configured. Burdened keys behavior off no mod id and no item code at any level. |
+| D13 | Active | Extends D03. Roles resolve in order: `BagRoleOverrides` in the config, then the item's `burdened.bagRole` attribute, then the game's own data for where the bag is worn and what it holds. The server owner always has the last word. A bag mod still works with nothing configured. No level keys off a mod id or item code. |
 
 
 ## Configuration contract
