@@ -26,8 +26,13 @@ its item moves into valid storage or drops at the player's feet.
 
 Immersive carrying mode replaces the normal bag bar with three roles:
 
-- **L** and **R** accept equippable waist bags such as baskets and sacks.
-- **B** accepts the leather, sturdy, and hunter backpacks.
+- **B** accepts bags the game wears on the back: the leather, sturdy, and
+  hunter backpacks, and the quiver.
+- **L** and **R** accept every other equippable bag, such as baskets and sacks.
+
+Bags added by other mods are sorted the same way, with no setup, as long as
+they are worn on the back like a vanilla backpack. `BagRoleOverrides` below
+changes the placement of any bag.
 
 <img
   width="536"

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Burdened.Config;
 using Vintagestory.API.Common;
@@ -24,17 +25,9 @@ internal static class BagClassifier
     }
 
     private const string RoleAttribute = "bagRole";
-
-    /// <summary>
-    /// The three vanilla backpacks, used only when nothing else assigns a role.
-    /// This list is the last resort
-    /// </summary>
-    private static readonly string[] VanillaBackCodes =
-    {
-        "backpack-normal",
-        "backpack-sturdy",
-        "hunterbackpack",
-    };
+    private const string AttachmentAttribute = "attachableToEntity";
+    private const string AttachmentCategoryKey = "categoryCode";
+    private const string BackAttachmentCategory = "backpack";
 
     public static bool IsTrueBackpack(ItemStack? stack)
     {
@@ -45,15 +38,33 @@ internal static class BagClassifier
         {
             BurdenedConfig.BackRole => true,
             BurdenedConfig.WaistRole => false,
-            _ => System.Array.IndexOf(VanillaBackCodes, collectible.Code?.Path) >= 0,
+            _ => AttachesAtTheBack(collectible),
         };
     }
 
     /// <summary>
-    /// D13: a `BagRoleOverrides` entry in burdened.json beats
-    /// the item's own `burdened.bagRole` attribute, which beats the vanilla list.
-    /// The server owner always has the last word, while a mod
-    /// that declares a role still works with nothing configured.
+    /// Fallback when no override or bagRole is set. Uses the game's attachment
+    /// category instead of a hardcoded item list: if it says `backpack`, the bag
+    /// sits on the back. That way any mod's bag that renders on the back counts,
+    /// with no attribute and no config.
+    ///
+    /// Callers already checked IsEquippableBag, so saddles and bedrolls that
+    /// share the attachment system never reach this.
+    /// </summary>
+    private static bool AttachesAtTheBack(CollectibleObject collectible)
+    {
+        JsonObject? attributes = collectible.Attributes;
+        if (attributes == null) return false;
+
+        string? category = attributes[AttachmentAttribute][AttachmentCategoryKey].AsString();
+        return string.Equals(category, BackAttachmentCategory, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// D13: a `BagRoleOverrides` entry in burdened.json beats the item's own
+    /// `burdened.bagRole` attribute, which beats the game's attachment category.
+    /// The server owner always has the last word, while a mod that declares a
+    /// role still works with nothing configured.
     /// </summary>
     private static string? ResolvedRole(CollectibleObject collectible)
     {

@@ -24,6 +24,11 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](FEATURES.md).
   Burdened patches two fewer engine internals.
 - The network protocol is now version 1.3.0, because the config sync carries
   `BagRoleOverrides`. Clients and servers must update together.
+- F03 / D03 / D13 - The **B** slot now accepts whatever the game itself wears on
+  the back, instead of three named backpacks. Bags from other mods are placed
+  correctly with nothing declared or configured, as long as they are worn like a
+  vanilla backpack. The quiver moves from the waist to **B** as a result; a
+  `BagRoleOverrides` entry of `"game:quiver": "waist"` restores it.
 
 ### Fixed
 
@@ -40,6 +45,10 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](FEATURES.md).
 - F08 / F10 - Interaction hints from other mods stay visible on bags. Burdened
   now removes only the two vanilla hints its remap makes wrong and leaves the
   rest of the list alone, instead of replacing all of it.
+- F03 / D03 - Immersive mode no longer refuses items that are not bags. A
+  populated skep can only be carried in a bag slot, so the L / B / R rules were
+  leaving it with nowhere to go. Bag slots now judge bags and pass everything
+  else to the game's own rules, as they do outside immersive mode.
 
 ## [v0.3.0](https://github.com/stinowdev/vs-burdened/releases/tag/v0.3.0)
 
