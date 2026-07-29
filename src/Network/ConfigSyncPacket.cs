@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Burdened.Config;
 using ProtoBuf;
 
@@ -28,6 +29,10 @@ public class ConfigSyncPacket
     [ProtoMember(6)]
     public bool ImprovedBagInteractions;
 
+    //F03 / D13
+    [ProtoMember(7)]
+    public Dictionary<string, string>? BagRoleOverrides;
+
     public static ConfigSyncPacket From(BurdenedConfig config)
     {
         return new ConfigSyncPacket
@@ -38,6 +43,7 @@ public class ConfigSyncPacket
             HideBagContentsInDialog = config.HideBagContentsInDialog,
             OffhandHoldsAnything = config.OffhandHoldsAnything,
             ImprovedBagInteractions = config.ImprovedBagInteractions,
+            BagRoleOverrides = config.BagRoleOverrides,
         };
     }
 
@@ -51,6 +57,7 @@ public class ConfigSyncPacket
             HideBagContentsInDialog = HideBagContentsInDialog,
             OffhandHoldsAnything = OffhandHoldsAnything,
             ImprovedBagInteractions = ImprovedBagInteractions,
+            BagRoleOverrides = BagRoleOverrides,
         };
         config.Sanitize();
         return config;

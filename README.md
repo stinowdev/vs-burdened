@@ -26,8 +26,14 @@ its item moves into valid storage or drops at the player's feet.
 
 Immersive carrying mode replaces the normal bag bar with three roles:
 
-- **L** and **R** accept equippable waist bags such as baskets and sacks.
-- **B** accepts the leather, sturdy, and hunter backpacks.
+- **B** takes your pack: a bag worn on the back that holds anything, such as the
+  leather, sturdy, and hunter backpacks.
+- **L** and **R** take everything else, including bags that only hold one kind
+  of thing. A quiver and a mining bag ride at the waist, so they never cost you
+  the slot your backpack needs.
+
+Bags added by other mods are sorted the same way with no setup.
+`BagRoleOverrides` below changes the placement of any bag.
 
 <img
   width="536"
@@ -89,14 +95,36 @@ The server creates
 | `HideBagContentsInDialog` | `true` | Keep bag contents out of the E inventory |
 | `OffhandHoldsAnything` | `true` | Allow manual offhand storage for non-bag items |
 | `ImprovedBagInteractions` | `true` | Enable direct opening, pickup, and placement of bags |
+| `BagRoleOverrides` | `{}` | Assign bags to the B or L / R slots by item code |
 
 After editing the file, restart the dedicated server or reopen the singleplayer
 world so the server loads and sends the updated settings.
 
+### Bag roles in immersive mode
+
+With `ImmersiveCarryingMode` on, the three vanilla backpacks go on the back and
+every other bag goes to the waist. `BagRoleOverrides` changes that for any item,
+including bags added by other mods. Codes accept `*` wildcards, and the two
+accepted roles are `back` and `waist`:
+
+```json
+"BagRoleOverrides": {
+  "othermod:rucksack-*": "back",
+  "game:backpack-sturdy": "waist"
+}
+```
+
+Bag mods can also ship their own default so nothing needs configuring; an entry
+here always wins over it. Listing an item that is not a bag does not make it
+equippable. Entries that name an unknown role are skipped, and each one is
+written to the server log at startup so a typo is easy to spot.
+
 ## Compatibility
 
 - Tested against Vintage Story **1.22.3**.
-- Required on both the client and server.
+- Required on both the client and server, and both must run the same version.
+  Burdened **0.4.0** changed the network protocol, so a client on an older
+  version cannot join a 0.4.0 server.
 - Standalone, with no required dependencies.
 - Immersive Backpacks, Wilderlands Onus Moderatus, and Immersive Modular
   Backpacks modify overlapping behavior and may not be compatible.

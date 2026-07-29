@@ -4,11 +4,11 @@
   "name": "Burdened",
   "authors": [ "stinow" ],
   "description": "A weightier carrying experience: fewer slots, immersive bag carrying, placeable and openable bags.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "side": "universal",
   "requiredOnClient": true,
   "requiredOnServer": true,
-  "networkVersion": "1.2.0",
+  "networkVersion": "1.3.0",
   "dependencies": {
     "game": "1.22.3"
   }

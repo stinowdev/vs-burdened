@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
 namespace Burdened.Config;
@@ -14,6 +18,9 @@ public class BurdenedConfig
     public const int MinBagSlots = 1;
     public const int MaxBagSlots = 4;       // vanilla bag-equip slot count
     public const int ImmersiveBagSlots = 3; // L / B / R while ImmersiveCarryingMode is on
+
+    public const string BackRole = "back";
+    public const string WaistRole = "waist";
 
     // F01: usable hotbar slots, left-aligned; the rest are locked + hidden.
     public int HotbarSlots { get; set; } = MaxHotbarSlots;
@@ -38,6 +45,29 @@ public class BurdenedConfig
     // Shift+click/RMB places them. Contents remain on the bag stack.
     public bool ImprovedBagInteractions { get; set; } = true;
 
+    // F03 / D13: item code -> "back" or "waist", highest priority in the role
+    // lookup. Codes may use wildcards ("othermod:rucksack-*") and an entry with
+    // no domain is read as "game:". This is how a server owner classifies a bag
+    // whose author never declared a role, or overrides one that declared wrong.
+    public Dictionary<string, string>? BagRoleOverrides { get; set; }
+
+    private readonly List<KeyValuePair<AssetLocation, string>> parsedRoleOverrides = new();
+    private readonly List<string> rejectedRoleOverrides = new();
+
+    /// <summary>
+    /// <see cref="BagRoleOverrides"/> parsed once by <see cref="Sanitize"/>.
+    /// The lookup runs per bag-equip check, so codes are not re-parsed there.
+    /// Ordered as written, and the first pattern that matches wins.
+    /// </summary>
+    [JsonIgnore]
+    public IReadOnlyList<KeyValuePair<AssetLocation, string>> RoleOverrides => parsedRoleOverrides;
+
+    /// <summary>
+    /// Entries <see cref="Sanitize"/> discarded. The server reports them once at startup.
+    /// </summary>
+    [JsonIgnore]
+    public IReadOnlyList<string> RejectedRoleOverrides => rejectedRoleOverrides;
+
     /// <summary>
     /// Bag-equip slots the player may use right now. Immersive mode always
     /// exposes exactly three typed slots (L/B/R); otherwise F02's BagSlots.
@@ -49,5 +79,52 @@ public class BurdenedConfig
     {
         HotbarSlots = GameMath.Clamp(HotbarSlots, MinHotbarSlots, MaxHotbarSlots);
         BagSlots = GameMath.Clamp(BagSlots, MinBagSlots, MaxBagSlots);
+        ParseRoleOverrides();
+    }
+
+    /// <summary>
+    /// Drops entries a hand-edit or an old version could have left unusable, so
+    /// one bad line cannot take the rest of the map with it.
+    /// </summary>
+    private void ParseRoleOverrides()
+    {
+        parsedRoleOverrides.Clear();
+        rejectedRoleOverrides.Clear();
+        if (BagRoleOverrides == null) return;
+
+        foreach (KeyValuePair<string, string> entry in BagRoleOverrides)
+        {
+            if (string.IsNullOrWhiteSpace(entry.Key))
+            {
+                rejectedRoleOverrides.Add("an entry with a blank item code");
+                continue;
+            }
+
+            string role = entry.Value?.Trim().ToLowerInvariant() ?? string.Empty;
+            if (role != BackRole && role != WaistRole)
+            {
+                rejectedRoleOverrides.Add(
+                    $"\"{entry.Key}\": \"{entry.Value}\" is not \"{BackRole}\" or \"{WaistRole}\"");
+                continue;
+            }
+
+            AssetLocation? code;
+            try
+            {
+                code = AssetLocation.Create(entry.Key.Trim().ToLowerInvariant());
+            }
+            catch (Exception)
+            {
+                code = null;
+            }
+
+            if (code == null)
+            {
+                rejectedRoleOverrides.Add($"\"{entry.Key}\" is not a usable item code");
+                continue;
+            }
+
+            parsedRoleOverrides.Add(new KeyValuePair<AssetLocation, string>(code, role));
+        }
     }
 }

@@ -34,9 +34,21 @@ public static class BagRoles
         };
     }
 
+    /// <summary>
+    /// L/B/R only sorts real bags. Everything else that can enter a bag-equip
+    /// slot is cargo, and immersive mode leaves it alone. A filled skep is the
+    /// usual case: it has the Backpack storage flag but no bag behavior, so a
+    /// bag slot is the only place vanilla will put it. Treating it as a bag
+    /// would leave it with nowhere to go.
+    ///
+    /// Falling through also keeps the storage-flag check, so nothing gets in
+    /// that vanilla would have refused.
+    /// </summary>
     public static bool Accepts(Role role, ItemStack? stack)
     {
         if (stack == null) return true;
+        if (!BagClassifier.IsEquippableBag(stack)) return true;
+
         return role switch
         {
             Role.Back => BagClassifier.IsTrueBackpack(stack),

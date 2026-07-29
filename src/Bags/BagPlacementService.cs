@@ -31,9 +31,20 @@ internal static class BagPlacementService
             Z = selection.Position.Z,
             FaceIndex = selection.Face.Index,
             HitX = selection.HitPosition?.X ?? 0.5,
-            HitY = selection.HitPosition?.Y ?? 1,
             HitZ = selection.HitPosition?.Z ?? 0.5,
         });
+        return true;
+    }
+
+    private static bool TryReadHitOffset(double value, out double offset)
+    {
+        if (!double.IsFinite(value))
+        {
+            offset = 0;
+            return false;
+        }
+
+        offset = Math.Clamp(value, 0, 1);
         return true;
     }
 
@@ -42,6 +53,15 @@ internal static class BagPlacementService
         if (SlotLocks.Config?.ImprovedBagInteractions != true) return;
         if (packet.BagIndex < 0 || packet.BagIndex >= SlotLocks.Config.EffectiveBagSlots()) return;
         if (packet.FaceIndex != BlockFacing.UP.Index) return;
+
+        if (!TryReadHitOffset(packet.HitX, out double hitX)
+            || !TryReadHitOffset(packet.HitZ, out double hitZ))
+        {
+            api.World.Logger.Audit(
+                "{0} sent a bag placement request with an out-of-range hit position. Ignored.",
+                player.PlayerName);
+            return;
+        }
 
         if (player.InventoryManager.GetOwnInventory(GlobalConstants.backpackInvClassName)
                 is not InventoryPlayerBackpacks backpacks
@@ -53,7 +73,7 @@ internal static class BagPlacementService
         ItemSlot source = backpacks.bagSlots[packet.BagIndex];
         if (source.Empty
             || SlotLocks.IsLocked(source)
-            || !BagSupport.SupportsGroundInteractions(source.Itemstack)) return;
+            || !BagSupport.SupportsBurdenedPlacement(source.Itemstack)) return;
 
         CollectibleBehaviorGroundStorable? groundBehavior =
             source.Itemstack.Collectible.GetBehavior<CollectibleBehaviorGroundStorable>();
@@ -86,8 +106,8 @@ internal static class BagPlacementService
             return;
         }
 
-        double y = player.Entity.Pos.X - (supportPos.X + packet.HitX);
-        double x = player.Entity.Pos.Z - (supportPos.Z + packet.HitZ);
+        double y = player.Entity.Pos.X - (supportPos.X + hitX);
+        double x = player.Entity.Pos.Z - (supportPos.Z + hitZ);
         double quarterTurn = Math.PI / 2;
         placed.MeshAngle = (float)(Math.Round(Math.Atan2(y, x) / quarterTurn) * quarterTurn);
         placed.DetermineStorageProperties(source);

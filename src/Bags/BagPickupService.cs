@@ -14,13 +14,14 @@ namespace Burdened.Bags;
 /// </summary>
 internal static class BagPickupService
 {
-    public static void Request(ICoreClientAPI api, BlockPos position)
+    public static void Request(ICoreClientAPI api, BlockPos position, int slotIndex)
     {
         api.Network.GetChannel(BurdenedModSystem.ModId).SendPacket(new PickupFloorBagPacket
         {
             X = position.X,
             Y = position.InternalY,
             Z = position.Z,
+            SlotIndex = slotIndex,
         });
     }
 
@@ -38,10 +39,11 @@ internal static class BagPickupService
 
         if (api.World.BlockAccessor.GetChunkAtBlockPos(position) == null) return;
         if (api.World.BlockAccessor.GetBlockEntity(position) is not BlockEntityGroundStorage groundStorage) return;
-        if (groundStorage.StorageProps?.Layout != EnumGroundStorageLayout.SingleCenter) return;
 
-        ItemSlot floorSlot = groundStorage.Inventory[0];
-        if (floorSlot.Empty || !BagSupport.SupportsGroundInteractions(floorSlot.Itemstack)) return;
+        if (packet.SlotIndex < 0 || packet.SlotIndex >= groundStorage.Inventory.Count) return;
+
+        ItemSlot floorSlot = groundStorage.Inventory[packet.SlotIndex];
+        if (floorSlot.Empty || !BagSupport.SupportsPlacedBagInteractions(floorSlot.Itemstack)) return;
 
         if (!BlockBehaviorReinforcable.AllowRightClickPickup(api.World, position, player)) return;
 

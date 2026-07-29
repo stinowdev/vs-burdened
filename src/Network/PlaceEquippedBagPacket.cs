@@ -23,9 +23,6 @@ public sealed class PlaceEquippedBagPacket
     [ProtoMember(6)]
     public double HitX;
 
-    [ProtoMember(7)]
-    public double HitY;
-
     [ProtoMember(8)]
     public double HitZ;
 }

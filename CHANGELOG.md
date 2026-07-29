@@ -4,19 +4,73 @@ All notable changes to this project will be documented in this file.
 
 Feature (F) and decision (D) numbers refer to [FEATURES.md](FEATURES.md).
 
-## [Unreleased]
+## [v0.4.0](https://github.com/stinowdev/vs-burdened/releases/tag/v0.4.0)
+
+Bags from other mods now work with Burdened. A bag is placed on the back or at
+the waist by what it is rather than by a list of names, mods can ship their own
+placement, and `BagRoleOverrides` gives the server owner the last word.
+
+**Clients and servers must update together.** The network protocol moved to
+version 1.3.0.
+
+### Added
+
+- F03 / D13 - `BagRoleOverrides` assigns any bag to the B or L / R slots by item
+  code, including bags from other mods and including vanilla. Codes accept `*`
+  wildcards, and the accepted roles are `back` and `waist`. An entry the server
+  cannot use is named in the log at startup rather than ignored in silence.
+- F03 / D13 - Bag mods can ship a default with
+  `"attributes": { "burdened": { "bagRole": "back" } }` in the item, so their
+  bags land correctly with nothing configured. A `BagRoleOverrides` entry always
+  wins over it. Bags that match neither keep their current slot.
 
 ### Changed
 
 - F10 / D12 - Worn-bag visibility follows the game's own active-slot event
   instead of patching the client inventory manager. Behavior is unchanged, and
   Burdened patches two fewer engine internals.
+- The network protocol is now version 1.3.0, because the config sync carries
+  `BagRoleOverrides`. Clients and servers must update together.
+- F03 / D03 / D13 - The **B** slot now recognises a pack by what it is rather
+  than by three named backpacks: worn on the back, and able to hold anything.
+  Bags from other mods are placed correctly with nothing declared or configured.
+  Every vanilla bag keeps the slot it had, and specialised back-worn containers
+  such as the quiver stay at the waist where they do not compete with a pack.
 
 ### Fixed
 
 - A game method that Burdened can no longer find now disables only the feature
   that needed it, instead of stopping the whole mod from loading. Each group of
   patches reports how many it applied, and names anything it could not.
+- F03 / D03 - Immersive bag-role rules now attach to every slot type in the
+  game. 8 vanilla slot types refused the previous attachment and logged a
+  warning on every world load, and a bag-equip slot added by another mod could
+  have skipped the role rules with no sign that it had.
+- F10 - A malformed placement request can no longer leave a placed bag that
+  cannot be opened or picked up again. The server checks the hit position it is
+  sent before deriving the bag's rotation from it.
+- F08 / F10 - Interaction hints from other mods stay visible on bags. Burdened
+  now removes only the two vanilla hints its remap makes wrong and leaves the
+  rest of the list alone, instead of replacing all of it.
+- F03 / D03 - Immersive mode no longer refuses items that are not bags. A
+  populated skep can only be carried in a bag slot, so the L / B / R rules were
+  leaving it with nowhere to go. Bag slots now judge bags and pass everything
+  else to the game's own rules, as they do outside immersive mode.
+- F08 / F10 / D08 - Wall-mounted bags such as the quiver work again.
+  A placed quiver now opens with right-click and picks up
+  with Shift + right-click, like every other bag. A selected one opens with
+  right-click whether or not a block is targeted, and an equipped one opens
+  from its slot. Putting it down stays vanilla: Ctrl + Shift against a wall,
+  which is a position Burdened cannot express.
+
+### Upgrade notice
+
+- `BagRoleOverrides` is added to `burdened.json` and is empty by default. No
+  other setting changed, and no existing setting was renamed or removed.
+- Saved worlds are unaffected. Burdened stores no data of its own.
+- Every vanilla bag keeps the slot it had.
+- Clients and servers must both run 0.4.0. A client on 0.3.0 cannot join a
+  0.4.0 server.
 
 ## [v0.3.0](https://github.com/stinowdev/vs-burdened/releases/tag/v0.3.0)
 
