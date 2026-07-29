@@ -48,6 +48,43 @@ The following rules apply to every transition:
 Ctrl remains the F05 modifier for selecting equipped bag slots. Shift owns bag
 pickup and placement.
 
+## Bag role contract (F03, D03, D13)
+
+An equippable bag is assigned to B or to L / R by the first of these that names
+it. Neither mechanism requires a Burdened release.
+
+| Priority | Source | Set by |
+|---|---|---|
+| 1 | `BagRoleOverrides` in `burdened.json` | The server owner |
+| 2 | `burdened.bagRole` item attribute | The bag's mod author |
+| 3 | The three D03 backpack codes | Burdened, for vanilla content |
+
+The accepted roles are `back` and `waist`. Anything unrecognized at one level
+is ignored and the next level decides, so one bad entry cannot break the rest.
+A bag that reaches level 3 without matching is a waist bag.
+
+A mod author ships a default in the item JSON:
+
+```json
+"attributes": { "burdened": { "bagRole": "back" } }
+```
+
+A server owner overrides anything, including vanilla and including a mod that
+declared the wrong role. Codes accept `*` wildcards, and an entry with no
+domain is read as `game:`:
+
+```json
+"BagRoleOverrides": {
+  "othermod:rucksack-*": "back",
+  "game:backpack-sturdy": "waist"
+}
+```
+
+Overrides are server-owned and sync to every client with the rest of the
+config, so both sides classify a bag identically. This applies only to items
+Burdened already recognizes as equippable bags: naming a non-bag here does not
+make it equippable.
+
 ## Locked decisions
 
 | ID | State | Decision |
@@ -64,6 +101,7 @@ pickup and placement.
 | D10 | Planned | F09 identifies a movable container independently of its world position. Pickup and replacement must not lose that identity. |
 | D11 | Active | Equipped-bag placement identifies the source by slot index. The server revalidates that slot when handling the request; no item fingerprint is sent. |
 | D12 | Active | An engine method is patched only where no event, behavior, or registered class reaches the same paths. Worn-bag invalidation uses `AfterActiveSlotChanged`, which already covers local and server-forced selection changes. |
+| D13 | Active | Extends D03. An immersive role is resolved as `BagRoleOverrides` in the config, then the item's own `burdened.bagRole` attribute, then the D03 codes. The server owner therefore always has the last word, and a bag mod still works with nothing configured. The D03 codes are the last resort, not the definition, and Burdened never keys behavior off a mod id. |
 
 
 ## Configuration contract

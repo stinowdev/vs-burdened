@@ -89,9 +89,28 @@ The server creates
 | `HideBagContentsInDialog` | `true` | Keep bag contents out of the E inventory |
 | `OffhandHoldsAnything` | `true` | Allow manual offhand storage for non-bag items |
 | `ImprovedBagInteractions` | `true` | Enable direct opening, pickup, and placement of bags |
+| `BagRoleOverrides` | `{}` | Assign bags to the B or L / R slots by item code |
 
 After editing the file, restart the dedicated server or reopen the singleplayer
 world so the server loads and sends the updated settings.
+
+### Bag roles in immersive mode
+
+With `ImmersiveCarryingMode` on, the three vanilla backpacks go on the back and
+every other bag goes to the waist. `BagRoleOverrides` changes that for any item,
+including bags added by other mods. Codes accept `*` wildcards, and the two
+accepted roles are `back` and `waist`:
+
+```json
+"BagRoleOverrides": {
+  "othermod:rucksack-*": "back",
+  "game:backpack-sturdy": "waist"
+}
+```
+
+Bag mods can also ship their own default so nothing needs configuring; an entry
+here always wins over it. Entries that name an unknown role are ignored, and
+listing an item that is not a bag does not make it equippable.
 
 ## Compatibility
 

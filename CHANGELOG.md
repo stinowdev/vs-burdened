@@ -6,11 +6,23 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](FEATURES.md).
 
 ## [Unreleased]
 
+### Added
+
+- F03 / D13 - `BagRoleOverrides` assigns any bag to the B or L / R slots by item
+  code, including bags from other mods and including vanilla. Codes accept `*`
+  wildcards, and the accepted roles are `back` and `waist`.
+- F03 / D13 - Bag mods can ship a default with
+  `"attributes": { "burdened": { "bagRole": "back" } }` in the item, so their
+  bags land correctly with nothing configured. A `BagRoleOverrides` entry always
+  wins over it. Bags that match neither keep their current slot.
+
 ### Changed
 
 - F10 / D12 - Worn-bag visibility follows the game's own active-slot event
   instead of patching the client inventory manager. Behavior is unchanged, and
   Burdened patches two fewer engine internals.
+- The network protocol is now version 1.3.0, because the config sync carries
+  `BagRoleOverrides`. Clients and servers must update together.
 
 ### Fixed
 
