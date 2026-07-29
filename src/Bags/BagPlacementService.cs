@@ -31,7 +31,6 @@ internal static class BagPlacementService
             Z = selection.Position.Z,
             FaceIndex = selection.Face.Index,
             HitX = selection.HitPosition?.X ?? 0.5,
-            HitY = selection.HitPosition?.Y ?? 1,
             HitZ = selection.HitPosition?.Z ?? 0.5,
         });
         return true;
