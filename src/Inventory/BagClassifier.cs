@@ -28,6 +28,14 @@ internal static class BagClassifier
     private const string AttachmentAttribute = "attachableToEntity";
     private const string AttachmentCategoryKey = "categoryCode";
     private const string BackAttachmentCategory = "backpack";
+    private const string BagAttribute = "backpack";
+    private const string StorageFlagsKey = "storageFlags";
+
+    /// <summary>
+    /// CollectibleBehaviorHeldBag.GetStorageFlags fallback.
+    /// Only used when a bag implements IHeldBag without the behavior.
+    /// </summary>
+    private const int UnrestrictedBagContents = 189;
 
     public static bool IsTrueBackpack(ItemStack? stack)
     {
@@ -38,26 +46,51 @@ internal static class BagClassifier
         {
             BurdenedConfig.BackRole => true,
             BurdenedConfig.WaistRole => false,
-            _ => AttachesAtTheBack(collectible),
+            _ => BelongsOnTheBack(stack, collectible),
         };
     }
 
     /// <summary>
-    /// Fallback when no override or bagRole is set. Uses the game's attachment
-    /// category instead of a hardcoded item list: if it says `backpack`, the bag
-    /// sits on the back. That way any mod's bag that renders on the back counts,
-    /// with no attribute and no config.
+    /// Fallback when no override or bagRole is set. Uses the game's own data
+    /// instead of a list of item codes. A back bag must wear at the `backpack`
+    /// position and hold ordinary items.
+    ///
+    /// The second check keeps the B slot free for a real pack. Quivers and
+    /// mining bags also wear on the back, but they only take one kind of thing,
+    /// so they count as waist bags here.
     ///
     /// Callers already checked IsEquippableBag, so saddles and bedrolls that
     /// share the attachment system never reach this.
     /// </summary>
-    private static bool AttachesAtTheBack(CollectibleObject collectible)
+    private static bool BelongsOnTheBack(ItemStack stack, CollectibleObject collectible)
     {
         JsonObject? attributes = collectible.Attributes;
         if (attributes == null) return false;
 
         string? category = attributes[AttachmentAttribute][AttachmentCategoryKey].AsString();
-        return string.Equals(category, BackAttachmentCategory, StringComparison.OrdinalIgnoreCase);
+        if (!string.Equals(category, BackAttachmentCategory, StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        return HoldsOrdinaryItems(stack, attributes);
+    }
+
+    /// <summary>
+    /// Asks vanilla what the bag's own slots accept, so a bag that overrides the
+    /// behavior is answered by its own code. Falls back to reading the attribute
+    /// with vanilla's default for a bag that implements IHeldBag some other way.
+    /// </summary>
+    private static bool HoldsOrdinaryItems(ItemStack stack, JsonObject attributes)
+    {
+        CollectibleBehaviorHeldBag? heldBag =
+            stack.Collectible.GetBehavior<CollectibleBehaviorHeldBag>();
+
+        EnumItemStorageFlags contents = heldBag != null
+            ? heldBag.GetStorageFlags(stack)
+            : (EnumItemStorageFlags)attributes[BagAttribute][StorageFlagsKey].AsInt(UnrestrictedBagContents);
+
+        return (contents & EnumItemStorageFlags.General) != 0;
     }
 
     /// <summary>

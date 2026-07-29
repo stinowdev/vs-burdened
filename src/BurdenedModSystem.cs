@@ -123,7 +123,7 @@ public class BurdenedModSystem : ModSystem
 
         config ??= new BurdenedConfig();
         config.Sanitize();
-        
+
         foreach (string rejected in config.RejectedRoleOverrides)
         {
             api.Logger.Warning(

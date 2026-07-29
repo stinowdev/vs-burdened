@@ -24,11 +24,11 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](FEATURES.md).
   Burdened patches two fewer engine internals.
 - The network protocol is now version 1.3.0, because the config sync carries
   `BagRoleOverrides`. Clients and servers must update together.
-- F03 / D03 / D13 - The **B** slot now accepts whatever the game itself wears on
-  the back, instead of three named backpacks. Bags from other mods are placed
-  correctly with nothing declared or configured, as long as they are worn like a
-  vanilla backpack. The quiver moves from the waist to **B** as a result; a
-  `BagRoleOverrides` entry of `"game:quiver": "waist"` restores it.
+- F03 / D03 / D13 - The **B** slot now recognises a pack by what it is rather
+  than by three named backpacks: worn on the back, and able to hold anything.
+  Bags from other mods are placed correctly with nothing declared or configured.
+  Every vanilla bag keeps the slot it had, and specialised back-worn containers
+  such as the quiver stay at the waist where they do not compete with a pack.
 
 ### Fixed
 

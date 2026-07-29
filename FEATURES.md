@@ -57,15 +57,17 @@ it. Neither mechanism requires a Burdened release.
 |---|---|---|
 | 1 | `BagRoleOverrides` in `burdened.json` | The server owner |
 | 2 | `burdened.bagRole` item attribute | The bag's mod author |
-| 3 | `attachableToEntity.categoryCode` of `backpack` | The game, for anything worn on the back |
+| 3 | Worn at the game's `backpack` position and unrestricted contents | The game, for any general-purpose pack |
 
 The accepted roles are `back` and `waist`. Anything unrecognized at one level
 is ignored and the next level decides, so one bad entry cannot break the rest.
 A bag that reaches level 3 without matching is a waist bag.
 
-Level 3 reads the game's own answer rather than a list of item codes, so a bag
-that already renders on the player's back is treated as a back bag with nothing
-declared or configured anywhere.
+Level 3 uses the game's own data instead of a list of item codes. A bag lands
+in the right place with nothing declared and nothing configured. The check is
+simple: does the game wear it on the back, and does it hold ordinary items
+rather than one kind of thing. A quiver fails the second part, so it stays at
+the waist and leaves the pack slot free.
 
 A mod author ships a default in the item JSON:
 
@@ -95,7 +97,7 @@ make it equippable.
 |---|---|---|
 | D01 | Active | Burdened is standalone. It does not depend on or patch another inventory mod. |
 | D02 | Active | Items in newly locked slots move into valid storage, then drop at the player's feet if no destination remains. They are never deleted. |
-| D03 | Active | Immersive mode exposes L / B / R. B accepts bags the game itself attaches at its `backpack` position; L and R accept every other equippable bag. In 1.22.3 that is the normal, sturdy and hunter backpacks plus the quiver on B. The roles sort bags only: anything else the game allows in a bag-equip slot, such as a populated skep, is passed through to vanilla's own rules. |
+| D03 | Active | Immersive mode exposes L / B / R. B accepts a general-purpose pack: a bag the game wears at its `backpack` position that also holds ordinary items. L and R accept every other equippable bag, including specialised back-worn containers such as the quiver, so they never compete for the single B slot. In 1.22.3 that leaves the normal, sturdy and hunter backpacks on B. The roles sort bags only: anything else the game allows in a bag-equip slot, such as a populated skep, is passed through to vanilla's own rules. |
 | D04 | Planned | Custom on-body rendering will place B on the back and L / R at the waist. A selected bag remains hand-only. |
 | D05 | Active | The compact E inventory hides bag contents only. Bag-equip slots remain on the hotbar. |
 | D06 | Active | Bags are always rejected by the offhand. With `OffhandHoldsAnything=true`, non-bag items may be placed there manually and automatic best-slot routing excludes it. Item use remains vanilla. |
