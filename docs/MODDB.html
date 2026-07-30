@@ -92,11 +92,10 @@
 <p><img src="https://i.imgur.com/NpUYCqf.png" alt="" width="756" height="439" /></p>
 <p><em>Several equipped and placed bag inventories open at once.</em></p>
 <p>&nbsp;</p>
-<p>Use <strong>Ctrl + mouse wheel</strong> to include equipped bag slots in hotbar selection. Multiple equipped
-  bags can remain open at the same time. If a pickup or placement is rejected, the bag and its contents remain at the
-  source.</p>
-<p>Wall-mounted bags such as quivers keep their vanilla placement gesture: <strong>Ctrl + Shift</strong> against a
-  wall.</p>
+<p>Use <strong>Ctrl + mouse wheel</strong> to include equipped bag slots in hotbar selection. Multiple equipped bags can
+  remain open at the same time. If a pickup or placement is rejected, the bag and its contents remain at the source.</p>
+<p>Wall-mounted bags such as quivers keep their vanilla placement gesture: <strong>Ctrl + Shift</strong> against a wall.
+</p>
 <h3>Configuration</h3>
 <p>Burdened creates the following server-owned file on first run:</p>
 <p><code>%APPDATA%\VintagestoryData\ModConfig\burdened.json</code></p>
@@ -167,6 +166,29 @@
     </tr>
   </tbody>
 </table>
+<p dir="auto">&nbsp;</p>
+<p dir="auto"><strong>Bag mods</strong> can declare their own default role in item JSON:</p>
+<div class="highlight highlight-source-json notranslate position-relative overflow-auto" dir="auto">
+  <div class="zeroclipboard-container">
+    <table style="width: 72.1027%; border-collapse: collapse; background-color: #f4efe4; border: 1px solid #6b563c;"
+      cellpadding="12">
+      <tbody>
+        <tr>
+          <td>
+            <p style="margin: 0;">&nbsp;</p>
+            <span class="pl-ent">"attributes"</span>: { <span class="pl-ent">"burdened"</span>: { <span
+              class="pl-ent">"bagRole"</span>: <span class="pl-s"><span class="pl-pds">"</span>back<span
+                class="pl-pds">"</span></span> } }
+            <p style="margin: 0;">&nbsp;</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="zeroclipboard-container">&nbsp;</div>
+</div>
+<p dir="auto">NOTE: A server override always wins over that default. Listing an item that is not a bag does not make it
+  equippable. Entries the server cannot use are skipped and written to the log at startup so a typo is easy to spot.</p>
 <h3>Compatibility and installation</h3>
 <table style="width: 72.1027%; border-collapse: collapse; background-color: #f4efe4; border: 3px double #6b563c;"
   cellpadding="14">
