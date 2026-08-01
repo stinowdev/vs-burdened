@@ -33,6 +33,10 @@ public class ConfigSyncPacket
     [ProtoMember(7)]
     public Dictionary<string, string>? BagRoleOverrides;
 
+    // F11 / D14
+    [ProtoMember(8)]
+    public float OffhandHungerPenalty;
+
     public static ConfigSyncPacket From(BurdenedConfig config)
     {
         return new ConfigSyncPacket
@@ -44,6 +48,7 @@ public class ConfigSyncPacket
             OffhandHoldsAnything = config.OffhandHoldsAnything,
             ImprovedBagInteractions = config.ImprovedBagInteractions,
             BagRoleOverrides = config.BagRoleOverrides,
+            OffhandHungerPenalty = config.OffhandHungerPenalty,
         };
     }
 
@@ -58,6 +63,7 @@ public class ConfigSyncPacket
             OffhandHoldsAnything = OffhandHoldsAnything,
             ImprovedBagInteractions = ImprovedBagInteractions,
             BagRoleOverrides = BagRoleOverrides,
+            OffhandHungerPenalty = OffhandHungerPenalty,
         };
         config.Sanitize();
         return config;

@@ -32,8 +32,8 @@ roles:
 - **B** takes your pack: a bag worn on the back that holds anything, such as the
   leather, sturdy, and hunter backpacks.
 - **L** and **R** take everything else, including bags that only hold one kind
-  of thing. A quiver and a mining bag ride at the waist, so they never cost you
-  the slot your backpack needs.
+  of thing. Wearable bags such as quivers remain visible on the body. Burdened
+  keeps their authored attachment instead of guessing a new position.
 
 Bags added by other mods are sorted the same way with no setup.
 `BagRoleOverrides` below changes the placement of any bag.
@@ -54,8 +54,8 @@ Bags added by other mods are sorted the same way with no setup.
 
 Equipped and placed bags can be used without moving them through the main
 inventory. Several equipped bag windows can remain open at once. When an
-equipped bag is selected, it appears in the active hand without also appearing
-as a worn duplicate.
+equipped bag is selected, only that bag moves to the active hand. Other wearable
+bags remain on the body.
 
 | Location | Input | Action |
 |---|---|---|
@@ -86,7 +86,10 @@ remain available from the hotbar.
 
 The offhand can accept non-bag items without adding dual-wield item use. Bags
 are always rejected. While `OffhandHoldsAnything` is enabled, automatic
-inventory routing also excludes the offhand.
+inventory routing also excludes the offhand. `OffhandHungerPenalty` controls
+Vintage Story's extra hunger rate while an ordinary item is held there. The
+default `0.2` means 20% faster hunger, while `0` disables that penalty. Items
+with their own stat modifiers keep their vanilla behavior.
 
 ## Configuration
 
@@ -100,6 +103,7 @@ The server creates
 | `ImmersiveCarryingMode` | `false` | Use the L / B / R layout instead of `BagSlots` |
 | `HideBagContentsInDialog` | `true` | Keep bag contents out of the E inventory |
 | `OffhandHoldsAnything` | `true` | Allow manual offhand storage for non-bag items |
+| `OffhandHungerPenalty` | `0.2` | Extra hunger rate for ordinary offhand items; `0` disables it |
 | `ImprovedBagInteractions` | `true` | Enable direct opening, pickup, and placement of bags |
 | `BagRoleOverrides` | `{}` | Assign bags to the B or L / R slots by item code |
 
@@ -152,6 +156,12 @@ Existing worlds are unaffected because Burdened stores no save data of its own.
 Version 0.4.0 adds an empty `BagRoleOverrides` setting automatically and requires
 no manual migration. It also changes the network protocol, so clients and
 servers must both update to 0.4.0.
+
+### Upgrading from 0.4.0
+
+Version 0.5.0 adds `OffhandHungerPenalty` with the vanilla value of `0.2`, so no
+manual migration is required. The network protocol changes again, so clients
+and servers must both update to 0.5.0.
 
 ## Installation
 

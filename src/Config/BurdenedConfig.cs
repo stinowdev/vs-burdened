@@ -18,6 +18,7 @@ public class BurdenedConfig
     public const int MinBagSlots = 1;
     public const int MaxBagSlots = 4;       // vanilla bag-equip slot count
     public const int ImmersiveBagSlots = 3; // L / B / R while ImmersiveCarryingMode is on
+    public const float VanillaOffhandHungerPenalty = 0.2f;
 
     public const string BackRole = "back";
     public const string WaistRole = "waist";
@@ -39,6 +40,10 @@ public class BurdenedConfig
 
     // F06 / D06: the offhand manually accepts non-bag items.
     public bool OffhandHoldsAnything { get; set; } = true;
+
+    // F11 / D14: vanilla's additive hunger-rate modifier while an ordinary
+    // item is held in the offhand. 0.2 means 20% faster; 0 disables it.
+    public float OffhandHungerPenalty { get; set; } = VanillaOffhandHungerPenalty;
 
     // F08 / F10: Burdened's complete bag interaction contract: floor bags open
     // with RMB and Shift+RMB equips them; equipped bags open with RMB and
@@ -79,6 +84,10 @@ public class BurdenedConfig
     {
         HotbarSlots = GameMath.Clamp(HotbarSlots, MinHotbarSlots, MaxHotbarSlots);
         BagSlots = GameMath.Clamp(BagSlots, MinBagSlots, MaxBagSlots);
+        if (!float.IsFinite(OffhandHungerPenalty) || OffhandHungerPenalty < 0)
+        {
+            OffhandHungerPenalty = 0;
+        }
         ParseRoleOverrides();
     }
 

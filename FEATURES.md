@@ -18,6 +18,8 @@ future work. See [README.md](README.md) for player documentation and
 | F08 | Implemented | Open and equip placed bags directly | `ImprovedBagInteractions` | `true` | Server transfers; client opens |
 | F09 | Planned | Remember container window positions by identity | - | - | Client |
 | F10 | Implemented | Open and place equipped bags directly | `ImprovedBagInteractions` | `true` | Server places; client opens |
+| F11 | Implemented | Configure the vanilla offhand hunger penalty | `OffhandHungerPenalty` | `0.2` | Server applies; client mirrors |
+| F12 | Implemented | Compose immersive wearable bag models independently | Follows F03 | - | Client presentation |
 
 Planned features have no runtime settings.
 
@@ -102,7 +104,7 @@ make it equippable.
 | D01 | Active | Burdened is standalone. It does not depend on or patch another inventory mod. |
 | D02 | Active | Items in newly locked slots move into valid storage, then drop at the player's feet if no destination remains. They are never deleted. |
 | D03 | Active | Immersive mode exposes L / B / R. B accepts a general-purpose pack: a bag the game wears at its `backpack` position that also holds ordinary items. L and R accept every other equippable bag, including specialised back-worn containers such as the quiver, so they never compete for the single B slot. In 1.22.3 that leaves the normal, sturdy and hunter backpacks on B. The roles sort bags only: anything else the game allows in a bag-equip slot, such as a populated skep, is passed through to vanilla's own rules. |
-| D04 | Planned | Custom on-body rendering will place B on the back and L / R at the waist. A selected bag remains hand-only. |
+| D04 | Active | In immersive mode, equipped bags with wearable models remain visible at their authored body positions. Selecting a bag shows it only in hand. Burdened does not reposition arbitrary models. |
 | D05 | Active | The compact E inventory hides bag contents only. Bag-equip slots remain on the hotbar. |
 | D06 | Active | Bags are always rejected by the offhand. With `OffhandHoldsAnything=true`, non-bag items may be placed there manually and automatic best-slot routing excludes it. Item use remains vanilla. |
 | D07 | Planned | F07 preserves vanilla priority: hotbar first, then equipped bag contents. |
@@ -112,6 +114,8 @@ make it equippable.
 | D11 | Active | Equipped-bag placement identifies the source by slot index. The server revalidates that slot when handling the request; no item fingerprint is sent. |
 | D12 | Active | An engine method is patched only where no event, behavior, or registered class reaches the same paths. Worn-bag invalidation uses `AfterActiveSlotChanged`, which already covers local and server-forced selection changes. |
 | D13 | Active | Extends D03. Roles resolve in order: `BagRoleOverrides` in the config, then the item's `burdened.bagRole` attribute, then the game's own data for where the bag is worn and what it holds. The server owner always has the last word. A bag mod still works with nothing configured. No level keys off a mod id or item code. |
+| D14 | Active | F11 configures Vintage Story's existing offhand fallback penalty rather than replacing the hunger system. `0.2` preserves vanilla's 20% increase and `0` disables it. Non-finite and negative values become `0`. Items with their own `statModifier` keep the game's item-defined behavior. The server applies the effective value and syncs it to clients. |
+| D15 | Active | Outside immersive mode, a selected bag stays hand-only and a quiver cannot replace an equipped backpack in the worn model. |
 
 
 ## Configuration contract

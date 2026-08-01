@@ -4,6 +4,41 @@ All notable changes to this project will be documented in this file.
 
 Feature (F) and decision (D) numbers refer to [FEATURES.md](FEATURES.md).
 
+## Unreleased
+
+The 0.5.0 development line makes Vintage Story's offhand hunger penalty
+configurable and makes immersive carrying visible on the player.
+
+**Clients and servers must update together.** The network protocol moves to
+version 1.4.0.
+
+### Added
+
+- F11 / D14 - `OffhandHungerPenalty` controls Vintage Story's extra hunger rate
+  for an ordinary offhand item. The default `0.2` preserves vanilla's 20%
+  increase, while `0` disables it.
+- F12 / D04 - In immersive mode, backpacks and other wearable bags remain visible
+  together. Selecting one moves only that bag to the hand.
+
+### Changed
+
+- The network protocol moves to version 1.4.0 because the config sync carries
+  `OffhandHungerPenalty`.
+
+### Fixed
+
+- F12 / D04 - Wearable bags keep their authored attachment instead of being
+  forced onto a different body bone.
+- F10 / D15 - A quiver no longer hides an equipped backpack outside immersive
+  mode.
+
+### Upgrade notice
+
+- `OffhandHungerPenalty` is added to `burdened.json`. Its default preserves
+  vanilla behavior, and no existing setting is renamed or removed.
+- Saved worlds are unaffected. Burdened stores no data of its own.
+- Clients and servers must both run the same Burdened version.
+
 ## [v0.4.0](https://github.com/stinowdev/vs-burdened/releases/tag/v0.4.0)
 
 Bags from other mods now work with Burdened. A bag is placed on the back or at
