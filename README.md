@@ -142,7 +142,7 @@ written to the log at startup so a typo is easy to spot.
 <img 
   width="720" 
   alt="Equipped bag selection" 
-  src="https://i.imgur.com/nDf7bT0.gif" 
+  src="https://i.imgur.com/Rt5nxhb.jpeg" 
 />
 
 When an equipped bag is selected, it is shown in the player's hand without also appearing as a worn duplicate.
