@@ -139,6 +139,14 @@ A server override always wins over that default. Listing an item that is not a
 bag does not make it equippable. Entries the server cannot use are skipped and
 written to the log at startup so a typo is easy to spot.
 
+<img 
+  width="720" 
+  alt="Equipped bag selection" 
+  src="https://i.imgur.com/nDf7bT0.gif" 
+/>
+
+When an equipped bag is selected, it is shown in the player's hand without also appearing as a worn duplicate.
+
 ## Compatibility
 
 - Built for Vintage Story **1.22.3**.
