@@ -1,4 +1,4 @@
-# Burdened: Immersive Carrying
+# Burdened
 
 <img
   width="400"
