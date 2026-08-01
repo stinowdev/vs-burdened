@@ -1,5 +1,5 @@
 using System;
-using Burdened.Bags;
+using Burdened.Client;
 using HarmonyLib;
 using Vintagestory.API.Common;
 using Vintagestory.GameContent;
@@ -7,9 +7,9 @@ using Vintagestory.GameContent;
 namespace Burdened.Patches;
 
 /// <summary>
-/// F10: a selected bag-equip slot is rendered by vanilla as the active hand
-/// item. Exclude that same slot while vanilla composes the player's worn
-/// backpack shape so one bag is not shown on the body and in the hand at once.
+/// F10 / F12: wraps vanilla player-inventory shape composition so the selected
+/// bag remains hand-only and immersive L / B / R bags can be composed without
+/// vanilla discarding duplicate attachment categories.
 ///
 /// D12 exception: the effect must wrap the vanilla body, which no behavior can.
 /// Client only. Runs on the client main thread, not a tesselation worker
@@ -35,7 +35,7 @@ public static class BagRenderPatches
                 finalizer: PatchSupport.Hook(logger, typeof(BagRenderPatches), nameof(TessellationFinalizer)));
 
             logger.Notification(
-                "[{0}] selected bag render patch applied to {1} method(s).", BurdenedModSystem.ModId, patched);
+                "[{0}] immersive bag render patch applied to {1} method(s).", BurdenedModSystem.ModId, patched);
         }
     }
 
@@ -44,45 +44,35 @@ public static class BagRenderPatches
         lock (Gate) applied = false;
     }
 
-    public static void TessellationPrefix(
+    internal static void TessellationPrefix(
         EntityBehaviorPlayerInventory __instance,
-        ref HiddenBagState? __state)
+        ref ImmersiveBagRenderer.HiddenBagState? __state)
     {
-        __state = null;
-
-        IPlayer? player = (__instance.entity as EntityPlayer)?.Player;
-        ItemSlot? activeSlot = BagSupport.SelectedEquippedBagSlot(player);
-        if (activeSlot?.Itemstack == null) return;
-
-        __state = new HiddenBagState(activeSlot, activeSlot.Itemstack);
-        activeSlot.Itemstack = null;
+        ImmersiveBagRenderer.BeforeVanilla(__instance, ref __state);
     }
 
-    public static void TessellationPostfix(HiddenBagState? __state) => __state?.Restore();
+    internal static void TessellationPostfix(
+        EntityBehaviorPlayerInventory __instance,
+        ref Shape entityShape,
+        string shapePathForLogging,
+        ref bool shapeIsCloned,
+        ref string[] willDeleteElements,
+        ImmersiveBagRenderer.HiddenBagState? __state)
+    {
+        ImmersiveBagRenderer.AfterVanilla(
+            __instance,
+            __state,
+            ref entityShape,
+            shapePathForLogging,
+            ref shapeIsCloned,
+            ref willDeleteElements);
+    }
 
-    public static Exception? TessellationFinalizer(Exception? __exception, HiddenBagState? __state)
+    internal static Exception? TessellationFinalizer(
+        Exception? __exception,
+        ImmersiveBagRenderer.HiddenBagState? __state)
     {
         __state?.Restore();
         return __exception;
-    }
-
-    public sealed class HiddenBagState
-    {
-        private readonly ItemSlot slot;
-        private ItemStack? stack;
-
-        public HiddenBagState(ItemSlot slot, ItemStack stack)
-        {
-            this.slot = slot;
-            this.stack = stack;
-        }
-
-        public void Restore()
-        {
-            if (stack == null) return;
-
-            slot.Itemstack = stack;
-            stack = null;
-        }
     }
 }

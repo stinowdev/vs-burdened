@@ -7,7 +7,7 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](FEATURES.md).
 ## Unreleased
 
 The 0.5.0 development line makes Vintage Story's offhand hunger penalty
-configurable.
+configurable and makes immersive carrying visible on the player.
 
 **Clients and servers must update together.** The network protocol moves to
 version 1.4.0.
@@ -17,11 +17,20 @@ version 1.4.0.
 - F11 / D14 - `OffhandHungerPenalty` controls Vintage Story's extra hunger rate
   for an ordinary offhand item. The default `0.2` preserves vanilla's 20%
   increase, while `0` disables it.
+- F12 / D04 - In immersive mode, backpacks and other wearable bags remain visible
+  together. Selecting one moves only that bag to the hand.
 
 ### Changed
 
 - The network protocol moves to version 1.4.0 because the config sync carries
   `OffhandHungerPenalty`.
+
+### Fixed
+
+- F12 / D04 - Wearable bags keep their authored attachment instead of being
+  forced onto a different body bone.
+- F10 / D15 - A quiver no longer hides an equipped backpack outside immersive
+  mode.
 
 ### Upgrade notice
 

@@ -32,8 +32,8 @@ roles:
 - **B** takes your pack: a bag worn on the back that holds anything, such as the
   leather, sturdy, and hunter backpacks.
 - **L** and **R** take everything else, including bags that only hold one kind
-  of thing. A quiver and a mining bag ride at the waist, so they never cost you
-  the slot your backpack needs.
+  of thing. Wearable bags such as quivers remain visible on the body. Burdened
+  keeps their authored attachment instead of guessing a new position.
 
 Bags added by other mods are sorted the same way with no setup.
 `BagRoleOverrides` below changes the placement of any bag.
@@ -54,8 +54,8 @@ Bags added by other mods are sorted the same way with no setup.
 
 Equipped and placed bags can be used without moving them through the main
 inventory. Several equipped bag windows can remain open at once. When an
-equipped bag is selected, it appears in the active hand without also appearing
-as a worn duplicate.
+equipped bag is selected, only that bag moves to the active hand. Other wearable
+bags remain on the body.
 
 | Location | Input | Action |
 |---|---|---|
