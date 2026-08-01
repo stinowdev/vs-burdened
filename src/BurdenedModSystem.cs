@@ -44,8 +44,13 @@ public class BurdenedModSystem : ModSystem
         SlotLocks.Config = Config;
 
         capi?.Logger.Notification(
-            "[{0}] config received from server. hotbarSlots={1}, bagSlots={2}, immersive={3}",
-            ModId, Config.HotbarSlots, Config.BagSlots, Config.ImmersiveCarryingMode);
+            "[{0}] config received from server. hotbarSlots={1}, bagSlots={2}, immersive={3}, "
+            + "hideBagContents={4}, offhandHoldsAnything={5}, offhandHungerPenalty={6}, "
+            + "improvedBagInteractions={7}, bagRoleOverrides={8}",
+            ModId, Config.HotbarSlots, Config.BagSlots, Config.ImmersiveCarryingMode,
+            Config.HideBagContentsInDialog, Config.OffhandHoldsAnything,
+            Config.OffhandHungerPenalty, Config.ImprovedBagInteractions,
+            Config.RoleOverrides.Count);
 
         ConfigReceived?.Invoke(Config);
     }
@@ -84,6 +89,7 @@ public class BurdenedModSystem : ModSystem
 
     private void RefreshClientUi()
     {
+        OffhandHunger.Apply(capi?.World?.Player, Config);
         slotVisuals?.TryApply();
         RecomposeHotbarHud();
         if (capi != null) InventoryDialogPatches.RecomposeIfPresent(capi);
@@ -144,6 +150,7 @@ public class BurdenedModSystem : ModSystem
     // Fired once the player entity is fully in-world. PlayerJoin is too early.
     private void OnPlayerNowPlaying(IServerPlayer player)
     {
+        OffhandHunger.Apply(player, Config);
         if (sapi != null) SlotEjection.EjectLockedSlots(sapi, player, Config);
     }
 
@@ -210,8 +217,13 @@ public class BurdenedModSystem : ModSystem
         api.Event.PlayerNowPlaying += OnPlayerNowPlaying;
 
         api.Logger.Notification(
-            "[{0}] server side loaded. Config: hotbarSlots={1}, bagSlots={2}, immersiveCarryingMode={3}",
-            ModId, Config.HotbarSlots, Config.BagSlots, Config.ImmersiveCarryingMode);
+            "[{0}] server side loaded. Config: hotbarSlots={1}, bagSlots={2}, immersiveCarryingMode={3}, "
+            + "hideBagContentsInDialog={4}, offhandHoldsAnything={5}, offhandHungerPenalty={6}, "
+            + "improvedBagInteractions={7}, bagRoleOverrides={8}",
+            ModId, Config.HotbarSlots, Config.BagSlots, Config.ImmersiveCarryingMode,
+            Config.HideBagContentsInDialog, Config.OffhandHoldsAnything,
+            Config.OffhandHungerPenalty, Config.ImprovedBagInteractions,
+            Config.RoleOverrides.Count);
     }
 
     public override void Dispose()

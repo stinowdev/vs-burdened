@@ -18,6 +18,7 @@ future work. See [README.md](README.md) for player documentation and
 | F08 | Implemented | Open and equip placed bags directly | `ImprovedBagInteractions` | `true` | Server transfers; client opens |
 | F09 | Planned | Remember container window positions by identity | - | - | Client |
 | F10 | Implemented | Open and place equipped bags directly | `ImprovedBagInteractions` | `true` | Server places; client opens |
+| F11 | Implemented | Configure the vanilla offhand hunger penalty | `OffhandHungerPenalty` | `0.2` | Server applies; client mirrors |
 
 Planned features have no runtime settings.
 
@@ -112,6 +113,7 @@ make it equippable.
 | D11 | Active | Equipped-bag placement identifies the source by slot index. The server revalidates that slot when handling the request; no item fingerprint is sent. |
 | D12 | Active | An engine method is patched only where no event, behavior, or registered class reaches the same paths. Worn-bag invalidation uses `AfterActiveSlotChanged`, which already covers local and server-forced selection changes. |
 | D13 | Active | Extends D03. Roles resolve in order: `BagRoleOverrides` in the config, then the item's `burdened.bagRole` attribute, then the game's own data for where the bag is worn and what it holds. The server owner always has the last word. A bag mod still works with nothing configured. No level keys off a mod id or item code. |
+| D14 | Active | F11 configures Vintage Story's existing offhand fallback penalty rather than replacing the hunger system. `0.2` preserves vanilla's 20% increase and `0` disables it. Non-finite and negative values become `0`. Items with their own `statModifier` keep the game's item-defined behavior. The server applies the effective value and syncs it to clients. |
 
 
 ## Configuration contract
