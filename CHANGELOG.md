@@ -6,10 +6,19 @@ Feature (F) and decision (D) numbers refer to [FEATURES.md](FEATURES.md).
 
 ## Unreleased
 
-The 0.5.0 development line makes Vintage Story's offhand hunger penalty
-configurable and makes immersive carrying visible on the player.
+The 0.5.1 patch fixes stale item rendering in equipped-bag windows.
 
-**Clients and servers must update together.** The network protocol moves to
+### Fixed
+
+- Equipped-bag windows no longer render an occupied slot as empty, or keep an
+  obsolete item name and quantity after its content changes.
+
+## [v0.5.0](https://github.com/stinowdev/vs-burdened/releases/tag/v0.5.0)
+
+Version 0.5.0 made Vintage Story's offhand hunger penalty configurable and made
+immersive carrying visible on the player.
+
+**Clients and servers must update together.** The network protocol moved to
 version 1.4.0.
 
 ### Added
@@ -22,7 +31,7 @@ version 1.4.0.
 
 ### Changed
 
-- The network protocol moves to version 1.4.0 because the config sync carries
+- The network protocol moved to version 1.4.0 because the config sync carries
   `OffhandHungerPenalty`.
 
 ### Fixed

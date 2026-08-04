@@ -151,7 +151,9 @@ internal sealed class GuiDialogEquippedBag : GuiDialog
         }
 
         // The view has independent dirty state, so one dialog cannot consume or
-        // reinterpret another dialog's (or the hotbar's) dirty slot ids.
+        // reinterpret another dialog's (or the hotbar's) dirty slot ids. 
+        // A bag content update may also replace ItemSlotBagContent objects.
+        RefreshGridSlotReferences();
         viewInventory.MarkAllDirty();
     }
 
