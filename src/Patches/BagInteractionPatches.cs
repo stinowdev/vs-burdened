@@ -303,6 +303,13 @@ public static class BagInteractionPatches
         if (slot.Empty
             || !BagSupport.SupportsEquippedBagWindow(slot.Itemstack)
             || SlotLocks.IsLocked(slot)) return true;
+
+        if (!shiftPressed && mouseButton == EnumMouseButton.Right)
+        {
+            GuiDialogEquippedBag.Toggle(api, slotId);
+            return false;
+        }
+
         if (!api.World.Player.InventoryManager.MouseItemSlot.Empty) return true;
 
         if (shiftPressed && (mouseButton == EnumMouseButton.Left || mouseButton == EnumMouseButton.Right))
@@ -314,12 +321,6 @@ public static class BagInteractionPatches
             {
                 GuiDialogEquippedBag.Close(slotId);
             }
-            return false;
-        }
-
-        if (mouseButton == EnumMouseButton.Right)
-        {
-            GuiDialogEquippedBag.Toggle(api, slotId);
             return false;
         }
 

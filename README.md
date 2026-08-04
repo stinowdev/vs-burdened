@@ -61,7 +61,7 @@ bags remain on the body.
 |---|---|---|
 | Placed bag | Right-click | Open the bag |
 | Placed bag | Shift + right-click | Equip it into a compatible empty bag slot |
-| Equipped bag slot | Right-click | Open or close that bag |
+| Equipped bag slot | Right-click | Open or close that bag (also with cursor stack) |
 | Equipped bag slot | Shift + click | Place it on the targeted block |
 | Selected equipped bag | Right-click | Open or close the bag when the targeted block does not use the input |
 | Selected equipped bag | Shift + right-click | Place it on the targeted block |

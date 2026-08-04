@@ -4,15 +4,29 @@ All notable changes to this project will be documented in this file.
 
 Feature (F) and decision (D) numbers refer to [FEATURES.md](FEATURES.md).
 
+## [v0.5.2](https://github.com/stinowdev/vs-burdened/releases/tag/v0.5.2)
+
+The 0.5.2 patch fixes opening equipped bags while moving items.
+
+<img
+  alt="Fix cursor carrying item"
+  src="https://github.com/user-attachments/assets/223e212b-2b52-4cae-a218-b5f335ad94fb"
+/>
+
+### Fixed
+
+- Equipped bags can now be opened while the cursor carries an item. Opening the
+  bag leaves that item untouched.
+
 ## [v0.5.1](https://github.com/stinowdev/vs-burdened/releases/tag/v0.5.1)
+
+The 0.5.1 patch fixes stale item rendering in equipped-bag windows.
 
 <img
   width="600"
   alt="Fix #7"
   src="https://github.com/user-attachments/assets/38b17f0f-39d7-4740-96f4-81cbcb4e8224"
 />
-
-The 0.5.1 patch fixes stale item rendering in equipped-bag windows.
 
 ### Fixed
 

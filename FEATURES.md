@@ -45,6 +45,8 @@ follows the table below for everything after that.
 The following rules apply to every transition:
 
 - Bag contents remain attached to the item stack.
+- Opening an equipped bag does not require an empty cursor and does not move the
+  cursor stack.
 - A rejected pickup or placement leaves the source unchanged.
 - Floor pickup never falls back to general inventory routing or the offhand.
 - Several equipped bag windows may remain open at once.
