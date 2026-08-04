@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file.
 
 Feature (F) and decision (D) numbers refer to [FEATURES.md](FEATURES.md).
 
-## Unreleased
+## [v0.5.1](https://github.com/stinowdev/vs-burdened/releases/tag/v0.5.1)
+
+<img
+  width="600"
+  alt="Fix #7"
+  src="https://github.com/user-attachments/assets/38b17f0f-39d7-4740-96f4-81cbcb4e8224"
+/>
 
 The 0.5.1 patch fixes stale item rendering in equipped-bag windows.
 
